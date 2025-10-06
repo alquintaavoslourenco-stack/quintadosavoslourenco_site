@@ -84,7 +84,8 @@ a:hover { text-decoration: underline; }
   background: #ccc;
   border-radius: 50%;
   cursor: pointer;
+  transition: background 0.3s;
 }
-.dots .active {
+.dots span.active {
   background: #8B0000;
 }
