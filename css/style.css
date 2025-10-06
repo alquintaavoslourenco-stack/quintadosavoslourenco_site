@@ -89,3 +89,9 @@ a:hover { text-decoration: underline; }
 .dots span.active {
   background: #8B0000;
 }
+/* Centralizar o título "Testemunhos" */
+.container h2 {
+  text-align: center;
+  font-size: 28px;   /* podes ajustar o tamanho se quiseres */
+  margin-bottom: 20px;
+}
