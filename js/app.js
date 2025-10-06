@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const dotsContainer = document.querySelector('.testemunhos-slider .dots');
   let slideIndex = 0;
   let autoPlay;
-
+ 
   // cria uma bolinha para cada slide
   slides.forEach((_, i) => {
     const dot = document.createElement('span');
