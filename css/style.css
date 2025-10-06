@@ -37,4 +37,7 @@ a:hover { text-decoration: underline; }
   height: 90px;     /* altura do logotipo */
   width: auto;      /* mantém a proporção original */
   vertical-align: middle;
+  background: transparent; /* torna o fundo do elemento invisível */
+  border-radius: 8px;      /* arredonda cantos, disfarça bordas */
 }
+
