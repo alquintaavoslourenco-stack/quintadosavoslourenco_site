@@ -7,13 +7,17 @@ a:hover { text-decoration: underline; }
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 5; }
 .brand { font-weight: 700; letter-spacing: .02em; }
 .brand a { color: #111; }
+.brand {
+  margin-left: 90px;   /* aumenta/diminui este valor até ficar no ponto */
+}
+
 .menu {
   margin: 0 auto;            /* empurra o menu para o centro */
   text-align: center;
 }
 
 .menu a {
-  margin: 0 150px;            /* espaçamento entre as opções */
+  margin: 0 20px;            /* espaçamento entre as opções */
   font-weight: 600;
   color: #333;
 }
