@@ -128,7 +128,7 @@ a:hover { text-decoration: underline; }
   align-items: center;
   z-index: 9999;
 }
-
+ 
 .lightbox img {
   max-width: 90%;
   max-height: 90%;
