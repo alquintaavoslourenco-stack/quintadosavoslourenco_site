@@ -4,48 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Galeria · Quinta dos Avós Lourenço</title>
+  <meta name="description" content="Galeria de imagens da Quinta dos Avós Lourenço, alojamento rural na Sertã.">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .gallery { 
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      padding: 20px;
-    }
-    .gallery img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 8px;
-      transition: transform .2s ease;
-      border: 2px solid #f4f4f4;
-    }
-    .gallery img:hover {
-      transform: scale(1.04);
-    }
-  </style>
 </head>
+
 <body>
- <header class="topbar">
-  <div class="brand">
-  <a href="index.html">
-    <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
-  </a>
-</div>
+  <!-- Cabeçalho -->
+  <header class="topbar">
+    <div class="brand">
+      <a href="index.html">
+        <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
+      </a>
+    </div>
 
-  <nav class="menu">
-    <a href="index.html">Início</a>
-    <a href="sobre.html">Sobre</a>
-    <a href="galeria.html">Galeria</a>
-    <a href="contactos.html">Contactos</a>
-    
-  </nav>
-</header>
+    <nav class="menu">
+      <a href="index.html">Início</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="galeria.html" class="active">Galeria</a>
+      <a href="contactos.html">Contactos</a>
+    </nav>
+  </header>
 
+  <!-- Galeria -->
   <main class="section">
     <div class="container">
-      <h1>Galeria</h1>
-      <p>Alguns momentos e detalhes da Quinta dos Avós Lourenço:</p>
+      <h1 style="text-align:center; margin-bottom: 10px;">Galeria</h1>
+      <p style="text-align:center;">Alguns momentos e detalhes da Quinta dos Avós Lourenço:</p>
 
       <div class="gallery">
         <img src="images/foto1.jpg" alt="Vista da quinta">
@@ -54,15 +38,19 @@
         <img src="images/foto4.jpg" alt="Detalhes rústicos">
         <img src="images/foto5.jpg" alt="Piscina e oliveiras">
         <img src="images/foto6.jpg" alt="Entrada principal">
-        <img src="images/foto7.jpg" alt="Entrada principal">
-        <img src="images/foto8.jpg" alt="Entrada principal">
-        <img src="images/foto9.jpg" alt="Entrada principal">
+        <img src="images/foto7.jpg" alt="Sala rústica">
+        <img src="images/foto8.jpg" alt="Pormenores interiores">
+        <img src="images/foto9.jpg" alt="Varanda e vista">
       </div>
     </div>
   </main>
 
+  <!-- Rodapé -->
   <footer class="footer">
-    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL</p>
+    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · Marca Nacional Nº 694765</p>
   </footer>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
 </body>
 </html>
