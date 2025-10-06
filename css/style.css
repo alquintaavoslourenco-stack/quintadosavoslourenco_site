@@ -22,3 +22,9 @@ a:hover { text-decoration: underline; }
 .gallery img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; }
 .badge { display:inline-block; background:#8B0000; color:#fff; padding:4px 8px; border-radius: 999px; font-size:12px; }
 .note { color:#555; font-size: 14px; }
+/* --- LOGOTIPO --- */
+.logo {
+  height: 60px;     /* altura do logotipo */
+  width: auto;      /* mantém a proporção original */
+  vertical-align: middle;
+}
