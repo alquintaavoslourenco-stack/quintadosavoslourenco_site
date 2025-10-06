@@ -4,7 +4,7 @@ html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, Segoe
 a { color: #8B0000; text-decoration: none; }
 a:hover { text-decoration: underline; }
 .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 5; }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; margin-left: 90px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 5; }
 .brand { font-weight: 700; letter-spacing: .02em; }
 .brand a { color: #111; }
 .menu {
@@ -34,7 +34,7 @@ a:hover { text-decoration: underline; }
 .note { color:#555; font-size: 14px; }
 /* --- LOGOTIPO --- */
 .logo {
-  height: 90px;     /* altura do logotipo */
+  height: 100px;     /* altura do logotipo */
   width: auto;      /* mantém a proporção original */
   vertical-align: middle;
   background: transparent; /* torna o fundo do elemento invisível */
