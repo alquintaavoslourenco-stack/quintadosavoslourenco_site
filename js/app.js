@@ -46,3 +46,26 @@ document.addEventListener('DOMContentLoaded', () => {
   showSlide(0);
   startAutoPlay();
 });
+// --- Lightbox para Galeria ---
+document.addEventListener('DOMContentLoaded', () => {
+  const galleryImages = document.querySelectorAll('.gallery img');
+  const lightbox = document.createElement('div');
+  const lightboxImg = document.createElement('img');
+  lightbox.classList.add('lightbox');
+  lightbox.appendChild(lightboxImg);
+  document.body.appendChild(lightbox);
+
+  galleryImages.forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightbox.style.display = 'flex';
+    });
+  });
+
+  // clicar fora da imagem fecha o lightbox
+  lightbox.addEventListener('click', e => {
+    if (e.target !== lightboxImg) {
+      lightbox.style.display = 'none';
+    }
+  });
+});
