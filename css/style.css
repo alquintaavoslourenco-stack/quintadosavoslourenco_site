@@ -7,7 +7,17 @@ a:hover { text-decoration: underline; }
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 5; }
 .brand { font-weight: 700; letter-spacing: .02em; }
 .brand a { color: #111; }
-.menu a { margin-left: 16px; font-weight: 600; }
+.menu {
+  margin: 0 auto;            /* empurra o menu para o centro */
+  text-align: center;
+}
+
+.menu a {
+  margin: 0 20px;            /* espaçamento entre as opções */
+  font-weight: 600;
+  color: #333;
+}
+
 .hero { padding: 72px 20px; background: #f8f5f3; text-align: center; }
 .hero h1 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 44px); }
 .hero p { margin: 0 0 24px; font-size: clamp(16px, 2vw, 18px); color: #444; }
@@ -22,3 +32,9 @@ a:hover { text-decoration: underline; }
 .gallery img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; }
 .badge { display:inline-block; background:#8B0000; color:#fff; padding:4px 8px; border-radius: 999px; font-size:12px; }
 .note { color:#555; font-size: 14px; }
+/* --- LOGOTIPO --- */
+.logo {
+  height: 60px;     /* altura do logotipo */
+  width: auto;      /* mantém a proporção original */
+  vertical-align: middle;
+}
