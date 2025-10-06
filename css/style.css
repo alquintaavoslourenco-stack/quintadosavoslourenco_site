@@ -238,3 +238,26 @@ a:hover {
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0,0,0,0.6);
 }
+/* --- Estrelas douradas nos testemunhos --- */
+.slide p:first-child {
+  color: #FFD700;        /* dourado */
+  font-size: 22px;
+  letter-spacing: 2px;   /* espaço entre estrelas */
+  margin-bottom: 8px;
+}
+
+/* --- Link ativo no menu (destaca a página atual) --- */
+.menu a.active {
+  color: #8B0000;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 2px;
+}
+
+/* --- Ajustes responsivos (mobile) --- */
+@media (max-width: 640px) {
+  .topbar { padding: 10px 14px; }
+  .logo { height: 70px; }       /* reduz ligeiramente o logo no telemóvel */
+  .menu a { margin: 0 12px; }
+  .container { padding: 16px; }
+  .hero { padding: 48px 16px; }
+}
