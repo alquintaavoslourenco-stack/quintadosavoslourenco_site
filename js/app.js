@@ -130,4 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.addEventListener('click', e => { if (e.target !== lightboxImg) lightbox.style.display = 'none'; });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
 });
+/* ==========================================================
+   MENU MOBILE (abrir/fechar)
+   ========================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.querySelector('.menu-toggle');
+  const menu = document.querySelector('.menu');
 
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      menu.classList.toggle('active');
+    });
+  }
+});
