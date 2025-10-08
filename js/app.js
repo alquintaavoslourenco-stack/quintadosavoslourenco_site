@@ -161,3 +161,33 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox();
   initMobileMenu();
 });
+// === Menu Mobile com ícone dinâmico ===
+function initMobileMenu() {
+  const menu   = document.querySelector('.menu');
+  const toggle = document.querySelector('.menu-toggle');
+  if (!menu || !toggle) return;
+
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.toggle('active');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.textContent = open ? '✕' : '☰';  // ← muda o ícone
+  });
+
+  // Fecha ao clicar num link
+  menu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';  // ← volta ao ícone normal
+    });
+  });
+
+  // Fecha se voltar ao desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }
+  });
+}
