@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contactos · Quinta dos Avós Lourenço</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* --- Mostrar/esconder botões consoante o dispositivo --- */
+    .btn-app { display: none; }         /* escondido no PC */
+    .btn-web { display: inline-block; } /* visível no PC */
+
+    @media (max-width: 768px) {
+      .btn-app { display: inline-block; }  /* visível no telemóvel */
+      .btn-web { display: none; }          /* escondido no telemóvel */
+    }
+  </style>
 </head>
 <body>
   
@@ -20,8 +30,6 @@
     <a href="sobre.html">Sobre</a>
     <a href="galeria.html">Galeria</a>
     <a href="contactos.html" class="active">Contactos</a>
-    <!-- Se já tens o botão mobile, mantém aqui também -->
-    <!-- <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button> -->
   </nav>
 </header>
 
@@ -41,26 +49,28 @@
 
     <!-- Botões de navegação -->
     <p style="margin-top:20px;">
-      <!-- Abre a app de navegação preferida (Waze, Apple Maps, Google Maps, etc.) -->
-      <a class="btn primary"
+      <!-- BOTÃO MOBILE -->
+      <a class="btn primary btn-app"
          href="geo:39.738794,-8.107801?q=Quinta+dos+Av%C3%B3s+Louren%C3%A7o,+Sert%C3%A3,+Portugal"
          target="_blank" rel="noopener">
-        📍 Obter direções (app)
+        📍 Obter direções
       </a>
 
-      <!-- Fallback: abre no navegador (Google Maps) -->
-      <a class="btn"
+      <!-- BOTÃO DESKTOP -->
+      <a class="btn btn-web"
          href="https://www.google.com/maps?q=39.738794,-8.107801+(Quinta+dos+Av%C3%B3s+Louren%C3%A7o)"
          target="_blank" rel="noopener">
         🌐 Ver no mapa
       </a>
     </p>
 
-    <!-- (Opcional) Mapa embutido na página -->
+    <!-- Mapa embutido -->
     <div style="margin-top:30px; text-align:center;">
       <iframe
         src="https://www.google.com/maps?q=39.738794,-8.107801&z=15&output=embed"
-        width="100%" height="350" style="border:0; border-radius:10px;" allowfullscreen="" loading="lazy">
+        width="100%" height="350"
+        style="border:0; border-radius:10px;"
+        allowfullscreen="" loading="lazy">
       </iframe>
     </div>
   </div>
@@ -70,7 +80,7 @@
   <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · Marca Nacional Nº 694765</p>
 </footer>
 
-<!-- Se já usas menu mobile ou outros scripts, inclui o app.js -->
 <script src="js/app.js"></script>
 </body>
 </html>
+
