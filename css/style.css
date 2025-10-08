@@ -416,3 +416,33 @@ h1, h2 {
     line-height: 50px;
   }
 }
+/* ===== Botão flutuante — WhatsApp (centrado com Flexbox) ===== */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background-color: #25D366;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 3px 8px rgba(0,0,0,.25);
+  z-index: 10000;
+  display: flex;                 /* <-- centra o ícone */
+  align-items: center;           /* <-- centra o ícone */
+  justify-content: center;       /* <-- centra o ícone */
+  transition: transform .2s ease, background-color .2s ease;
+}
+
+.whatsapp-float:hover { background-color: #1ebe5d; transform: scale(1.08); }
+
+.whatsapp-float img {
+  width: 28px;
+  height: 28px;
+  display: block;                /* sem margens/posicionamento extra */
+}
+
+@media (max-width: 380px) {
+  .whatsapp-float { width: 50px; height: 50px; }
+  .whatsapp-float img { width: 24px; height: 24px; }
+}
