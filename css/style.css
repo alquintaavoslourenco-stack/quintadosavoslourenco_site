@@ -366,3 +366,66 @@ iframe {
     height: 28px;
   }
 }
+/* === HEADER como estava (logo à esquerda com recuo e menu ao centro) === */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* mantém brand e menu equilibrados */
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  margin-left: 90px;            /* recuo do logotipo (como tinhas) */
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.brand a { color: #111; }
+
+.logo {
+  height: 100px;                /* tamanho do logo (como tinhas) */
+  width: auto;
+  vertical-align: middle;
+  background: transparent;
+  border-radius: 8px;
+}
+
+.menu {
+  margin: 0 auto;               /* empurra o menu para o centro */
+  text-align: center;
+}
+.menu a {
+  margin: 0 20px;               /* espaçamento entre opções */
+  font-weight: 600;
+  color: #333;
+}
+
+/* link ativo (opcional) */
+.menu a.active {
+  color: #8B0000;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 2px;
+}
+
+/* === RODAPÉ mais pequeno === */
+.footer {
+  border-top: 1px solid #eee;
+  padding: 10px 0;              /* altura mais baixa */
+  text-align: center;
+  color: #777;
+  font-size: 13px;              /* texto mais pequeno */
+  line-height: 1.4;
+  background: #fafafa;          /* leve contraste */
+}
+.footer p { margin: 4px 0; }
+
+/* === Ajustes mobile para manter tudo alinhado === */
+@media (max-width: 768px) {
+  .brand { margin-left: 0; }    /* retira o recuo em ecrãs pequenos */
+  .logo { height: 70px; }
+  .menu a { margin: 0 12px; }
+}
