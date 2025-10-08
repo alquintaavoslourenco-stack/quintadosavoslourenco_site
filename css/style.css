@@ -429,3 +429,44 @@ iframe {
   .logo { height: 70px; }
   .menu a { margin: 0 12px; }
 }
+/* ================== MENU MOBILE (hambúrguer) ================== */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid #8B0000;
+  color: #8B0000;
+  border-radius: 8px;
+  font-size: 22px;
+  line-height: 1;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+/* Desktop mantém como estava (menu centrado via .menu { margin: 0 auto; }) */
+
+@media (max-width: 768px) {
+  .topbar { flex-wrap: wrap; padding: 12px 16px; }
+  .brand { margin-left: 0; }          /* tira o recuo do logo no mobile */
+  .logo  { height: 70px; }
+
+  /* mostra o botão e esconde os links por defeito */
+  .menu-toggle { display: block; margin-left: auto; }
+
+  .menu a {
+    display: none;                    /* escondidos por defeito */
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    border-top: 1px solid #eee;
+    background: #fff;
+  }
+
+  /* quando o menu está aberto */
+  .menu.active a { display: block; }
+
+  /* estilo do link ativo no mobile */
+  .menu a.active {
+    background: #f8f5f3;
+    border-bottom: none;
+  }
+}
