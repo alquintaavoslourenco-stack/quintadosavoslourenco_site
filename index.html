@@ -6,7 +6,7 @@
   <title>Quinta dos Avós Lourenço · Alojamento rural na Sertã</title>
   <meta name="description" content="Alojamento rural na Sertã, refúgio tranquilo desde 1853.">
 
-  <!-- ✅ Content Security Policy (mitiga XSS/clickjacking) -->
+  <!-- ✅ Política de Segurança -->
   <meta http-equiv="Content-Security-Policy"
         content="
           default-src 'self';
@@ -17,11 +17,8 @@
           connect-src 'self';
           base-uri   'self';
           form-action 'self';
-          frame-ancestors 'none';
           upgrade-insecure-requests;
         ">
-
-  <!-- ✅ Referrer-Policy (menos dados enviados para sites externos) -->
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="stylesheet" href="css/style.css">
@@ -35,11 +32,7 @@
         <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
       </a>
     </div>
-
-    <!-- Botão mobile -->
     <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
-
-    <!-- Menu -->
     <nav class="menu" aria-label="Navegação principal">
       <a href="index.html" class="active">Início</a>
       <a href="sobre.html">Sobre</a>
@@ -104,7 +97,6 @@
         </a>
       </p>
 
-      <!-- Slider (slides injetados pelo JS) -->
       <div class="testemunhos-slider">
         <div class="dots"></div>
       </div>
@@ -113,11 +105,10 @@
 
   <!-- Rodapé -->
   <footer class="footer">
-  <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · 
-     <a href="politica-privacidade.html">Política de Privacidade</a>
-  </p>
-</footer>
-
+    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · 
+       <a href="politica-privacidade.html">Política de Privacidade</a>
+    </p>
+  </footer>
 
   <!-- WhatsApp flutuante -->
   <a href="https://wa.me/351960446713?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Lourenço."
@@ -125,34 +116,15 @@
     <img src="images/whatsapp-icon.svg" alt="WhatsApp">
   </a>
 
-  <!-- JS local (sem inline → compatível com CSP) -->
-  <script src="js/app.js"></script>
-  
-    <!-- Banner de cookies -->
+  <!-- ✅ Banner de cookies -->
   <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
-    <p>Usamos cookies apenas para garantir o bom funcionamento do site. 
+    <p>Usamos cookies apenas para garantir o bom funcionamento do site.
        <a href="politica-privacidade.html">Saiba mais</a></p>
-    <button id="accept-cookies">Aceitar</button>
+    <button id="accept-cookies" type="button">Aceitar</button>
   </div>
 
-  <script>
-    const banner = document.getElementById('cookie-banner');
-    const btn = document.getElementById('accept-cookies');
-
-    if (localStorage.getItem('cookiesAccepted')) {
-      banner.style.display = 'none';
-    }
-
-    btn.addEventListener('click', () => {
-      localStorage.setItem('cookiesAccepted', 'true');
-      banner.style.display = 'none';
-    });
-  </script>
-
-  <!-- Script principal do site -->
-  <script src="js/app.js"></script>
-</body>
-</html>
-
+  <!-- Scripts -->
+  <script src="js/cookies.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
