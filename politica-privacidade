@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Política de Privacidade · Quinta dos Avós Lourenço</title>
+  <meta name="description" content="Política de Privacidade da Quinta dos Avós Lourenço">
+
+  <!-- CSP alinhada com o teu site -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          script-src 'self';
+          style-src  'self' 'unsafe-inline';
+          img-src    'self' data:;
+          font-src   'self' data:;
+          connect-src 'self';
+          base-uri   'self';
+          form-action 'self';
+          upgrade-insecure-requests;
+        ">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <a href="index.html">
+        <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
+      </a>
+    </div>
+    <nav class="menu" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="galeria.html">Galeria</a>
+      <a href="contactos.html">Contactos</a>
+    </nav>
+  </header>
+
+  <main class="container section">
+    <h1>Política de Privacidade</h1>
+    <p>Última atualização: 8 de outubro de 2025</p>
+
+    <h2>1. Quem somos</h2>
+    <p><strong>Quinta dos Avós Lourenço</strong> — Alojamento local (AL nº 135447/AL) na Sertã, Portugal.</p>
+    <p>Contactos do responsável pelo tratamento de dados (Responsável/Encarregado):<br>
+      Email: <a href="mailto:SEU_EMAIL">SEU_EMAIL</a><br>
+      Telefone/WhatsApp: <a href="https://wa.me/351960446713" target="_blank" rel="noopener noreferrer">+351 960 446 713</a><br>
+      Morada: SEU_ENDERECO_POSTAL, Sertã, Portugal
+    </p>
+
+    <h2>2. Que dados pessoais recolhemos e porquê</h2>
+    <p>O nosso site é estático (HTML/CSS/JS) e <strong>não utiliza cookies de rastreamento</strong> nem analítica de terceiros.</p>
+    <ul>
+      <li><strong>Contactos e reservas:</strong> se entrar em contacto connosco por email/telefone/WhatsApp, poderemos tratar
+        nome, email, telefone e conteúdo da mensagem para responder ao seu pedido.</li>
+      <li><strong>Plataformas de reserva:</strong> se reservar através de <em>terceiros</em> (por exemplo, Airbnb ou Booking),
+        esses serviços enviam-nos os dados necessários à gestão da reserva. Por favor consulte as políticas desses serviços.</li>
+      <li><strong>Registos legais de alojamento:</strong> quando aplicável, poderemos recolher os dados exigidos por lei
+        (por exemplo, identificação para fins de registo de hóspedes) ao abrigo da legislação portuguesa.</li>
+    </ul>
+
+    <h2>3. Bases legais do tratamento</h2>
+    <ul>
+      <li><strong>Execução de contrato e diligências pré-contratuais</strong> (art. 6.º, n.º 1, al. b) RGPD): gerir pedidos e reservas.</li>
+      <li><strong>Obrigação legal</strong> (art. 6.º, n.º 1, al. c) RGPD): cumprimento de requisitos legais aplicáveis ao alojamento.</li>
+      <li><strong>Interesse legítimo</strong> (art. 6.º, n.º 1, al. f) RGPD): assegurar a segurança do site e prevenir abuso.</li>
+      <li><strong>Consentimento</strong> (art. 6.º, n.º 1, al. a) RGPD): apenas quando necessário, por exemplo para cookies não essenciais (se algum dia forem usados).</li>
+    </ul>
+
+    <h2>4. Partilha de dados com terceiros</h2>
+    <p>Não vendemos os seus dados. Poderemos partilhar dados apenas quando necessário com:</p>
+    <ul>
+      <li><strong>Plataformas de reserva</strong> (à escolha do hóspede): 
+        <a href="https://www.airbnb.pt/help/article/2855" target="_blank" rel="noopener noreferrer">Airbnb – Privacidade</a>,
+        <a href="https://www.booking.com/content/privacy.pt-pt.html" target="_blank" rel="noopener noreferrer">Booking – Privacidade</a>.
+      </li>
+      <li><strong>Autoridades públicas</strong> quando a lei assim o exigir.</li>
+      <li><strong>Fornecedores de alojamento do site</strong> (GitHub Pages) para disponibilização técnica do website.</li>
+    </ul>
+
+    <h2>5. Cookies</h2>
+    <p><strong>Atualmente:</strong> apenas usamos cookies/armazenamento local estritamente necessários ao funcionamento (por exemplo, para recordar a sua aceitação do aviso de cookies). Não utilizamos cookies de análise ou marketing.</p>
+    <p>Se, no futuro, introduzirmos analítica (por ex., Google Analytics) ou integrações que criem cookies não essenciais, exibiremos um <strong>banner de consentimento</strong> permitindo aceitar/recusar antes de ativar esses recursos, e atualizaremos esta política.</p>
+
+    <h2>6. Conservação dos dados</h2>
+    <ul>
+      <li><strong>Contactos e reservas:</strong> durante o tempo necessário para gestão da reserva e obrigações legais (por regra até 2 anos, salvo prazos legais superiores).</li>
+      <li><strong>Faturação/registos legais:</strong> pelos prazos exigidos por lei.</li>
+    </ul>
+
+    <h2>7. Os seus direitos</h2>
+    <p>Ao abrigo do RGPD, tem os direitos de <strong>acesso</strong>, <strong>retificação</strong>, <strong>eliminação</strong>, <strong>limitação</strong>, <strong>oposição</strong> e <strong>portabilidade</strong> (quando aplicável). Também pode retirar o consentimento quando o tratamento se basear nele.</p>
+    <p>Para exercer os seus direitos, contacte: <a href="mailto:SEU_EMAIL">SEU_EMAIL</a>. Tem ainda o direito de apresentar reclamação à <a href="https://www.cnpd.pt/" target="_blank" rel="noopener noreferrer">CNPD</a>.</p>
+
+    <h2>8. Segurança</h2>
+    <p>Aplicamos medidas técnicas e organizativas adequadas para proteger os dados pessoais, incluindo utilização de HTTPS, políticas de segurança no navegador (CSP) e princípio da minimização de dados.</p>
+
+    <h2>9. Ligações para terceiros</h2>
+    <p>O nosso site contém ligações para serviços externos (por ex., Airbnb, Booking, WhatsApp). Não controlamos esses sites; recomendamos a leitura das respetivas políticas de privacidade.</p>
+
+    <h2>10. Menores</h2>
+    <p>Não recolhemos intencionalmente dados de menores sem o consentimento dos titulares de responsabilidades parentais quando exigido por lei.</p>
+
+    <h2>11. Alterações a esta política</h2>
+    <p>Poderemos atualizar esta política para refletir mudanças legais ou operacionais. A versão publicada no site indica sempre a data da última atualização.</p>
+
+    <hr>
+    <p>Se tiver dúvidas sobre esta política, contacte-nos: <a href="mailto:SEU_EMAIL">SEU_EMAIL</a>.</p>
+  </main>
+
+  <footer class="footer">
+    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · <a href="politica-privacidade.html">Política de Privacidade</a></p>
+  </footer>
+
+  <!-- (Opcional) Banner de cookies – se ainda não o adicionaste nesta página -->
+  <!--
+  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
+    <p>Usamos cookies apenas para garantir o bom funcionamento do site.
+       <a href="politica-privacidade.html">Saiba mais</a></p>
+    <button id="accept-cookies">Aceitar</button>
+  </div>
+  <script>
+    const banner = document.getElementById('cookie-banner');
+    const btn = document.getElementById('accept-cookies');
+    if (localStorage.getItem('cookiesAccepted')) banner.style.display = 'none';
+    btn?.addEventListener('click', () => {
+      localStorage.setItem('cookiesAccepted', 'true');
+      banner.style.display = 'none';
+    });
+  </script>
+  -->
+
+  <script src="js/app.js"></script>
+</body>
+</html>
