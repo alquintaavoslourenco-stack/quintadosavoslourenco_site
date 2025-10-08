@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Quinta dos Avós Lourenço · Alojamento rural na Sertã</title>
   <meta name="description" content="Alojamento rural na Sertã, refúgio tranquilo desde 1853.">
+
+  <!-- ✅ Content Security Policy (mitiga XSS/clickjacking) -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          script-src 'self';
+          style-src  'self' 'unsafe-inline';
+          img-src    'self' data:;
+          font-src   'self' data:;
+          connect-src 'self';
+          base-uri   'self';
+          form-action 'self';
+          frame-ancestors 'none';
+          upgrade-insecure-requests;
+        ">
+
+  <!-- ✅ Referrer-Policy (menos dados enviados para sites externos) -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -69,7 +88,8 @@
 
       <!-- Airbnb -->
       <p style="text-align:center; margin-top:-6px;">
-        <a href="https://www.airbnb.pt/rooms/875560493639889462" target="_blank" rel="noopener"
+        <a href="https://www.airbnb.pt/rooms/875560493639889462"
+           target="_blank" rel="noopener noreferrer"
            style="display:inline-block; padding:6px 10px; border:1px solid #eee; border-radius:999px; font-size:14px; color:#222;">
           ⭐ 4,96/5 · +50 avaliações · Airbnb
         </a>
@@ -77,7 +97,8 @@
 
       <!-- Booking -->
       <p style="text-align:center; margin-top:4px;">
-        <a href="https://www.booking.com/hotel/pt/quinta-dos-avos-lourenco.pt-pt.html" target="_blank" rel="noopener"
+        <a href="https://www.booking.com/hotel/pt/quinta-dos-avos-lourenco.pt-pt.html"
+           target="_blank" rel="noopener noreferrer"
            style="display:inline-block; padding:6px 10px; border:1px solid #eee; border-radius:999px; font-size:14px; color:#222;">
           ⭐ <span style="color:#003580;">9,8/10</span> · Booking.com
         </a>
@@ -97,10 +118,11 @@
 
   <!-- WhatsApp flutuante -->
   <a href="https://wa.me/351960446713?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Lourenço."
-     class="whatsapp-float" target="_blank" rel="noopener" aria-label="Enviar mensagem no WhatsApp">
+     class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp">
     <img src="images/whatsapp-icon.svg" alt="WhatsApp">
   </a>
 
+  <!-- JS local (sem inline → compatível com CSP) -->
   <script src="js/app.js"></script>
 </body>
 </html>
