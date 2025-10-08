@@ -347,3 +347,20 @@ a:hover {
 h1, h2 {
   text-align: center;
 }
+/* --- Badges das plataformas --- */
+.container p a[href*="airbnb"], 
+.container p a[href*="booking"] {
+  transition: all 0.2s ease;
+}
+
+.container p a[href*="airbnb"]:hover {
+  background: #FF5A5F;
+  color: #fff;
+  border-color: #FF5A5F;
+}
+
+.container p a[href*="booking"]:hover {
+  background: #003580;
+  color: #fff;
+  border-color: #003580;
+}
