@@ -1,9 +1,12 @@
-/* ===== Helpers ===== */
-function qsAll(sel, root = document) { return root.querySelectorAll(sel); }
-function qs(sel, root = document) { return root.querySelector(sel); }
+/* ==========================================================
+   Helpers
+   ========================================================== */
+const qs  = (sel, root = document) => root.querySelector(sel);
+const qsa = (sel, root = document) => root.querySelectorAll(sel);
 
 /* ==========================================================
-   TESTEMUNHOS AIRBNB — dados + criação automática dos slides
+   Dados — Testemunhos (Airbnb/Booking)
+   (podes editar livremente os textos abaixo)
    ========================================================== */
 const TESTEMUNHOS_AIRBNB = [
   {
@@ -23,66 +26,75 @@ const TESTEMUNHOS_AIRBNB = [
     autor: `— Beatriz, Airbnb (abril 2025)`
   },
   {
-    texto: `Um refúgio na serra para descansar e aproveitar a natureza. Pequeno-almoço divinal e anfitriões sempre prontos a ajudar. Casa ampla, exterior impecável e A/C em todas as divisões.`,
+    texto: `Um refúgio na serra para descansar e aproveitar a natureza. Pequeno-almoço divinal e anfitriões sempre prontos a ajudar. Casa ampla e exterior impecável.`,
     autor: `— Patrícia, Airbnb (fevereiro 2025)`
   },
   {
-    texto: `Propriedade incrível: muito limpa e confortável. O meu cão e gato adoraram. Amei o burro Uva e os porcos Elvis e Shakira. Tranquilo e perfeito para escapar da cidade.`,
+    texto: `Propriedade incrível: muito limpa e confortável. O meu cão e gato adoraram. Amei o burro Uva e os porcos Elvis e Shakira. Perfeito para escapar da cidade.`,
     autor: `— Juliane, Airbnb (setembro 2025)`
   },
   {
-    texto: `Estadia maravilhosa. Anfitriões muito afáveis e sempre disponíveis. Casa bem equipada, lareira e A/C; exterior fantástico, cercado e com vistas deslumbrantes. Pequeno-almoço diário delicioso.`,
+    texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada (lareira e A/C); exterior fantástico e cercado. Pequeno-almoço diário delicioso. Vamos repetir!`,
     autor: `— Diogo, Airbnb (março 2025)`
   }
 ];
 
-/* --- Render dos slides ANTES do slider arrancar --- */
-document.addEventListener('DOMContentLoaded', () => {
+/* ==========================================================
+   Render — Cria os slides de testemunhos (se a secção existir)
+   ========================================================== */
+function renderTestemunhos() {
   const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
-  if (!sliderEl || !TESTEMUNHOS_AIRBNB.length) return;
+  if (!sliderEl) return;
 
-  // garante o recipiente das bolinhas
-  const dotsEl = sliderEl.querySelector('.dots') || (() => {
-    const d = document.createElement('div'); d.className = 'dots'; sliderEl.appendChild(d); return d;
-  })();
+  // garante recipiente das bolinhas
+  let dotsEl = sliderEl.querySelector('.dots');
+  if (!dotsEl) {
+    dotsEl = document.createElement('div');
+    dotsEl.className = 'dots';
+    sliderEl.appendChild(dotsEl);
+  }
 
-  // cria os slides com estrelas douradas
-  TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className = 'slide' + (idx === 0 ? ' active' : '');
-    div.innerHTML = `
-      <p style="color:#FFD700; font-size:20px; margin-bottom:6px;">★★★★★</p>
-      <p><em>${item.texto}</em></p>
-      <p class="note">${item.autor}</p>
-    `;
-    sliderEl.insertBefore(div, dotsEl);
-  });
-});
+  // se já houver slides, não duplica
+  const existingSlides = qsa('.slide', sliderEl);
+  if (existingSlides.length === 0 && TESTEMUNHOS_AIRBNB.length > 0) {
+    TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'slide' + (idx === 0 ? ' active' : '');
+      div.innerHTML = `
+        <p style="color:#FFD700; font-size:20px; margin-bottom:6px;">★★★★★</p>
+        <p><em>${item.texto}</em></p>
+        <p class="note">${item.autor}</p>
+      `;
+      sliderEl.insertBefore(div, dotsEl);
+    });
+  }
+}
 
 /* ==========================================================
-   Slider de Testemunhos com Bolinhas (seguro)
+   Slider — com bolinhas e autoplay
    ========================================================== */
-document.addEventListener('DOMContentLoaded', () => {
+function initSlider() {
   const slider = qs('.testemunhos-slider');
-  const slides = qsAll('.testemunhos-slider .slide');
+  if (!slider) return;
+
+  const slides = qsa('.testemunhos-slider .slide');
+  if (slides.length === 0) return;
+
   const dotsContainer = qs('.testemunhos-slider .dots');
-
-  // Se não houver slider nesta página, sai sem erro.
-  if (!slider || slides.length === 0) return;
-
+  let dots = [];
   let slideIndex = 0;
   let autoPlay;
 
-  // cria bolinhas só se existir o recipiente .dots
+  // cria bolinhas consoante nº de slides
   if (dotsContainer) {
+    dotsContainer.innerHTML = '';
     slides.forEach((_, i) => {
       const dot = document.createElement('span');
       dot.addEventListener('click', () => showSlide(i));
       dotsContainer.appendChild(dot);
     });
+    dots = qsa('span', dotsContainer);
   }
-
-  const dots = dotsContainer ? qsAll('span', dotsContainer) : [];
 
   function showSlide(index) {
     slides.forEach(s => s.classList.remove('active'));
@@ -95,22 +107,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function nextSlide() { showSlide(slideIndex + 1); }
 
-  function startAutoPlay() { autoPlay = setInterval(nextSlide, 6000); }
-  function stopAutoPlay() { clearInterval(autoPlay); }
+  function startAutoPlay() {
+    stopAutoPlay();
+    autoPlay = setInterval(nextSlide, 6000);
+  }
+  function stopAutoPlay() {
+    if (autoPlay) clearInterval(autoPlay);
+  }
 
+  // Pausa no hover e em toque
   slider.addEventListener('mouseenter', stopAutoPlay);
   slider.addEventListener('mouseleave', startAutoPlay);
+  slider.addEventListener('touchstart', stopAutoPlay, { passive: true });
+  slider.addEventListener('touchend', startAutoPlay, { passive: true });
 
   showSlide(0);
   startAutoPlay();
-});
+}
 
 /* ==========================================================
-   Lightbox para Galeria (seguro e com Esc)
+   Galeria — Lightbox (fecha ao clicar fora e com Esc)
    ========================================================== */
-document.addEventListener('DOMContentLoaded', () => {
-  const galleryImgs = qsAll('.gallery img');
-  if (galleryImgs.length === 0) return; // não há galeria nesta página
+function initLightbox() {
+  const galleryImgs = qsa('.gallery img');
+  if (galleryImgs.length === 0) return;
 
   const lightbox = document.createElement('div');
   lightbox.className = 'lightbox';
@@ -126,20 +146,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // clicar fora ou tecla Esc fecha
-  lightbox.addEventListener('click', e => { if (e.target !== lightboxImg) lightbox.style.display = 'none'; });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
-});
+  // Fechar ao clicar fora da imagem
+  lightbox.addEventListener('click', (e) => {
+    if (e.target !== lightboxImg) lightbox.style.display = 'none';
+  });
+
+  // Fechar com Esc
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') lightbox.style.display = 'none';
+  });
+}
+
 /* ==========================================================
-   MENU MOBILE (abrir/fechar)
+   Menu Mobile — Abre/fecha (só se existir .menu-toggle)
+   ========================================================== */
+function initMobileMenu() {
+  const toggle = qs('.menu-toggle');
+  const menu   = qs('.menu');
+  if (!toggle || !menu) return;
+
+  toggle.addEventListener('click', () => {
+    const opened = menu.classList.toggle('active');
+    toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  });
+
+  // fecha ao clicar em links
+  qsa('.menu a').forEach(a => {
+    a.addEventListener('click', () => menu.classList.remove('active'));
+  });
+
+  // fecha se redimensionar para desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) menu.classList.remove('active');
+  });
+}
+
+/* ==========================================================
+   Boot
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.querySelector('.menu-toggle');
-  const menu = document.querySelector('.menu');
+  // 1) Cria slides de testemunhos (se existir a secção)
+  renderTestemunhos();
 
-  if (toggle && menu) {
-    toggle.addEventListener('click', () => {
-      menu.classList.toggle('active');
-    });
-  }
+  // 2) Inicia slider (se houver)
+  initSlider();
+
+  // 3) Lightbox da galeria (se houver)
+  initLightbox();
+
+  // 4) Menu mobile (se houver botão)
+  initMobileMenu();
 });
