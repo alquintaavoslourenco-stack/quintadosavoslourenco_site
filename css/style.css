@@ -3,10 +3,7 @@
    ========================================================== */
 
 /* --- BASE GERAL --- */
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 html, body {
   margin: 0;
   padding: 0;
@@ -14,424 +11,31 @@ html, body {
   color: #222;
   background: #fff;
 }
-
-a {
-  color: #8B0000;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-}
+a { color: #8B0000; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
 /* ==========================================================
-   CABEÇALHO E MENU
+   CABEÇALHO + MENU (desktop e mobile)
    ========================================================== */
 
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   padding: 16px 20px;
   border-bottom: 1px solid #eee;
   background: #fff;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 50;
 }
-
-.brand a {
-  color: #111;
-}
-
-.logo {
-  height: 100px;
-  width: auto;
-  vertical-align: middle;
-  background: transparent;
-  border-radius: 8px;
-}
-
-.menu {
-  text-align: center;
-}
-
-.menu a {
-  margin: 0 15px;
-  font-weight: 600;
-  color: #333;
-}
-
-.menu a.active {
-  color: #8B0000;
-  border-bottom: 2px solid #8B0000;
-  padding-bottom: 2px;
-}
-
-/* ==========================================================
-   HERO — SECÇÃO PRINCIPAL
-   ========================================================== */
-
-.hero {
-  padding: 72px 20px;
-  background: #f8f5f3;
-  text-align: center;
-}
-
-.hero h1 {
-  margin: 0 0 12px;
-  font-size: clamp(28px, 4vw, 44px);
-}
-
-.hero p {
-  margin: 0 0 24px;
-  color: #444;
-  font-size: clamp(16px, 2vw, 18px);
-}
-
-.badge {
-  display: inline-block;
-  background: #8B0000;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-
-.btn {
-  display: inline-block;
-  padding: 12px 18px;
-  border: 2px solid #8B0000;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-}
-
-.btn.primary {
-  background: #8B0000;
-  color: #fff;
-}
-
-.btn.primary:hover {
-  background: #a31c1c;
-}
-
-/* ==========================================================
-   SECÇÕES DE CONTEÚDO
-   ========================================================== */
-
-.section {
-  padding: 50px 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px;
-  padding: 32px 20px;
-}
-
-.card {
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 18px;
-  background: #fff;
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.card h3 {
-  margin-top: 0;
-  color: #8B0000;
-}
-
-/* ==========================================================
-   TESTEMUNHOS — SLIDER AUTOMÁTICO
-   ========================================================== */
-
-.titulo-testemunhos {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-.testemunhos-slider {
-  position: relative;
-  max-width: 700px;
-  margin: 30px auto;
-  text-align: center;
-  min-height: 150px;
-}
-
-.slide {
-  display: none;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.slide.active {
-  display: block;
-  opacity: 1;
-}
-
-.note {
-  color: #555;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-/* --- Bolinhas de navegação --- */
-.dots {
-  text-align: center;
-  margin-top: 15px;
-}
-
-.dots span {
-  height: 10px;
-  width: 10px;
-  margin: 0 5px;
-  display: inline-block;
-  background: #ccc;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.dots span.active {
-  background: #8B0000;
-}
-
-/* ==========================================================
-   GALERIA — LIGHTBOX DE IMAGENS
-   ========================================================== */
-
-.gallery {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-.gallery img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.gallery img:hover {
-  transform: scale(1.03);
-}
-
-/* --- Fundo escuro (lightbox) --- */
-.lightbox {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.6);
-}
-
-/* ==========================================================
-   CONTACTOS — MAPA E BOTÕES
-   ========================================================== */
-
-iframe {
-  border-radius: 10px;
-  width: 100%;
-  height: 400px;
-  border: 0;
-}
-
-/* ==========================================================
-   RODAPÉ
-   ========================================================== */
-
-.footer {
-  border-top: 1px solid #eee;
-  padding: 18px 20px;
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-}
-
-/* ==========================================================
-   BOTÃO FLUTUANTE — WHATSAPP (CENTRADO)
-   ========================================================== */
-
-.whatsapp-float {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background-color: #25D366;
-  border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  z-index: 9999;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.whatsapp-float:hover {
-  background-color: #1ebe5d;
-  transform: scale(1.08);
-}
-
-.whatsapp-float img {
-  width: 34px;
-  height: 34px;
-  display: block;
-  margin: 0;
-  padding: 0;
-}
-
-/* ==========================================================
-   RESPONSIVO (TABLET E TELEMÓVEL)
-   ========================================================== */
-
-@media (max-width: 768px) {
-  .logo {
-    height: 80px;
-  }
-
-  .menu a {
-    margin: 0 10px;
-  }
-
-  .grid {
-    padding: 20px 10px;
-  }
-
-  .hero {
-    padding: 50px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .logo {
-    height: 70px;
-  }
-
-  .hero h1 {
-    font-size: 26px;
-  }
-
-  .hero p {
-    font-size: 16px;
-  }
-
-  .whatsapp-float {
-    width: 52px;
-    height: 52px;
-    bottom: 15px;
-    right: 15px;
-  }
-
-  .whatsapp-float img {
-    width: 28px;
-    height: 28px;
-  }
-}
-/* === HEADER como estava (logo à esquerda com recuo e menu ao centro) === */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* mantém brand e menu equilibrados */
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-  background: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.brand {
-  margin-left: 90px;            /* recuo do logotipo (como tinhas) */
-  font-weight: 700;
-  letter-spacing: .02em;
-}
+.brand { margin-left: 90px; }
 .brand a { color: #111; }
+.logo { height: 100px; width: auto; background: transparent; border-radius: 8px; }
 
-.logo {
-  height: 100px;                /* tamanho do logo (como tinhas) */
-  width: auto;
-  vertical-align: middle;
-  background: transparent;
-  border-radius: 8px;
-}
-
-.menu {
-  margin: 0 auto;               /* empurra o menu para o centro */
-  text-align: center;
-}
-.menu a {
-  margin: 0 20px;               /* espaçamento entre opções */
-  font-weight: 600;
-  color: #333;
-}
-
-/* link ativo (opcional) */
-.menu a.active {
-  color: #8B0000;
-  border-bottom: 2px solid #8B0000;
-  padding-bottom: 2px;
-}
-
-/* === RODAPÉ mais pequeno === */
-.footer {
-  border-top: 1px solid #eee;
-  padding: 10px 0;              /* altura mais baixa */
-  text-align: center;
-  color: #777;
-  font-size: 13px;              /* texto mais pequeno */
-  line-height: 1.4;
-  background: #fafafa;          /* leve contraste */
-}
-.footer p { margin: 4px 0; }
-
-/* === Ajustes mobile para manter tudo alinhado === */
-@media (max-width: 768px) {
-  .brand { margin-left: 0; }    /* retira o recuo em ecrãs pequenos */
-  .logo { height: 70px; }
-  .menu a { margin: 0 12px; }
-}
-/* ================== MENU MOBILE (hambúrguer) ================== */
 .menu-toggle {
-  display: none;
+  display: none;              /* desktop: escondido */
   background: none;
   border: 1px solid #8B0000;
   color: #8B0000;
@@ -442,55 +46,137 @@ iframe {
   cursor: pointer;
 }
 
-/* Desktop normal */
+/* DESKTOP (>=769px) */
 @media (min-width: 769px) {
   .menu {
-    display: flex;
+    display: flex !important;   /* força visível no desktop */
     justify-content: center;
-    flex: 1;
+    align-items: center;
+    gap: 24px;
+    flex: 1;                    /* ocupa o espaço para centrar */
+    text-align: center;
+  }
+  .menu a {
+    display: inline-block;
+    font-weight: 600;
+    color: #333;
+    padding: 4px 0;
+  }
+  .menu a.active {
+    color: #8B0000;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 2px;
   }
 }
 
-/* Mobile */
+/* MOBILE (<=768px) */
 @media (max-width: 768px) {
-  .topbar {
-    flex-wrap: wrap;
-    padding: 12px 16px;
-  }
-
-  .brand {
-    margin-left: 0;
-  }
-
-  .logo {
-    height: 70px;
-  }
-
-  .menu-toggle {
-    display: block;
-    margin-left: auto;
-  }
+  .topbar { flex-wrap: wrap; padding: 12px 16px; }
+  .brand { margin-left: 0; }
+  .logo  { height: 70px; }
+  .menu-toggle { display: block; margin-left: auto; }
 
   .menu {
-    display: none; /* escondido por defeito */
+    display: none;              /* escondido por defeito */
     width: 100%;
-    text-align: center;
     background: #fff;
     border-top: 1px solid #eee;
   }
+  .menu.active { display: block; } /* mostra quando abrimos */
 
   .menu a {
     display: block;
     padding: 14px 0;
     border-bottom: 1px solid #eee;
     color: #333;
+    font-weight: 600;
   }
-
-  .menu.active {
-    display: block; /* mostra quando abrimos */
-  }
-
   .menu a.active {
     background: #f8f5f3;
+    color: #8B0000;
+    border-bottom: 1px solid #eedede;
   }
+}
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+.hero { padding: 72px 20px; background: #f8f5f3; text-align: center; }
+.hero h1 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 44px); }
+.hero p { margin: 0 0 24px; color: #444; font-size: clamp(16px, 2vw, 18px); }
+.badge { display:inline-block; background:#8B0000; color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; margin-bottom:10px; }
+
+.btn { display:inline-block; padding:12px 18px; border:2px solid #8B0000; border-radius:6px; font-weight:700; cursor:pointer; transition:all .3s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn.primary { background:#8B0000; color:#fff; }
+.btn.primary:hover { background:#a31c1c; }
+
+/* ==========================================================
+   SECÇÕES / CARDS
+   ========================================================== */
+.section { padding: 50px 20px; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:22px; padding: 32px 20px; }
+.card { border:1px solid #eee; border-radius:10px; padding:18px; background:#fff; text-align:center; transition:transform .2s, box-shadow .2s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,.05); }
+.card h3 { margin-top:0; color:#8B0000; }
+
+/* ==========================================================
+   TESTEMUNHOS (slider)
+   ========================================================== */
+.titulo-testemunhos { text-align:center; font-size:28px; margin-bottom:20px; }
+.testemunhos-slider { position:relative; max-width:700px; margin:30px auto; text-align:center; min-height:150px; }
+.slide { display:none; opacity:0; transition:opacity .8s ease; }
+.slide.active { display:block; opacity:1; }
+.note { color:#555; font-size:14px; margin-top:5px; }
+.dots { text-align:center; margin-top:15px; }
+.dots span { height:10px; width:10px; margin:0 5px; display:inline-block; background:#ccc; border-radius:50%; cursor:pointer; transition:background .3s; }
+.dots span.active { background:#8B0000; }
+
+/* ==========================================================
+   GALERIA + LIGHTBOX
+   ========================================================== */
+.gallery { display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.gallery img { width:100%; height:220px; object-fit:cover; border-radius:8px; cursor:pointer; transition: transform .2s; }
+.gallery img:hover { transform: scale(1.03); }
+
+.lightbox { position:fixed; inset:0; background:rgba(0,0,0,.8); display:none; justify-content:center; align-items:center; z-index:9999; }
+.lightbox img { max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,.6); }
+
+/* ==========================================================
+   CONTACTOS — MAPA
+   ========================================================== */
+iframe { border-radius:10px; width:100%; height:400px; border:0; }
+
+/* ==========================================================
+   RODAPÉ (mais pequeno)
+   ========================================================== */
+.footer { border-top:1px solid #eee; padding:10px 0; text-align:center; color:#777; font-size:13px; line-height:1.4; background:#fafafa; }
+.footer p { margin:4px 0; }
+
+/* ==========================================================
+   BOTÃO FLUTUANTE — WHATSAPP (centrado perfeito)
+   ========================================================== */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  width: 60px; height: 60px;
+  background-color: #25D366;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  z-index: 9999;
+  transition: transform .2s, background-color .2s;
+}
+.whatsapp-float:hover { background:#1ebe5d; transform: scale(1.08); }
+.whatsapp-float img { width: 34px; height: 34px; display:block; }
+
+/* ==========================================================
+   RESPONSIVO EXTRA
+   ========================================================== */
+@media (max-width: 480px) {
+  .whatsapp-float { width:52px; height:52px; bottom:15px; right:15px; }
+  .whatsapp-float img { width:28px; height:28px; }
+  .logo { height:70px; }
+  .hero { padding: 50px 16px; }
 }
