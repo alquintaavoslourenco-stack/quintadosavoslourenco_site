@@ -1,183 +1,287 @@
 <!doctype html>
-<html lang="pt-PT">
+
+<html lang="pt">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Quinta dos Avós Lourenço · Alojamento rural na Sertã</title>
-  <meta name="description" content="Refúgio tranquilo na Sertã, rodeado de natureza e tradição desde 1853. Reserve diretamente por WhatsApp ou peça disponibilidade por email.">
-  <link rel="canonical" href="https://alquintaavoslourenco-stack.github.io/quintadosavoslourenco_site/">
 
-  <!-- Open Graph / Twitter -->
-  <meta property="og:title" content="Quinta dos Avós Lourenço · Alojamento rural na Sertã">
-  <meta property="og:description" content="Natureza, conforto e tradição numa casa rústica na Sertã.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://alquintaavoslourenco-stack.github.io/quintadosavoslourenco_site/">
-  <!-- <meta property="og:image" content="assets/hero.jpg"> -->
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="description" content="Alojamento rural na Sertã, refúgio tranquilo desde 1853.">
 
-  <!-- Favicon (opcional) -->
-  <!-- <link rel="icon" href="assets/favicon.ico"> -->
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles.css">
 
-  <!-- Dados estruturados (SEO) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"LodgingBusiness",
-    "name":"Quinta dos Avós Lourenço",
-    "description":"Alojamento rural na Sertã, Portugal — conforto, tradição e natureza.",
-    "address":{"@type":"PostalAddress","addressLocality":"Sertã","addressCountry":"PT"},
-    "url":"https://alquintaavoslourenco-stack.github.io/quintadosavoslourenco_site/",
-    "currenciesAccepted":"EUR",
-    "priceRange":"€€",
-    "identifier":"135447/AL"
-  }
-  </script>
+  <!-- ✅ Política de Segurança -->
+
+  <meta http-equiv="Content-Security-Policy"
+
+        content="
+
+          default-src 'self';
+
+          script-src 'self';
+
+          style-src  'self' 'unsafe-inline';
+
+          img-src    'self' data:;
+
+          font-src   'self' data:;
+
+          connect-src 'self';
+
+          base-uri   'self';
+
+          form-action 'self';
+
+          upgrade-insecure-requests;
+
+        ">
+
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+
+
+  <link rel="stylesheet" href="css/style.css">
+
 </head>
 
+
+
 <body>
-  <!-- Topbar simples com CTA discreto -->
+
+  <!-- Cabeçalho -->
+
   <header class="topbar">
-    <nav class="container nav">
-      <a href="#inicio" class="brand">Quinta dos Avós Lourenço</a>
 
-      <button class="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+    <div class="brand">
 
-      <ul id="menu" class="menu">
-        <li><a href="#sobre">Sobre</a></li>
-        <li><a href="#galeria">Galeria</a></li>
-        <li><a href="#contactos">Contactos</a></li>
-        <li class="nav-cta">
-          <a class="btn-ghost" href="https://wa.me/351XXXXXXXXX?text=Olá!%20Quero%20saber%20disponibilidade%20para%20as%20datas%3A" target="_blank" rel="noopener">Reservar</a>
-        </li>
-      </ul>
+      <a href="index.html">
+
+        <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
+
+      </a>
+
+    </div>
+
+    <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
+
+    <nav class="menu" aria-label="Navegação principal">
+
+      <a href="index.html" class="active">Início</a>
+
+      <a href="sobre.html">Sobre</a>
+
+      <a href="galeria.html">Galeria</a>
+
+      <a href="contactos.html">Contactos</a>
+
     </nav>
+
   </header>
 
-  <main id="inicio">
-    <!-- Hero minimalista -->
-    <section class="hero container">
-      <div class="hero-media">
-        <picture>
-          <!-- TODO: troca pelos teus ficheiros -->
-          <source srcset="assets/hero.webp" type="image/webp">
-          <img src="assets/hero.jpg" alt="Casa rural rodeada de oliveiras na Sertã" width="1600" height="900" loading="eager" fetchpriority="high">
-        </picture>
-      </div>
-      <div class="hero-text">
-        <h1>Alojamento rural na Sertã</h1>
-        <p>Refúgio tranquilo, rodeado de natureza e tradição desde 1853.</p>
-        <div class="hero-ctas">
-          <a class="btn-solid" href="https://wa.me/351XXXXXXXXX?text=Olá!%20Gostava%20de%20ver%20disponibilidade%20para%3A%20__%20a%20__%20(%20__%20pessoas)" target="_blank" rel="noopener">Ver disponibilidade</a>
-          <a class="btn-ghost" href="#sobre">Saber mais</a>
+
+
+  <!-- Hero -->
+
+  <section class="hero">
+
+    <div class="container">
+
+      <span class="badge">Alojamento Rural</span>
+
+      <h1>Quinta dos Avós Lourenço</h1>
+
+      <p>Refúgio tranquilo na Sertã, rodeado de natureza e tradição desde 1853.</p>
+
+      <p>
+
+        <a class="btn primary" href="contactos.html">Contactar</a>
+
+        <a class="btn" href="sobre.html">Saber mais</a>
+
+      </p>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- Destaques -->
+
+  <section class="section">
+
+    <div class="container">
+
+      <div class="grid">
+
+        <div class="card">
+
+          <h3>Conforto e Tradição</h3>
+
+          <p>Cozinha equipada, sala de jantar, quartos com luz natural e ambiente rústico cuidadosamente restaurado.</p>
+
         </div>
-        <ul class="badges">
-          <li>⭐ 4,96/5 · +50 avaliações</li>
-          <li>135447/AL</li>
-        </ul>
-      </div>
-    </section>
 
-    <!-- Secção Sobre (três cartões simples) -->
-    <section id="sobre" class="container grid-3">
-      <article class="card">
-        <h2>Conforto e Tradição</h2>
-        <p>Cozinha equipada, sala de jantar, quartos com luz natural e ambiente rústico cuidadosamente restaurado.</p>
-      </article>
-      <article class="card">
-        <h2>Natureza em 3 hectares</h2>
-        <p>Oliveiras, equipamentos agrícolas tradicionais e animais que compõem um cenário rural autêntico.</p>
-      </article>
-      <article class="card">
-        <h2>Sustentabilidade</h2>
-        <p>Práticas responsáveis e respeito pela comunidade e recursos naturais.</p>
-      </article>
-    </section>
+        <div class="card">
 
-    <!-- Galeria (lazy) -->
-    <section id="galeria" class="container">
-      <h2>Galeria</h2>
-      <div class="gallery">
-        <!-- TODO: substitui imagens/alt -->
-        <img src="assets/gal/1.jpg" alt="Quarto com luz natural" loading="lazy" width="800" height="600">
-        <img src="assets/gal/2.jpg" alt="Sala com pormenores rústicos" loading="lazy" width="800" height="600">
-        <img src="assets/gal/3.jpg" alt="Área exterior com oliveiras" loading="lazy" width="800" height="600">
-        <img src="assets/gal/4.jpg" alt="Cozinha equipada" loading="lazy" width="800" height="600">
-        <img src="assets/gal/5.jpg" alt="Trilho junto à propriedade" loading="lazy" width="800" height="600">
-      </div>
-    </section>
+          <h3>Natureza em 3 hectares</h3>
 
-    <!-- Testemunhos curtos -->
-    <section class="container">
-      <h2>Testemunhos</h2>
-      <ul class="reviews-min">
-        <li><blockquote>“Casa encantadora no meio da natureza.”</blockquote><cite>— Ana M. (Airbnb)</cite></li>
-        <li><blockquote>“Silêncio, conforto e autenticidade.”</blockquote><cite>— Luís R. (Booking)</cite></li>
-      </ul>
-    </section>
+          <p>Oliveiras, equipamentos agrícolas tradicionais e animais que compõem um cenário rural autêntico.</p>
 
-    <!-- Contactos -->
-    <section id="contactos" class="container contact">
-      <div class="contact-info">
-        <h2>Contactos</h2>
-        <p><strong>WhatsApp:</strong> <a href="https://wa.me/351XXXXXXXXX" target="_blank" rel="noopener">+351 XXX XXX XXX</a></p>
-        <p><strong>Email:</strong> <a href="mailto:reservas@quintadosavoslourenço.pt">reservas@quintadosavoslourenço.pt</a></p>
-        <p><strong>AL:</strong> 135447/AL</p>
-        <div class="map-embed" role="img" aria-label="Mapa da localização (Sertã, Portugal)">
-          <!-- TODO: se tiveres, coloca o iframe do Google Maps -->
-          <p>Localização: Sertã, Portugal</p>
         </div>
+
+        <div class="card">
+
+          <h3>Sustentabilidade</h3>
+
+          <p>Compromisso com práticas responsáveis e respeito pela comunidade e recursos naturais.</p>
+
+        </div>
+
       </div>
 
-      <!-- Formulário curto via FormSubmit (sem backend) -->
-      <form class="card" action="https://formsubmit.co/SEU_EMAIL" method="POST">
-        <!-- TODO: troca SEU_EMAIL pelo teu email -->
-        <input type="hidden" name="_subject" value="Pedido de disponibilidade — Quinta dos Avós Lourenço">
-        <input type="hidden" name="_captcha" value="false">
-        <label>Nome
-          <input name="nome" required autocomplete="name">
-        </label>
-        <label>Email
-          <input type="email" name="email" required autocomplete="email">
-        </label>
-        <label>Datas (check-in / check-out)
-          <input name="datas" placeholder="dd/mm/aaaa – dd/mm/aaaa">
-        </label>
-        <label>Nº de pessoas
-          <input type="number" name="pessoas" min="1" max="12">
-        </label>
-        <label>Mensagem
-          <textarea name="mensagem" rows="4" placeholder="Diz-nos o que procuras 😊"></textarea>
-        </label>
-        <button class="btn-solid" type="submit">Pedir disponibilidade</button>
-        <p class="muted">Ou fala connosco por <a href="https://wa.me/351XXXXXXXXX" target="_blank" rel="noopener">WhatsApp</a>.</p>
-      </form>
-    </section>
-  </main>
+    </div>
+
+  </section>
+
+
+
+  <!-- Testemunhos -->
+
+  <section class="section" id="testemunhos">
+
+    <div class="container">
+
+      <h2 class="titulo-testemunhos">Testemunhos</h2>
+
+
+
+      <!-- Airbnb -->
+
+      <p style="text-align:center; margin-top:-6px;">
+
+        <a href="https://www.airbnb.pt/rooms/875560493639889462"
+
+           target="_blank" rel="noopener noreferrer"
+
+           style="display:inline-block; padding:6px 10px; border:1px solid #eee; border-radius:999px; font-size:14px; color:#222;">
+
+          ⭐ 4,96/5 · +50 avaliações · Airbnb
+
+        </a>
+
+      </p>
+
+
+
+      <!-- Booking -->
+
+      <p style="text-align:center; margin-top:4px;">
+
+        <a href="https://www.booking.com/hotel/pt/quinta-dos-avos-lourenco.pt-pt.html"
+
+           target="_blank" rel="noopener noreferrer"
+
+           style="display:inline-block; padding:6px 10px; border:1px solid #eee; border-radius:999px; font-size:14px; color:#222;">
+
+          ⭐ <span style="color:#003580;">9,8/10</span> · Booking.com
+
+        </a>
+
+      </p>
+
+
+
+      <div class="testemunhos-slider">
+
+        <div class="dots"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- Rodapé -->
 
   <footer class="footer">
-    <div class="container footer-grid">
-      <p>© 2023–2025 Quinta dos Avós Lourenço</p>
-      <nav class="footer-links">
-        <a href="privacidade.html">Política de Privacidade</a>
-        <a href="#" id="open-cookies">Preferências de cookies</a>
-      </nav>
-    </div>
+
+    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · 
+
+       <a href="politica-privacidade.html">Política de Privacidade</a>
+
+    </p>
+
   </footer>
 
-  <!-- Banner de cookies minimalista -->
-  <div id="cookie-banner" class="cookie-banner" hidden>
-    <p>Usamos cookies apenas para garantir o bom funcionamento do site.</p>
-    <div class="cookie-actions">
-      <button class="btn-ghost" data-decline>Recusar</button>
-      <button class="btn-solid" data-accept>Aceitar</button>
-    </div>
+
+
+  <!-- WhatsApp flutuante -->
+
+  <a href="https://wa.me/351960446713?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Lourenço."
+
+     class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp">
+
+    <img src="images/whatsapp-icon.svg" alt="WhatsApp">
+
+  </a>
+  <!-- ✅ Banner de cookies -->
+
+
+
+  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
+
+
+    <p>Usamos cookies apenas para garantir o bom funcionamento do site.
+
+
+       <a href="politica-privacidade.html">Saiba mais</a></p>
+
+
+    <button id="accept-cookies" type="button">Aceitar</button>
+
+
   </div>
 
-  <!-- JS -->
-  <script src="script.js" defer></script>
+
+<!-- ✅ Banner de cookies (oculto por defeito) -->
+
+
+<div id="cookie-banner" class="cookie-banner" role="dialog"
+
+
+     aria-label="Aviso de cookies" hidden>
+
+
+  <p>Usamos cookies apenas para garantir o bom funcionamento do site.
+
+
+     <a href="politica-privacidade.html">Saiba mais</a></p>
+
+
+  <button id="accept-cookies" type="button">Aceitar</button>
+
+
+</div>
+
+
+
+
+
+<!-- Scripts -->
+
+
+<script defer src="js/cookies.js"></script>
+
+
+<script defer src="js/app.js"></script>
 </body>
+
+
 </html>
