@@ -5,48 +5,25 @@ const qs  = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => root.querySelectorAll(sel);
 
 /* ==========================================================
-   Dados — Testemunhos (Airbnb/Booking)
-   (podes editar livremente os textos abaixo)
+   Dados — Testemunhos
    ========================================================== */
 const TESTEMUNHOS_AIRBNB = [
-  {
-    texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`,
-    autor: `— Laura, Airbnb (julho 2025)`
-  },
-  {
-    texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pequeno-almoço com pão quentinho no portão. Sentimo-nos em casa.`,
-    autor: `— Tisha, Airbnb (maio 2025)`
-  },
-  {
-    texto: `Casa incrivelmente equipada: beleza do antigo com comodidades do presente. Vista incrível. Foi, sem dúvida, uma excelente estadia.`,
-    autor: `— Joana, Airbnb (abril 2025)`
-  },
-  {
-    texto: `Estadia maravilhosa: casa muito limpa, rústica e acolhedora com comodidades modernas. Pequeno-almoço delicioso e anfitrião sempre disponível. Voltaremos certamente!`,
-    autor: `— Beatriz, Airbnb (abril 2025)`
-  },
-  {
-    texto: `Um refúgio na serra para descansar e aproveitar a natureza. Pequeno-almoço divinal e anfitriões sempre prontos a ajudar. Casa ampla e exterior impecável.`,
-    autor: `— Patrícia, Airbnb (fevereiro 2025)`
-  },
-  {
-    texto: `Propriedade incrível: muito limpa e confortável. O meu cão e gato adoraram. Amei o burro Uva e os porcos Elvis e Shakira. Perfeito para escapar da cidade.`,
-    autor: `— Juliane, Airbnb (setembro 2025)`
-  },
-  {
-    texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada (lareira e A/C); exterior fantástico e cercado. Pequeno-almoço diário delicioso. Vamos repetir!`,
-    autor: `— Diogo, Airbnb (março 2025)`
-  }
+  { texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`, autor: `— Laura, Airbnb (julho 2025)` },
+  { texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.`, autor: `— Tisha, Airbnb (maio 2025)` },
+  { texto: `Casa incrivelmente equipada: beleza do antigo com comodidades do presente. Vista incrível. Excelente estadia.`, autor: `— Joana, Airbnb (abril 2025)` },
+  { texto: `Estadia maravilhosa: casa muito limpa, rústica e acolhedora com comodidades modernas. Anfitrião sempre disponível.`, autor: `— Beatriz, Airbnb (abril 2025)` },
+  { texto: `Refúgio na serra para descansar. Pequeno-almoço divinal e anfitriões 24/7. Casa ampla e exterior impecável.`, autor: `— Patrícia, Airbnb (fevereiro 2025)` },
+  { texto: `Propriedade incrível: muito limpa e confortável. Cão e gato felizes. Amei o burro Uva e os porcos Elvis e Shakira.`, autor: `— Juliane, Airbnb (setembro 2025)` },
+  { texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.`, autor: `— Diogo, Airbnb (março 2025)` }
 ];
 
 /* ==========================================================
-   Render — Cria os slides de testemunhos (se a secção existir)
+   Renderiza slides de testemunhos se a secção existir
    ========================================================== */
 function renderTestemunhos() {
   const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
   if (!sliderEl) return;
 
-  // garante recipiente das bolinhas
   let dotsEl = sliderEl.querySelector('.dots');
   if (!dotsEl) {
     dotsEl = document.createElement('div');
@@ -54,9 +31,9 @@ function renderTestemunhos() {
     sliderEl.appendChild(dotsEl);
   }
 
-  // se já houver slides, não duplica
+  // evita duplicar se já houver
   const existingSlides = qsa('.slide', sliderEl);
-  if (existingSlides.length === 0 && TESTEMUNHOS_AIRBNB.length > 0) {
+  if (existingSlides.length === 0) {
     TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
       const div = document.createElement('div');
       div.className = 'slide' + (idx === 0 ? ' active' : '');
@@ -85,7 +62,6 @@ function initSlider() {
   let slideIndex = 0;
   let autoPlay;
 
-  // cria bolinhas consoante nº de slides
   if (dotsContainer) {
     dotsContainer.innerHTML = '';
     slides.forEach((_, i) => {
@@ -99,23 +75,15 @@ function initSlider() {
   function showSlide(index) {
     slides.forEach(s => s.classList.remove('active'));
     dots.forEach(d => d.classList.remove('active'));
-
     slideIndex = (index + slides.length) % slides.length;
     slides[slideIndex].classList.add('active');
     if (dots[slideIndex]) dots[slideIndex].classList.add('active');
   }
 
   function nextSlide() { showSlide(slideIndex + 1); }
+  function startAutoPlay() { stopAutoPlay(); autoPlay = setInterval(nextSlide, 6000); }
+  function stopAutoPlay() { if (autoPlay) clearInterval(autoPlay); }
 
-  function startAutoPlay() {
-    stopAutoPlay();
-    autoPlay = setInterval(nextSlide, 6000);
-  }
-  function stopAutoPlay() {
-    if (autoPlay) clearInterval(autoPlay);
-  }
-
-  // Pausa no hover e em toque
   slider.addEventListener('mouseenter', stopAutoPlay);
   slider.addEventListener('mouseleave', startAutoPlay);
   slider.addEventListener('touchstart', stopAutoPlay, { passive: true });
@@ -126,7 +94,7 @@ function initSlider() {
 }
 
 /* ==========================================================
-   Galeria — Lightbox (fecha ao clicar fora e com Esc)
+   Galeria — Lightbox
    ========================================================== */
 function initLightbox() {
   const galleryImgs = qsa('.gallery img');
@@ -146,62 +114,20 @@ function initLightbox() {
     });
   });
 
-  // Fechar ao clicar fora da imagem
   lightbox.addEventListener('click', (e) => {
     if (e.target !== lightboxImg) lightbox.style.display = 'none';
   });
-
-  // Fechar com Esc
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') lightbox.style.display = 'none';
   });
 }
 
 /* ==========================================================
-   Menu Mobile — Abre/fecha (só se existir .menu-toggle)
+   Menu Mobile — abrir/fechar
    ========================================================== */
 function initMobileMenu() {
-  const toggle = qs('.menu-toggle');
   const menu   = qs('.menu');
-  if (!toggle || !menu) return;
-
-  toggle.addEventListener('click', () => {
-    const opened = menu.classList.toggle('active');
-    toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
-  });
-
-  // fecha ao clicar em links
-  qsa('.menu a').forEach(a => {
-    a.addEventListener('click', () => menu.classList.remove('active'));
-  });
-
-  // fecha se redimensionar para desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) menu.classList.remove('active');
-  });
-}
-
-/* ==========================================================
-   Boot
-   ========================================================== */
-document.addEventListener('DOMContentLoaded', () => {
-  // 1) Cria slides de testemunhos (se existir a secção)
-  renderTestemunhos();
-
-  // 2) Inicia slider (se houver)
-  initSlider();
-
-  // 3) Lightbox da galeria (se houver)
-  initLightbox();
-
-  // 4) Menu mobile (se houver botão)
-  initMobileMenu();
-});
-
-/* === Menu Mobile: abrir/fechar com as 3 barrinhas === */
-document.addEventListener('DOMContentLoaded', () => {
-  const menu   = document.querySelector('.menu');
-  const toggle = document.querySelector('.menu-toggle');
+  const toggle = qs('.menu-toggle');
   if (!menu || !toggle) return;
 
   toggle.addEventListener('click', () => {
@@ -209,19 +135,29 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
-  // Fecha ao clicar num link
-  menu.querySelectorAll('a').forEach(a => {
+  // fecha ao clicar num link
+  qsa('.menu a').forEach(a => {
     a.addEventListener('click', () => {
       menu.classList.remove('active');
       toggle.setAttribute('aria-expanded', 'false');
     });
   });
 
-  // Fecha se voltar ao desktop
+  // fecha se voltar ao desktop
   window.addEventListener('resize', () => {
     if (window.innerWidth > 768) {
       menu.classList.remove('active');
       toggle.setAttribute('aria-expanded', 'false');
     }
   });
+}
+
+/* ==========================================================
+   Boot
+   ========================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  renderTestemunhos();
+  initSlider();
+  initLightbox();
+  initMobileMenu();
 });
