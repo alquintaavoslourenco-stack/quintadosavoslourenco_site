@@ -4,8 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sobre · Quinta dos Avós Lourenço</title>
-  <meta name="description" content="Conheça a história e o espírito da Quinta dos Avós Lourenço.">
+  <meta name="description" content="Conheça a história e o espírito da Quinta dos Avós Lourenço, alojamento rural na Sertã.">
 
+  <!-- ✅ Segurança -->
   <meta http-equiv="Content-Security-Policy"
         content="
           default-src 'self';
@@ -22,14 +23,19 @@
 
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+  <!-- Cabeçalho -->
   <header class="topbar">
     <div class="brand">
       <a href="index.html">
         <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
       </a>
     </div>
+
+    <!-- Botão hambúrguer -->
     <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
+
     <nav class="menu" aria-label="Navegação principal">
       <a href="index.html">Início</a>
       <a href="sobre.html" class="active">Sobre</a>
@@ -38,30 +44,54 @@
     </nav>
   </header>
 
+  <!-- Conteúdo -->
   <main class="section">
-    <div class="container">
-      <h1>Sobre a Quinta</h1>
-      <p>Desde 1853, a Quinta dos Avós Lourenço preserva a tradição e a calma da Sertã. 
-         Aqui podes colocar o texto e as fotos que já tinhas nesta página.</p>
-      <!-- Coloca aqui o teu conteúdo original da página "Sobre" -->
+    <div class="container" style="max-width:800px; text-align:center;">
+      <h1>Sobre a Quinta dos Avós Lourenço</h1>
+
+      <p>
+        A <strong>Quinta dos Avós Lourenço</strong> é um alojamento rural com mais de um século de história,
+        localizado no concelho da Sertã. É o refúgio ideal para quem procura tranquilidade, conforto e um
+        contacto direto com a natureza.
+      </p>
+
+      <p>
+        A casa foi cuidadosamente restaurada, preservando o charme rústico original,
+        mas adaptando-se às comodidades modernas — oferecendo uma experiência autêntica e acolhedora.
+      </p>
+
+      <p>
+        Rodeada por três hectares de oliveiras, árvores de fruto, animais e trilhos naturais,
+        a Quinta proporciona uma imersão completa na vida rural, com a serenidade e o encanto de outros tempos.
+      </p>
+
+      <p>
+        O espaço é ideal para famílias, casais e amantes da natureza que procuram descansar,
+        reconectar-se e desfrutar do silêncio e da paisagem da Beira Interior.
+      </p>
+
+      <p>
+        Mais do que um alojamento, a Quinta dos Avós Lourenço é um lugar de memórias,
+        partilhas e histórias — onde cada recanto reflete o carinho e a dedicação de gerações.
+      </p>
     </div>
   </main>
 
   <footer class="footer">
-    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · 
+    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
        <a href="politica-privacidade.html">Política de Privacidade</a>
     </p>
   </footer>
 
-  <!-- Banner de cookies -->
+  <!-- ✅ Banner de cookies -->
   <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
     <p>Usamos cookies apenas para garantir o bom funcionamento do site.
        <a href="politica-privacidade.html">Saiba mais</a></p>
     <button id="accept-cookies" type="button">Aceitar</button>
   </div>
 
+  <!-- Scripts (compatíveis com a CSP) -->
   <script defer src="js/cookies.js"></script>
   <script defer src="js/app.js"></script>
 </body>
 </html>
-
