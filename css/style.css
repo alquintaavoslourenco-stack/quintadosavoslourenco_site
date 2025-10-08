@@ -446,3 +446,11 @@ h1, h2 {
   .whatsapp-float { width: 50px; height: 50px; }
   .whatsapp-float img { width: 24px; height: 24px; }
 }
+/* Mostrar diferente no mobile/desktop */
+.btn-app { display: none; }
+.btn-web { display: inline-block; }
+
+@media (max-width: 768px) {
+  .btn-app { display: inline-block; }
+  .btn-web { display: none; }
+}
