@@ -83,15 +83,17 @@
     </p>
   </footer>
 
-  <!-- ✅ Banner de cookies -->
-  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
-    <p>Usamos cookies apenas para garantir o bom funcionamento do site.
-       <a href="politica-privacidade.html">Saiba mais</a></p>
-    <button id="accept-cookies" type="button">Aceitar</button>
-  </div>
+  <!-- ✅ Banner de cookies (oculto por defeito) -->
+<div id="cookie-banner" class="cookie-banner" role="dialog"
+     aria-label="Aviso de cookies" hidden>
+  <p>Usamos cookies apenas para garantir o bom funcionamento do site.
+     <a href="politica-privacidade.html">Saiba mais</a></p>
+  <button id="accept-cookies" type="button">Aceitar</button>
+</div>
 
-  <!-- Scripts (compatíveis com a CSP) -->
-  <script defer src="js/cookies.js"></script>
-  <script defer src="js/app.js"></script>
+<!-- Scripts -->
+<script defer src="js/cookies.js"></script>
+<script defer src="js/app.js"></script>
+
 </body>
 </html>
