@@ -231,51 +231,22 @@
     <img src="images/whatsapp-icon.svg" alt="WhatsApp">
 
   </a>
-  <!-- ✅ Banner de cookies -->
-
-
-
-  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
-
-
-    <p>Usamos cookies apenas para garantir o bom funcionamento do site.
-
-
-       <a href="politica-privacidade.html">Saiba mais</a></p>
-
-
-    <button id="accept-cookies" type="button">Aceitar</button>
-
-
-  </div>
-
-
-<!-- ✅ Banner de cookies (oculto por defeito) -->
-
-
-<div id="cookie-banner" class="cookie-banner" role="dialog"
-
-
-     aria-label="Aviso de cookies" hidden>
-
-
-  <p>Usamos cookies apenas para garantir o bom funcionamento do site.
-
-
-     <a href="politica-privacidade.html">Saiba mais</a></p>
-
-
-  <button id="accept-cookies" type="button">Aceitar</button>
-
-
+  
+  <div id="cookie-consent" role="dialog" aria-live="polite" style="
+  position: fixed; inset-inline: 0; bottom: 0; 
+  background: #111; color: #fff; padding: 16px; 
+  display: none; z-index: 9999; box-shadow: 0 -4px 20px rgba(0,0,0,.25);
+">
+  <p style="margin:0 0 8px 0;">
+    Usamos cookies apenas para garantir o bom funcionamento do site.
+    <a href="/quintadosavoslourenco_site/politica-privacidade.html" style="color:#9fd3ff; text-decoration:underline;">Saiba mais</a>
+  </p>
+  <button id="cookie-accept" type="button" style="
+    background:#22c55e; border:0; padding:8px 14px; border-radius:8px; cursor:pointer;
+  ">Aceitar</button>
 </div>
 
-
-
-
-
 <!-- Scripts -->
-
 
 <script defer src="js/cookies.js"></script>
 
