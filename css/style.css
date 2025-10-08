@@ -3,12 +3,14 @@
    ========================================================== */
 
 /* --- BASE GERAL --- */
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #222;
   background: #fff;
 }
@@ -38,32 +40,16 @@ a:hover {
   justify-content: space-between;
   padding: 16px 20px;
   border-bottom: 1px solid #eee;
+  background: #fff;
   position: sticky;
   top: 0;
-  background: #fff;
-  z-index: 5;
+  z-index: 10;
 }
 
-.brand {
-  font-weight: 700;
-  letter-spacing: .02em;
-  margin-left: 200px; /* afasta o logotipo da margem esquerda */
+.brand a {
+  color: #111;
 }
 
-.brand a { color: #111; }
-
-.menu {
-  margin: 0 auto;
-  text-align: center;
-}
-
-.menu a {
-  margin: 0 20px;
-  font-weight: 600;
-  color: #333;
-}
-
-/* --- LOGOTIPO --- */
 .logo {
   height: 100px;
   width: auto;
@@ -72,8 +58,24 @@ a:hover {
   border-radius: 8px;
 }
 
+.menu {
+  text-align: center;
+}
+
+.menu a {
+  margin: 0 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.menu a.active {
+  color: #8B0000;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 2px;
+}
+
 /* ==========================================================
-   SECÇÕES E CONTEÚDO BASE
+   HERO — SECÇÃO PRINCIPAL
    ========================================================== */
 
 .hero {
@@ -89,8 +91,18 @@ a:hover {
 
 .hero p {
   margin: 0 0 24px;
-  font-size: clamp(16px, 2vw, 18px);
   color: #444;
+  font-size: clamp(16px, 2vw, 18px);
+}
+
+.badge {
+  display: inline-block;
+  background: #8B0000;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 
 .btn {
@@ -99,11 +111,29 @@ a:hover {
   border: 2px solid #8B0000;
   border-radius: 6px;
   font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
 }
 
 .btn.primary {
   background: #8B0000;
   color: #fff;
+}
+
+.btn.primary:hover {
+  background: #a31c1c;
+}
+
+/* ==========================================================
+   SECÇÕES DE CONTEÚDO
+   ========================================================== */
+
+.section {
+  padding: 50px 20px;
 }
 
 .grid {
@@ -118,36 +148,29 @@ a:hover {
   border-radius: 10px;
   padding: 18px;
   background: #fff;
-}
-
-.card h3 { margin-top: 0; }
-
-.section { padding: 40px 20px; }
-
-.footer {
-  border-top: 1px solid #eee;
-  padding: 24px 20px;
   text-align: center;
-  color: #666;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.badge {
-  display: inline-block;
-  background: #8B0000;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-size: 12px;
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.note {
-  color: #555;
-  font-size: 14px;
+.card h3 {
+  margin-top: 0;
+  color: #8B0000;
 }
 
 /* ==========================================================
    TESTEMUNHOS — SLIDER AUTOMÁTICO
    ========================================================== */
+
+.titulo-testemunhos {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
 
 .testemunhos-slider {
   position: relative;
@@ -168,10 +191,10 @@ a:hover {
   opacity: 1;
 }
 
-.container h2 {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 20px;
+.note {
+  color: #555;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
 /* --- Bolinhas de navegação --- */
@@ -238,159 +261,48 @@ a:hover {
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0,0,0,0.6);
 }
-/* --- Estrelas douradas nos testemunhos --- */
-.slide p:first-child {
-  color: #FFD700;        /* dourado */
-  font-size: 22px;
-  letter-spacing: 2px;   /* espaço entre estrelas */
-  margin-bottom: 8px;
+
+/* ==========================================================
+   CONTACTOS — MAPA E BOTÕES
+   ========================================================== */
+
+iframe {
+  border-radius: 10px;
+  width: 100%;
+  height: 400px;
+  border: 0;
 }
 
-/* --- Link ativo no menu (destaca a página atual) --- */
-.menu a.active {
-  color: #8B0000;
-  border-bottom: 2px solid #8B0000;
-  padding-bottom: 2px;
-}
+/* ==========================================================
+   RODAPÉ
+   ========================================================== */
 
-/* --- Ajustes responsivos (mobile) --- */
-@media (max-width: 640px) {
-  .topbar { padding: 10px 14px; }
-  .logo { height: 70px; }       /* reduz ligeiramente o logo no telemóvel */
-  .menu a { margin: 0 12px; }
-  .container { padding: 16px; }
-  .hero { padding: 48px 16px; }
-}
-/* ================== MENU MOBILE ================== */
-.menu {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  position: relative;
-}
-
-.menu-toggle {
-  display: none;
-  background: none;
-  border: 1px solid #8B0000;
-  border-radius: 8px;
-  font-size: 22px;
-  line-height: 1;
-  padding: 6px 10px;
-  cursor: pointer;
-  color: #8B0000;
-}
-
-/* --- Vista Mobile/Tablet --- */
-@media (max-width: 768px) {
-  .topbar {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 12px 16px;
-  }
-
-  .brand { margin-left: 0; }
-  .logo { height: 70px; }
-
-  /* mostra o botão e esconde links por defeito */
-  .menu-toggle { display: block; margin-left: auto; }
-
-  .menu a {
-    display: none;
-    width: 100%;
-    text-align: center;
-    padding: 12px 0;
-    border-top: 1px solid #eee;
-    background: #fff;
-  }
-
-  /* quando o menu está aberto */
-  .menu.active a {
-    display: block;
-  }
-
-  .menu a.active {
-    border-bottom: none;
-    background: #f8f5f3;
-  }
-
-  .grid { grid-template-columns: 1fr; }
-  .container { padding: 16px; }
-  .hero { padding: 48px 16px; }
-}
-
-/* transições suaves (opcional) */
-@media (max-width: 768px) {
-  .menu a { transition: background .2s; }
-  .menu a:hover { background: #f2f2f2; }
-}
-/* ================== RODAPÉ AJUSTADO ================== */
 .footer {
   border-top: 1px solid #eee;
-  padding: 10px 0;        /* altura mais baixa */
+  padding: 18px 20px;
   text-align: center;
-  color: #777;
-  font-size: 13px;        /* texto mais pequeno */
-  line-height: 1.4;
-  background: #fafafa;    /* leve contraste com o resto da página */
-}
-
-/* opcional: remove margem extra no último parágrafo */
-.footer p {
-  margin: 4px 0;
-}
-.footer {
-  border-top: 1px solid #e4e4e4;
-  background: linear-gradient(to top, #f9f9f9, #fff);
-}
-/* Centralizar títulos principais */
-h1, h2 {
-  text-align: center;
-}
-/* --- Badges das plataformas --- */
-.container p a[href*="airbnb"], 
-.container p a[href*="booking"] {
-  transition: all 0.2s ease;
-}
-
-.container p a[href*="airbnb"]:hover {
-  background: #FF5A5F;
-  color: #fff;
-  border-color: #FF5A5F;
-}
-
-.container p a[href*="booking"]:hover {
-  background: #003580;
-  color: #fff;
-  border-color: #003580;
-}
-/* ==========================================================
-   BOTÕES ADAPTÁVEIS (MOBILE vs DESKTOP)
-   ========================================================== */
-.btn-app { display: none; }
-.btn-web { display: inline-block; }
-
-@media (max-width: 768px) {
-  .btn-app { display: inline-block; }
-  .btn-web { display: none; }
+  color: #666;
+  font-size: 14px;
 }
 
 /* ==========================================================
-   BOTÃO FLUTUANTE — WHATSAPP
+   BOTÃO FLUTUANTE — WHATSAPP (CENTRADO)
    ========================================================== */
+
 .whatsapp-float {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 55px;
-  height: 55px;
+  width: 60px;
+  height: 60px;
   background-color: #25D366;
-  color: white;
   border-radius: 50%;
-  text-align: center;
-  line-height: 55px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-  z-index: 999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 9999;
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
@@ -400,57 +312,57 @@ h1, h2 {
 }
 
 .whatsapp-float img {
-  width: 28px;
-  height: 28px;
-  position: relative;
-  top: 13px;
-  left: 13px;
+  width: 34px;
+  height: 34px;
+  display: block;
+  margin: 0;
+  padding: 0;
 }
 
-@media (max-width: 380px) {
-  .whatsapp-float {
-    bottom: 15px;
-    right: 15px;
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
-  }
-}
-/* ===== Botão flutuante — WhatsApp (centrado com Flexbox) ===== */
-.whatsapp-float {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  background-color: #25D366;
-  color: #fff;
-  border-radius: 50%;
-  box-shadow: 0 3px 8px rgba(0,0,0,.25);
-  z-index: 10000;
-  display: flex;                 /* <-- centra o ícone */
-  align-items: center;           /* <-- centra o ícone */
-  justify-content: center;       /* <-- centra o ícone */
-  transition: transform .2s ease, background-color .2s ease;
-}
-
-.whatsapp-float:hover { background-color: #1ebe5d; transform: scale(1.08); }
-
-.whatsapp-float img {
-  width: 28px;
-  height: 28px;
-  display: block;                /* sem margens/posicionamento extra */
-}
-
-@media (max-width: 380px) {
-  .whatsapp-float { width: 50px; height: 50px; }
-  .whatsapp-float img { width: 24px; height: 24px; }
-}
-/* Mostrar diferente no mobile/desktop */
-.btn-app { display: none; }
-.btn-web { display: inline-block; }
+/* ==========================================================
+   RESPONSIVO (TABLET E TELEMÓVEL)
+   ========================================================== */
 
 @media (max-width: 768px) {
-  .btn-app { display: inline-block; }
-  .btn-web { display: none; }
+  .logo {
+    height: 80px;
+  }
+
+  .menu a {
+    margin: 0 10px;
+  }
+
+  .grid {
+    padding: 20px 10px;
+  }
+
+  .hero {
+    padding: 50px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 70px;
+  }
+
+  .hero h1 {
+    font-size: 26px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .whatsapp-float {
+    width: 52px;
+    height: 52px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .whatsapp-float img {
+    width: 28px;
+    height: 28px;
+  }
 }
