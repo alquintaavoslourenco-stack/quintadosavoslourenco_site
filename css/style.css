@@ -47,7 +47,7 @@ a:hover {
 .brand {
   font-weight: 700;
   letter-spacing: .02em;
-  margin-left: 90px; /* afasta o logotipo da margem esquerda */
+  margin-left: 200px; /* afasta o logotipo da margem esquerda */
 }
 
 .brand a { color: #111; }
