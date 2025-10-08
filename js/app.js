@@ -197,3 +197,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4) Menu mobile (se houver botão)
   initMobileMenu();
 });
+
+/* === Menu Mobile: abrir/fechar com as 3 barrinhas === */
+document.addEventListener('DOMContentLoaded', () => {
+  const menu   = document.querySelector('.menu');
+  const toggle = document.querySelector('.menu-toggle');
+  if (!menu || !toggle) return;
+
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.toggle('active');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  // Fecha ao clicar num link
+  menu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Fecha se voltar ao desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+});
