@@ -124,5 +124,32 @@
 
   <!-- JS local (sem inline → compatível com CSP) -->
   <script src="js/app.js"></script>
+  
+    <!-- Banner de cookies -->
+  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
+    <p>Usamos cookies apenas para garantir o bom funcionamento do site. 
+       <a href="politica-privacidade.html">Saiba mais</a></p>
+    <button id="accept-cookies">Aceitar</button>
+  </div>
+
+  <script>
+    const banner = document.getElementById('cookie-banner');
+    const btn = document.getElementById('accept-cookies');
+
+    if (localStorage.getItem('cookiesAccepted')) {
+      banner.style.display = 'none';
+    }
+
+    btn.addEventListener('click', () => {
+      localStorage.setItem('cookiesAccepted', 'true');
+      banner.style.display = 'none';
+    });
+  </script>
+
+  <!-- Script principal do site -->
+  <script src="js/app.js"></script>
+</body>
+</html>
+
 </body>
 </html>
