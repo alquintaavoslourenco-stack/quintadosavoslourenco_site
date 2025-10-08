@@ -324,3 +324,22 @@ a:hover {
   .menu a { transition: background .2s; }
   .menu a:hover { background: #f2f2f2; }
 }
+/* ================== RODAPÉ AJUSTADO ================== */
+.footer {
+  border-top: 1px solid #eee;
+  padding: 10px 0;        /* altura mais baixa */
+  text-align: center;
+  color: #777;
+  font-size: 13px;        /* texto mais pequeno */
+  line-height: 1.4;
+  background: #fafafa;    /* leve contraste com o resto da página */
+}
+
+/* opcional: remove margem extra no último parágrafo */
+.footer p {
+  margin: 4px 0;
+}
+.footer {
+  border-top: 1px solid #e4e4e4;
+  background: linear-gradient(to top, #f9f9f9, #fff);
+}
