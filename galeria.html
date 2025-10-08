@@ -4,8 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Galeria · Quinta dos Avós Lourenço</title>
-  <meta name="description" content="Fotografias da Quinta dos Avós Lourenço e envolvente.">
+  <meta name="description" content="Alguns momentos e detalhes da Quinta dos Avós Lourenço, alojamento rural na Sertã.">
 
+  <!-- ✅ Segurança -->
   <meta http-equiv="Content-Security-Policy"
         content="
           default-src 'self';
@@ -22,14 +23,19 @@
 
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+  <!-- Cabeçalho -->
   <header class="topbar">
     <div class="brand">
       <a href="index.html">
         <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
       </a>
     </div>
+
+    <!-- Botão hambúrguer (fora da nav) -->
     <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
+
     <nav class="menu" aria-label="Navegação principal">
       <a href="index.html">Início</a>
       <a href="sobre.html">Sobre</a>
@@ -38,38 +44,48 @@
     </nav>
   </header>
 
+  <!-- Conteúdo -->
   <main class="section">
     <div class="container">
       <h1>Galeria</h1>
-      <p>Explora imagens da casa, dos quartos e dos espaços exteriores.</p>
+      <p style="text-align:center;">Alguns momentos e detalhes da Quinta dos Avós Lourenço:</p>
 
-      <!-- Exemplo de grelha de imagens; substitui pelos teus ficheiros -->
-      <div class="grid gallery">
+      <div class="gallery">
         <img src="images/foto1.jpg" alt="Vista da quinta">
-        <img src="images/foto2.jpg" alt="Quarto">
-        <img src="images/foto3.jpg" alt="Sala">
-        <img src="images/foto4.jpg" alt="Olival">
+        <img src="images/foto2.jpg" alt="Quarto principal">
+        <img src="images/foto3.jpg" alt="Área exterior">
+        <img src="images/foto4.jpg" alt="Detalhes rústicos">
+        <img src="images/foto5.jpg" alt="Piscina e oliveiras">
+        <img src="images/foto6.jpg" alt="Entrada principal">
+        <img src="images/foto7.jpg" alt="Animais da quinta">
+        <img src="images/foto8.jpg" alt="Pôr do sol na quinta">
+        <img src="images/foto9.jpg" alt="Vista panorâmica">
       </div>
-
-      <!-- Coloca aqui o teu conteúdo original da página "Galeria" -->
     </div>
   </main>
 
+  <!-- Rodapé -->
   <footer class="footer">
     <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL · 
        <a href="politica-privacidade.html">Política de Privacidade</a>
     </p>
   </footer>
 
-  <!-- Banner de cookies -->
+  <!-- Botão flutuante WhatsApp (corrigido) -->
+  <a href="https://wa.me/351960446713?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Lourenço."
+     class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp">
+    <img src="images/whatsapp-icon.svg" alt="WhatsApp">
+  </a>
+
+  <!-- ✅ Banner de cookies -->
   <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
     <p>Usamos cookies apenas para garantir o bom funcionamento do site.
        <a href="politica-privacidade.html">Saiba mais</a></p>
     <button id="accept-cookies" type="button">Aceitar</button>
   </div>
 
+  <!-- Scripts (compatíveis com a CSP) -->
   <script defer src="js/cookies.js"></script>
   <script defer src="js/app.js"></script>
 </body>
 </html>
-
