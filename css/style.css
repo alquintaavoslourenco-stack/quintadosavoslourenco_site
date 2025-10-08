@@ -364,3 +364,55 @@ h1, h2 {
   color: #fff;
   border-color: #003580;
 }
+/* ==========================================================
+   BOTÕES ADAPTÁVEIS (MOBILE vs DESKTOP)
+   ========================================================== */
+.btn-app { display: none; }
+.btn-web { display: inline-block; }
+
+@media (max-width: 768px) {
+  .btn-app { display: inline-block; }
+  .btn-web { display: none; }
+}
+
+/* ==========================================================
+   BOTÃO FLUTUANTE — WHATSAPP
+   ========================================================== */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 55px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+  z-index: 999;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.whatsapp-float:hover {
+  background-color: #1ebe5d;
+  transform: scale(1.08);
+}
+
+.whatsapp-float img {
+  width: 28px;
+  height: 28px;
+  position: relative;
+  top: 13px;
+  left: 13px;
+}
+
+@media (max-width: 380px) {
+  .whatsapp-float {
+    bottom: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+  }
+}
