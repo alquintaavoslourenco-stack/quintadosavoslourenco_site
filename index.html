@@ -6,19 +6,18 @@
   <title>Quinta dos Avós Lourenço · Alojamento rural na Sertã</title>
   <meta name="description" content="Alojamento rural na Sertã, refúgio tranquilo desde 1853.">
 
-  <!-- ✅ Política de Segurança -->
-  <meta http-equiv="Content-Security-Policy"
-        content="
-          default-src 'self';
-          script-src 'self';
-          style-src  'self' 'unsafe-inline';
-          img-src    'self' data:;
-          font-src   'self' data:;
-          connect-src 'self';
-          base-uri   'self';
-          form-action 'self';
-          upgrade-insecure-requests;
-        ">
+  <!-- ✅ Segurança -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src  'self' 'unsafe-inline';
+    img-src    'self' data:;
+    font-src   'self' data:;
+    connect-src 'self';
+    base-uri   'self';
+    form-action 'self';
+    upgrade-insecure-requests;
+  ">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="stylesheet" href="css/style.css">
@@ -78,7 +77,6 @@
     <div class="container">
       <h2 class="titulo-testemunhos">Testemunhos</h2>
 
-      <!-- Airbnb -->
       <p style="text-align:center; margin-top:-6px;">
         <a href="https://www.airbnb.pt/rooms/875560493639889462"
            target="_blank" rel="noopener noreferrer"
@@ -87,7 +85,6 @@
         </a>
       </p>
 
-      <!-- Booking -->
       <p style="text-align:center; margin-top:4px;">
         <a href="https://www.booking.com/hotel/pt/quinta-dos-avos-lourenco.pt-pt.html"
            target="_blank" rel="noopener noreferrer"
@@ -96,7 +93,7 @@
         </a>
       </p>
 
-      <div class="testemunhos-slider">
+      <div class="testemunhos-slider" tabindex="0" aria-label="Testemunhos de hóspedes">
         <div class="dots"></div>
       </div>
     </div>
@@ -110,12 +107,13 @@
   </footer>
 
   <!-- WhatsApp flutuante -->
-  <a href="https://wa.me/351960446713?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Lourenço."
-     class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp">
+  <a href="https://wa.me/351960446713?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Av%C3%B3s%20Louren%C3%A7o."
+     class="whatsapp-float" target="_blank" rel="noopener noreferrer"
+     aria-label="Enviar mensagem no WhatsApp" title="Enviar mensagem no WhatsApp">
     <img src="images/whatsapp-icon.svg" alt="WhatsApp">
   </a>
 
-  <!-- Banner de cookies (fundo branco + botão à direita) -->
+  <!-- Banner de cookies -->
   <div id="cookie-consent" class="cookie-banner" role="dialog" aria-live="polite" hidden>
     <div class="cookie-inner">
       <p class="cookie-text">
