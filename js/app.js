@@ -4,12 +4,12 @@
 (() => {
   'use strict';
 
-  /* ===================== Helpers ===================== */
+  /* Helpers */
   const qs  = (sel, root = document) => root.querySelector(sel);
   const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
-  /* ===================== Dados — Testemunhos ===================== */
+  /* Dados — Testemunhos (podes editar/ordenar à vontade) */
   const TESTEMUNHOS_AIRBNB = [
     { texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`, autor: `— Laura, Airbnb (julho 2025)` },
     { texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.`, autor: `— Tisha, Airbnb (maio 2025)` },
@@ -20,7 +20,7 @@
     { texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.`, autor: `— Diogo, Airbnb (março 2025)` }
   ];
 
-  /* ===================== Renderiza Testemunhos ===================== */
+  /* Renderiza Testemunhos */
   function renderTestemunhos() {
     const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
     if (!sliderEl) return;
@@ -48,7 +48,7 @@
     }
   }
 
-  /* ===================== Slider ===================== */
+  /* Slider */
   function initSlider() {
     const slider = qs('.testemunhos-slider');
     if (!slider) return;
@@ -86,16 +86,11 @@
     const INTERVAL = 6000;
 
     function nextSlide() { showSlide(slideIndex + 1); }
-    function startAutoPlay() {
-      stopAutoPlay();
-      if (!reduceMotion) autoPlay = setInterval(nextSlide, INTERVAL);
-    }
+    function startAutoPlay() { stopAutoPlay(); if (!reduceMotion) autoPlay = setInterval(nextSlide, INTERVAL); }
     function stopAutoPlay() { if (autoPlay) { clearInterval(autoPlay); autoPlay = null; } }
 
     // pausa autoplay quando tab fica oculto
-    on(document, 'visibilitychange', () => {
-      if (document.hidden) stopAutoPlay(); else startAutoPlay();
-    });
+    on(document, 'visibilitychange', () => { if (document.hidden) stopAutoPlay(); else startAutoPlay(); });
 
     // hover/touch control
     on(slider, 'mouseenter', stopAutoPlay);
@@ -103,7 +98,7 @@
     on(slider, 'touchstart', stopAutoPlay, { passive: true });
     on(slider, 'touchend', startAutoPlay,   { passive: true });
 
-    // navegação por teclado
+    // teclado
     on(slider, 'keydown', (e) => {
       if (e.key === 'ArrowRight') nextSlide();
       if (e.key === 'ArrowLeft')  showSlide(slideIndex - 1);
@@ -113,7 +108,7 @@
     startAutoPlay();
   }
 
-  /* ===================== Galeria — Lightbox ===================== */
+  /* Galeria — Lightbox */
   function initLightbox() {
     const galleryImgs = qsa('.gallery img');
     if (galleryImgs.length === 0) return;
@@ -140,7 +135,7 @@
     on(document, 'keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
   }
 
-  /* ===================== Menu Mobile ===================== */
+  /* Menu Mobile */
   function initMobileMenu() {
     const menu   = qs('.menu');
     const toggle = qs('.menu-toggle');
@@ -149,10 +144,9 @@
     on(toggle, 'click', () => {
       const open = menu.classList.toggle('active');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.textContent = open ? '✕' : '☰'; // ícone dinâmico
+      toggle.textContent = open ? '✕' : '☰';
     });
 
-    // fecha ao clicar num link
     qsa('.menu a').forEach(a => {
       on(a, 'click', () => {
         menu.classList.remove('active');
@@ -161,7 +155,6 @@
       });
     });
 
-    // fecha se voltar ao desktop
     on(window, 'resize', () => {
       if (window.innerWidth > 768) {
         menu.classList.remove('active');
@@ -171,7 +164,7 @@
     });
   }
 
-  /* ===================== Boot ===================== */
+  /* Boot */
   on(document, 'DOMContentLoaded', () => {
     renderTestemunhos();
     initSlider();
