@@ -9,7 +9,7 @@
   const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
-  /* Dados — Testemunhos (podes editar/ordenar à vontade) */
+  /* ===================== Dados — Testemunhos ===================== */
   const TESTEMUNHOS_AIRBNB = [
     { texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`, autor: `— Laura, Airbnb (julho 2025)` },
     { texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.`, autor: `— Tisha, Airbnb (maio 2025)` },
@@ -20,7 +20,7 @@
     { texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.`, autor: `— Diogo, Airbnb (março 2025)` }
   ];
 
-  /* Renderiza Testemunhos */
+  /* ===================== Renderiza Testemunhos ===================== */
   function renderTestemunhos() {
     const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
     if (!sliderEl) return;
@@ -48,7 +48,7 @@
     }
   }
 
-  /* Slider */
+  /* ===================== Slider (infinito) ===================== */
   function initSlider() {
     const slider = qs('.testemunhos-slider');
     if (!slider) return;
@@ -75,9 +75,10 @@
     }
 
     function showSlide(index) {
+      // índice circular (loop infinito)
+      slideIndex = (index + slides.length) % slides.length;
       slides.forEach(s => s.classList.remove('active'));
       dots.forEach(d => d.classList.remove('active'));
-      slideIndex = (index + slides.length) % slides.length;
       slides[slideIndex].classList.add('active');
       if (dots[slideIndex]) dots[slideIndex].classList.add('active');
     }
@@ -85,18 +86,18 @@
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     const INTERVAL = 6000;
 
-    function nextSlide() { showSlide(slideIndex + 1); }
-    function startAutoPlay() { stopAutoPlay(); if (!reduceMotion) autoPlay = setInterval(nextSlide, INTERVAL); }
-    function stopAutoPlay() { if (autoPlay) { clearInterval(autoPlay); autoPlay = null; } }
+    const nextSlide = () => showSlide(slideIndex + 1);
+    const startAutoPlay = () => { stopAutoPlay(); if (!reduceMotion) autoPlay = setInterval(nextSlide, INTERVAL); };
+    const stopAutoPlay  = () => { if (autoPlay) { clearInterval(autoPlay); autoPlay = null; } };
 
-    // pausa autoplay quando tab fica oculto
+    // pausa/resume no tab oculto
     on(document, 'visibilitychange', () => { if (document.hidden) stopAutoPlay(); else startAutoPlay(); });
 
     // hover/touch control
     on(slider, 'mouseenter', stopAutoPlay);
     on(slider, 'mouseleave', startAutoPlay);
     on(slider, 'touchstart', stopAutoPlay, { passive: true });
-    on(slider, 'touchend', startAutoPlay,   { passive: true });
+    on(slider, 'touchend',   startAutoPlay, { passive: true });
 
     // teclado
     on(slider, 'keydown', (e) => {
@@ -105,10 +106,10 @@
     });
 
     showSlide(0);
-    startAutoPlay();
+    startAutoPlay(); // ➜ nunca “pára no fim”; o índice é circular
   }
 
-  /* Galeria — Lightbox */
+  /* ===================== Galeria — Lightbox ===================== */
   function initLightbox() {
     const galleryImgs = qsa('.gallery img');
     if (galleryImgs.length === 0) return;
@@ -135,7 +136,7 @@
     on(document, 'keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
   }
 
-  /* Menu Mobile */
+  /* ===================== Menu Mobile ===================== */
   function initMobileMenu() {
     const menu   = qs('.menu');
     const toggle = qs('.menu-toggle');
@@ -164,11 +165,12 @@
     });
   }
 
-  /* Redes sociais — injeta o bloco em todas as páginas (evita duplicações) */
+  /* ===================== Redes sociais — injeta em todas as páginas ===================== */
   function addSocialRow() {
-    const target = qs('main.section .container') || qs('main.section');
-    if (!target || qs('.social-row')) return; // já existe
+    // evita duplicações
+    if (qs('.social-row')) return;
 
+    // cria o bloco
     const wrap = document.createElement('div');
     wrap.className = 'social-row';
     wrap.setAttribute('aria-label', 'Siga-nos nas redes sociais');
@@ -184,16 +186,39 @@
         </svg>
       </a>
     `;
-    target.appendChild(wrap);
+
+    // 1) Homepage: insere logo a seguir ao slider de testemunhos
+    const slider = qs('#testemunhos .testemunhos-slider');
+    if (slider) {
+      slider.insertAdjacentElement('afterend', wrap);
+      return;
+    }
+
+    // 2) Outras páginas: tenta dentro do main, senão no fim da última .section
+    const mainContainer = qs('main.section .container') || qs('main.section');
+    if (mainContainer) {
+      mainContainer.appendChild(wrap);
+      return;
+    }
+
+    const lastSection = qsa('.section').pop();
+    if (lastSection) {
+      lastSection.appendChild(wrap);
+      return;
+    }
+
+    // 3) Fallback
+    document.body.appendChild(wrap);
   }
 
-  /* Boot */
+  /* ===================== Boot ===================== */
   on(document, 'DOMContentLoaded', () => {
     renderTestemunhos();
-    initSlider();
+    initSlider();      // loop infinito
     initLightbox();
     initMobileMenu();
-    addSocialRow(); // <- injeta os ícones FB/IG
+    addSocialRow();    // ícones FB/IG
   });
 })();
+
 
