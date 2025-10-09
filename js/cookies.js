@@ -1,15 +1,25 @@
-// js/cookies.js
+// QUINTA DOS AVÓS LOURENÇO — cookies.js
 (function () {
-  const KEY = 'qdal-consent-v1'; // muda se quiseres isolar por projeto
+  const KEY = 'qdal-consent-v1'; // chave única do projeto
+
+  const setWaOffset = (px) => {
+    document.documentElement.style.setProperty('--wa-offset', px + 'px');
+  };
 
   const hide = (banner) => {
     banner.setAttribute('hidden', '');
     banner.setAttribute('aria-hidden', 'true');
+    setWaOffset(0); // volta o WhatsApp ao fundo
   };
 
   const show = (banner) => {
     banner.removeAttribute('hidden');
     banner.setAttribute('aria-hidden', 'false');
+    // mede a altura do banner e ajusta o WhatsApp
+    requestAnimationFrame(() => {
+      const h = banner.getBoundingClientRect().height || 0;
+      setWaOffset(h + 12); // 12px de folga
+    });
   };
 
   const start = () => {
@@ -42,8 +52,13 @@
       }
     });
 
-    // Foco no botão ao abrir (não faz scroll)
-    setTimeout(() => { try { btn.focus({ preventScroll: true }); } catch {} }, 0);
+    // Atualiza offset em resize
+    window.addEventListener('resize', () => {
+      if (!banner.hasAttribute('hidden')) {
+        const h = banner.getBoundingClientRect().height || 0;
+        setWaOffset(h + 12);
+      }
+    });
   };
 
   if (document.readyState === 'loading') {
@@ -52,10 +67,9 @@
     start();
   }
 
-  // Helpers de teste no console:
+  // Helpers de teste no console
   window.qdalConsent = {
-    reset() {
-      try { localStorage.removeItem(KEY); } catch {}
-      const b = document.getElementById('cookie-consent');
-      if (b) show(b);
-    }
+    reset() { try { localStorage.removeItem(KEY); } catch {} const b = document.getElementById('cookie-consent'); if (b) show(b); },
+    accepted() { try { return localStorage.getItem(KEY) === 'true'; } catch { return false; } }
+  };
+})();
