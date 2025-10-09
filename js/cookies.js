@@ -1,47 +1,61 @@
 // js/cookies.js
-(function initCookies() {
-  const start = () => {
-    const banner = document.getElementById('cookie-consent');   // <-- id certo
-    const btn = document.getElementById('cookie-accept');       // <-- id certo
-    if (!banner || !btn) return;
+(function () {
+  const KEY = 'qdal-consent-v1'; // muda se quiseres isolar por projeto
 
-    // Se já aceitou, esconder e sair
-    try {
-      if (localStorage.getItem('cookiesAccepted') === 'true') {
-        banner.setAttribute('hidden', '');
-        banner.style.display = 'none';
-        return;
-      }
-    } catch (e) {
-      console.warn('localStorage indisponível:', e);
-    }
-
-    // Mostrar o banner
-    banner.removeAttribute('hidden');
-    banner.style.display = 'block';
-
-    // Click em Aceitar
-    btn.addEventListener('click', () => {
-      try { localStorage.setItem('cookiesAccepted', 'true'); } catch {}
-      banner.setAttribute('hidden', '');
-      banner.style.display = 'none';
-    });
-
-    // Opcional: fechar com ESC
-    banner.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Escape') {
-        try { localStorage.setItem('cookiesAccepted', 'true'); } catch {}
-        banner.setAttribute('hidden', '');
-        banner.style.display = 'none';
-      }
-    });
+  const hide = (banner) => {
+    banner.setAttribute('hidden', '');
+    banner.setAttribute('aria-hidden', 'true');
   };
 
-  // Garante que corre mesmo que o DOM ainda esteja a carregar
+  const show = (banner) => {
+    banner.removeAttribute('hidden');
+    banner.setAttribute('aria-hidden', 'false');
+  };
+
+  const start = () => {
+    const banner = document.getElementById('cookie-consent');
+    const btn = document.getElementById('cookie-accept');
+    if (!banner || !btn) return;
+
+    // Já aceitou?
+    try {
+      if (localStorage.getItem(KEY) === 'true') {
+        hide(banner);
+        return;
+      }
+    } catch (e) { /* continua mesmo sem localStorage */ }
+
+    // Mostrar banner
+    show(banner);
+
+    // Aceitar (uma vez)
+    btn.addEventListener('click', () => {
+      try { localStorage.setItem(KEY, 'true'); } catch {}
+      hide(banner);
+    }, { once: true });
+
+    // Acessibilidade: ESC fecha/aceita
+    banner.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') {
+        try { localStorage.setItem(KEY, 'true'); } catch {}
+        hide(banner);
+      }
+    });
+
+    // Foco no botão ao abrir (não faz scroll)
+    setTimeout(() => { try { btn.focus({ preventScroll: true }); } catch {} }, 0);
+  };
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
   } else {
     start();
   }
-})();
 
+  // Helpers de teste no console:
+  window.qdalConsent = {
+    reset() {
+      try { localStorage.removeItem(KEY); } catch {}
+      const b = document.getElementById('cookie-consent');
+      if (b) show(b);
+    }
