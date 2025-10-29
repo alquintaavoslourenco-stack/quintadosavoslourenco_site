@@ -21,22 +21,23 @@
   ">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
-  <link rel="stylesheet" href="css/style.css">
+  <!-- ✅ Caminho absoluto -->
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
   <!-- Cabeçalho -->
   <header class="topbar">
     <div class="brand">
-      <a href="index.html"><img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a>
+      <a href="/"><img src="/images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a>
     </div>
     <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
     <nav class="menu" aria-label="Navegação principal">
-  <a href="/">Início</a>
-  <a href="/sobre/">Sobre</a>
-  <a href="/galeria/">Galeria</a>
-  <a href="/contactos/">Contactos</a>
-</nav>
+      <a href="/">Início</a>
+      <a href="/sobre/">Sobre</a>
+      <a href="/galeria/">Galeria</a>
+      <a href="/contactos/" class="active">Contactos</a>
+    </nav>
   </header>
 
   <!-- Conteúdo -->
@@ -79,33 +80,33 @@
   <a href="https://wa.me/351960446713?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Av%C3%B3s%20Louren%C3%A7o."
      class="whatsapp-float" target="_blank" rel="noopener noreferrer"
      aria-label="Enviar mensagem no WhatsApp" title="Enviar mensagem no WhatsApp">
-    <img src="images/whatsapp-icon.svg" alt="WhatsApp">
+    <img src="/images/whatsapp-icon.svg" alt="WhatsApp">
   </a>
 
   <!-- Rodapé -->
   <footer class="footer">
-  <p>
-    © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
-    <a href="/politica-privacidade/">Política de Privacidade</a> ·
-    <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">
-      Livro de Reclamações
-    </a>
-  </p>
-</footer>
+    <p>
+      © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
+      <a href="/politica-privacidade/">Política de Privacidade</a> ·
+      <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">
+        Livro de Reclamações
+      </a>
+    </p>
+  </footer>
 
-  <!-- ✅ Banner de cookies (branco, botão à direita, 1 só instância) -->
+  <!-- ✅ Banner de cookies -->
   <div id="cookie-consent" class="cookie-banner" role="dialog" aria-live="polite" hidden>
     <div class="cookie-inner">
       <p class="cookie-text">
         Usamos cookies apenas para garantir o bom funcionamento do site.
-        <a href="politica-privacidade.html">Saiba mais</a>
+        <a href="/politica-privacidade/">Saiba mais</a>
       </p>
       <button id="cookie-accept" type="button" class="btn-accept">Aceitar</button>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script defer src="js/cookies.js"></script>
-  <script defer src="js/app.js"></script>
+  <script defer src="/js/cookies.js"></script>
+  <script defer src="/js/app.js"></script>
 </body>
 </html>
