@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — STYLE SHEET
+   QUINTA DOS AVÓS LOURENÇO — STYLE SHEET (ORGANIZADO)
    ========================================================== */
 
 /* ---------- Variáveis de tema ---------- */
@@ -54,7 +54,7 @@ a:hover{ text-decoration: underline; }
 }
 .menu-toggle:active{ transform: scale(0.9); }
 
-/* Desktop (>=769px) */
+/* Menu — Desktop (>=769px) */
 @media (min-width: 769px){
   .menu{
     display: flex !important; justify-content: center; align-items: center;
@@ -68,7 +68,7 @@ a:hover{ text-decoration: underline; }
   }
 }
 
-/* Mobile (<=768px) */
+/* Menu — Mobile (<=768px) */
 @media (max-width: 768px){
   .topbar{ flex-wrap: wrap; padding: 12px 16px; }
   .brand{ margin-left: 0; }
@@ -91,13 +91,80 @@ a:hover{ text-decoration: underline; }
 }
 
 /* ==========================================================
-   Hero
+   Hero — COM IMAGEM DE FUNDO (ativa)
+   (Usa caminho relativo pois o CSS está em /css/)
    ========================================================== */
-.hero{ padding:72px 20px; background:#f8f5f3; text-align:center; }
-.hero h1{ margin:0 0 12px; font-size: clamp(28px, 4vw, 44px); }
-.hero p{ margin:0 0 24px; color:#444; font-size: clamp(16px, 2vw, 18px); }
-.badge{ display:inline-block; background: var(--brand); color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; margin-bottom:10px; }
+.hero{
+  position: relative;
 
+  /* Fallback para browsers sem image-set */
+  background-image: url("../images/hero.jpg");
+  /* Formatos modernos (se existirem) — ignora se não suportar */
+  background-image: image-set(
+    url("../images/hero.avif") type("image/avif"),
+    url("../images/hero.webp") type("image/webp"),
+    url("../images/hero.jpg") type("image/jpeg")
+  );
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: clamp(420px, 72vh, 820px);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #fff;
+  isolation: isolate;
+  padding: 0;
+}
+
+/* Overlay para legibilidade */
+.hero::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,.55),
+    rgba(0,0,0,.35)
+  );
+  z-index: -1;
+}
+
+/* Conteúdo interno */
+.hero .container{
+  max-width: 900px;
+  padding: 2rem 1.25rem;
+}
+
+/* Badge */
+.badge{
+  display:inline-block;
+  background: var(--brand);
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+
+/* Título e texto */
+.hero h1{
+  margin: 0 0 .5rem 0;
+  font-size: clamp(32px, 4.5vw, 54px);
+  line-height: 1.1;
+  text-shadow: 0 2px 14px rgba(0,0,0,.4);
+}
+.hero p{
+  margin: 0 0 1.1rem 0;
+  font-size: clamp(16px, 1.6vw, 20px);
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0,0,0,.35);
+}
+
+/* Botões no hero */
 .btn{
   display:inline-block; padding:12px 18px; border:2px solid var(--brand);
   border-radius:6px; font-weight:700; cursor:pointer; transition:all .3s ease;
@@ -105,6 +172,18 @@ a:hover{ text-decoration: underline; }
 .btn:hover{ transform: translateY(-2px); }
 .btn.primary{ background: var(--brand); color:#fff; }
 .btn.primary:hover{ background: var(--brand-dark); }
+
+.hero .btn{ box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.hero .btn:not(.primary){ border-color:#fff; color:#fff; }
+.hero .btn:not(.primary):hover{ background:#fff; color:var(--brand); }
+
+/* Ajustes de espaçamento após hero */
+.hero + .section { margin-top: 0; }
+
+/* Mobile */
+@media (max-width: 640px){
+  .hero{ min-height: 58vh; }
+}
 
 /* ==========================================================
    Secções / Cards
@@ -151,6 +230,30 @@ a:hover{ text-decoration: underline; }
   color:var(--muted); font-size:13px; line-height:1.4; background:#fafafa;
 }
 .footer p{ margin:4px 0; }
+
+/* ==========================================================
+   Ícones de Redes Sociais (abaixo dos testemunhos)
+   ========================================================== */
+.social-row{
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+.social-link{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  transition: transform .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.social-link:hover{ transform: translateY(-2px); border-color: #ddd; background: #fafafa; }
+.icon{ width: 22px; height: 22px; display: block; fill: var(--brand); }
+
 /* ==========================================================
    WhatsApp flutuante
    ========================================================== */
@@ -173,19 +276,6 @@ a:hover{ text-decoration: underline; }
   .whatsapp-float {
     bottom: calc(max(20px, env(safe-area-inset-bottom)) + var(--wa-offset));
   }
-}
-
-/* Pequenos ecrãs */
-@media (max-width: 480px){
-  .whatsapp-float{ width:52px; height:52px; right:15px; }
-  .whatsapp-float img{ width:28px; height:28px; }
-  .hero{ padding:50px 16px; }
-}
-
-/* Sem animações para quem prefere menos movimento */
-@media (prefers-reduced-motion: reduce){
-  .whatsapp-float{ transition: none; }
-  .whatsapp-float:hover{ transform: none; }
 }
 
 /* ==========================================================
@@ -221,154 +311,16 @@ a:hover{ text-decoration: underline; }
   .cookie-inner{ flex-wrap: wrap; }
   .btn-accept{ margin-left: 0; }
 }
-/* Redes sociais abaixo dos testemunhos */
-.social-row{
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-}
-.social-link{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px; height: 44px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: #fff;
-  transition: transform .15s ease, border-color .15s ease, background-color .15s ease;
-}
-.social-link:hover{ transform: translateY(-2px); border-color: #ddd; background: #fafafa; }
-.icon{
-  width: 22px; height: 22px; display: block; fill: var(--brand);
-}
-@media (prefers-reduced-motion: reduce){
-  .social-link{ transition: none; }
-  .social-link:hover{ transform: none; }
-}
-/* ===== HERO COM IMAGEM DE FUNDO (1.ª OPÇÃO) ===== */
-.hero{
-  position: relative;
-  /* troca os caminhos pelos teus ficheiros reais */
-  background-image: image-set(
-    url("/images/hero.avif") type("image/avif"),
-    url("/images/hero.webp") type("image/webp"),
-    url("/images/hero.jpg") type("image/jpeg")
-  );
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 
-  /* altura responsiva */
-  min-height: clamp(420px, 72vh, 820px);
-
-  /* centraliza conteúdo */
-  display: grid;
-  place-items: center;
-  text-align: center;
-  color: #fff;
-  isolation: isolate; /* garante overlay por baixo do conteúdo */
-  padding: 0; /* sobrepõe o padding antigo */
-}
-
-/* Overlay para legibilidade do texto */
-.hero::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,.45),
-    rgba(0,0,0,.35)
-  );
-  z-index: -1;
-}
-
-/* Conteúdo interno */
-.hero .container{
-  max-width: 900px;
-  padding: 2rem 1.25rem;
-}
-
-/* Título e texto do hero */
-.hero h1{
-  margin: 0 0 .5rem 0;
-  font-size: clamp(32px, 4.5vw, 54px);
-  line-height: 1.1;
-  text-shadow: 0 2px 14px rgba(0,0,0,.35);
-}
-.hero p{
-  margin: 0 0 1.1rem 0;
-  font-size: clamp(16px, 1.6vw, 20px);
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(0,0,0,.35);
-}
-
-/* Badge */
-.hero .badge{
-  background: var(--brand);
-  color: #fff;
-  padding: 6px 14px;
-  font-size: 13px;
-  border-radius: 999px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.25);
-}
-
-/* Botões no hero (secundário invertido) */
-.hero .btn{
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-}
-.hero .btn:not(.primary){
-  border-color: #fff;
-  color: #fff;
-}
-.hero .btn:not(.primary):hover{
-  background: #fff;
-  color: var(--brand);
-}
-
-/* Ajuste mobile */
-@media (max-width: 640px){
-  .hero{ min-height: 58vh; }
-}
 /* ==========================================================
-   CORREÇÃO — ÍCONES DAS REDES SOCIAIS E RODAPÉ
+   Preferências de movimento reduzido
    ========================================================== */
-
-.social-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 16px;
-}
-
-.social-link {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
-}
-
-.social-link:hover {
-  transform: translateY(-2px);
-  border-color: #ddd;
-  background: #fafafa;
-}
-
-.icon {
-  width: 22px;
-  height: 22px;
-  display: block;
-  fill: var(--brand);
-}
-.hero + .section {
-  margin-top: 0;
+@media (prefers-reduced-motion: reduce){
+  .menu-toggle,
+  .btn,
+  .social-link,
+  .whatsapp-float { transition: none; }
+  .btn:hover,
+  .social-link:hover,
+  .whatsapp-float:hover { transform: none; }
 }
