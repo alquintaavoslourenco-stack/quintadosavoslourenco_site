@@ -1,1 +1,111 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contactos · Quinta dos Avós Lourenço</title>
+  <meta name="description" content="Contacte a Quinta dos Avós Lourenço para informações e reservas.">
 
+  <!-- ✅ Políticas de segurança -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src  'self' 'unsafe-inline';
+    img-src    'self' data:;
+    font-src   'self' data:;
+    connect-src 'self';
+    base-uri   'self';
+    form-action 'self';
+    frame-src  'self' https://www.google.com https://maps.google.com;
+    upgrade-insecure-requests;
+  ">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- Cabeçalho -->
+  <header class="topbar">
+    <div class="brand">
+      <a href="index.html"><img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a>
+    </div>
+    <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
+    <nav class="menu" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="galeria.html">Galeria</a>
+      <a href="contactos.html" class="active">Contactos</a>
+    </nav>
+  </header>
+
+  <!-- Conteúdo -->
+  <main class="section">
+    <div class="container">
+      <h1>Contactos</h1>
+      <p>Se tiver alguma questão ou interesse, contacte-nos pelos seguintes meios:</p>
+
+      <p>
+        Rua Cascalheira Nº371<br>
+        6100-421 Azinheira, Sertã<br>
+        GPS:
+        <a href="https://maps.app.goo.gl/9ZXXdmu7sS2fHf8T7" target="_blank" rel="noopener noreferrer">
+          39.738794, -8.107801
+        </a><br>
+        Email:
+        <a href="mailto:alquintaavoslourenco@gmail.com">alquintaavoslourenco@gmail.com</a><br>
+        Telefone:
+        <a href="tel:+351960446713">+351 960 446 713</a>
+        <span class="note">Chamada para rede móvel nacional</span>
+      </p>
+
+      <p style="margin-top:20px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+        <a class="btn primary"
+           href="https://www.google.com/maps/dir/?api=1&destination=39.7387811,-8.107531&travelmode=driving"
+           target="_blank" rel="noopener noreferrer">📍 Obter direções</a>
+      </p>
+
+      <div style="margin-top:30px; max-width:900px; margin-inline:auto;">
+        <iframe
+          title="Mapa — Quinta dos Avós Lourenço"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29912.05533819686!2d-8.107531!3d39.7387811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1869278e539d21%3A0xac183f67c1c902d0!2sQuinta%20Dos%20Av%C3%B3s%20Louren%C3%A7o!5e0!3m2!1spt-PT!2spt!4v1696862400000!5m2!1spt-PT!2spt"
+          loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+          style="border:0; border-radius:10px; width:100%; height:400px;"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <!-- WhatsApp flutuante -->
+  <a href="https://wa.me/351960446713?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Av%C3%B3s%20Louren%C3%A7o."
+     class="whatsapp-float" target="_blank" rel="noopener noreferrer"
+     aria-label="Enviar mensagem no WhatsApp" title="Enviar mensagem no WhatsApp">
+    <img src="images/whatsapp-icon.svg" alt="WhatsApp">
+  </a>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+  <p>
+    © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
+    <a href="politica-privacidade.html">Política de Privacidade</a> ·
+    <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">
+      Livro de Reclamações
+    </a>
+  </p>
+</footer>
+
+  <!-- ✅ Banner de cookies (branco, botão à direita, 1 só instância) -->
+  <div id="cookie-consent" class="cookie-banner" role="dialog" aria-live="polite" hidden>
+    <div class="cookie-inner">
+      <p class="cookie-text">
+        Usamos cookies apenas para garantir o bom funcionamento do site.
+        <a href="politica-privacidade.html">Saiba mais</a>
+      </p>
+      <button id="cookie-accept" type="button" class="btn-accept">Aceitar</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script defer src="js/cookies.js"></script>
+  <script defer src="js/app.js"></script>
+</body>
+</html>
