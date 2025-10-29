@@ -324,3 +324,37 @@ a:hover{ text-decoration: underline; }
   .social-link:hover,
   .whatsapp-float:hover { transform: none; }
 }
+/* === HERO com imagem de fundo (corrigido p/ /css/) === */
+.hero{
+  position: relative;
+
+  /* Fallback */
+  background-image: url("../images/hero.jpg") !important;
+
+  /* Formatos modernos (se existirem) */
+  background-image: image-set(
+    url("../images/hero.avif") type("image/avif"),
+    url("../images/hero.webp") type("image/webp"),
+    url("../images/hero.jpg") type("image/jpeg")
+  ) !important;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: clamp(420px, 72vh, 820px);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #fff;
+  isolation: isolate;
+  padding: 0;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.35));
+  z-index:-1;
+}
