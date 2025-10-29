@@ -136,6 +136,55 @@
     on(document, 'keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
   }
 
+  /* ===================== Header overlay sobre o HERO ===================== */
+  function initTopbarOverlay() {
+    const topbar = qs('.topbar');
+    const hero   = qs('.hero');
+    const menu   = qs('.menu');
+    if (!topbar || !hero) return;
+
+    const setOverlay = (isOverlay) => {
+      if (isOverlay) {
+        topbar.classList.add('is-overlay');
+        topbar.classList.remove('is-solid');
+      } else {
+        topbar.classList.remove('is-overlay');
+        topbar.classList.add('is-solid');
+      }
+    };
+
+    // Decide estado pelo scroll/posição do hero
+    const applyByScroll = () => {
+      const menuIsOpen = menu && menu.classList.contains('active');
+      if (menuIsOpen) { setOverlay(false); return; }
+      const rect = hero.getBoundingClientRect();
+      // hero visível se parte do topo estiver no viewport
+      const heroVisible = rect.bottom > 80 && rect.top < (window.innerHeight * 0.9);
+      setOverlay(heroVisible);
+    };
+
+    // IntersectionObserver para suavidade
+    const io = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      const menuIsOpen = menu && menu.classList.contains('active');
+      if (menuIsOpen) { setOverlay(false); return; }
+      setOverlay(entry.isIntersecting);
+    }, { threshold: 0.1 });
+
+    io.observe(hero);
+
+    // Fallback inicial e em scroll
+    on(window, 'load', applyByScroll, { passive:true });
+    on(window, 'scroll', applyByScroll, { passive:true });
+
+    // Reage ao evento personalizado do menu mobile
+    on(document, 'menu:state', (e) => {
+      const open = !!(e && e.detail && e.detail.open);
+      if (open) setOverlay(false);
+      else applyByScroll();
+    });
+  }
+
   /* ===================== Menu Mobile ===================== */
   function initMobileMenu() {
     const menu   = qs('.menu');
@@ -146,21 +195,32 @@
       const open = menu.classList.toggle('active');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.textContent = open ? '✕' : '☰';
+
+      // notifica overlay sobre o estado do menu
+      document.dispatchEvent(new CustomEvent('menu:state', { detail: { open } }));
     });
 
     qsa('.menu a').forEach(a => {
       on(a, 'click', () => {
+        const wasOpen = menu.classList.contains('active');
         menu.classList.remove('active');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.textContent = '☰';
+        if (wasOpen) {
+          document.dispatchEvent(new CustomEvent('menu:state', { detail: { open:false } }));
+        }
       });
     });
 
     on(window, 'resize', () => {
       if (window.innerWidth > 768) {
+        const wasOpen = menu.classList.contains('active');
         menu.classList.remove('active');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.textContent = '☰';
+        if (wasOpen) {
+          document.dispatchEvent(new CustomEvent('menu:state', { detail: { open:false } }));
+        }
       }
     });
   }
@@ -214,11 +274,10 @@
   /* ===================== Boot ===================== */
   on(document, 'DOMContentLoaded', () => {
     renderTestemunhos();
-    initSlider();      // loop infinito
+    initSlider();         // loop infinito
     initLightbox();
-    initMobileMenu();
-    addSocialRow();    // ícones FB/IG
+    initMobileMenu();     // controla menu + emite "menu:state"
+    initTopbarOverlay();  // torna header transparente sobre hero e sólido ao rolar
+    addSocialRow();       // ícones FB/IG
   });
 })();
-
-
