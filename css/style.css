@@ -151,19 +151,6 @@ a:hover{ text-decoration: underline; }
   color:var(--muted); font-size:13px; line-height:1.4; background:#fafafa;
 }
 .footer p{ margin:4px 0; }
-.footer a {
-  color: var(--muted);
-  text-decoration: none;
-  margin: 0 4px;
-  transition: color 0.2s ease;
-}
-
-.footer a:hover {
-  color: var(--text); /* ou outra variável que uses para texto normal */
-  text-decoration: underline;
-}
-
-
 /* ==========================================================
    WhatsApp flutuante
    ========================================================== */
