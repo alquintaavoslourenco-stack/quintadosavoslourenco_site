@@ -6,7 +6,7 @@
   <title>Política de Privacidade · Quinta dos Avós Lourenço</title>
   <meta name="description" content="Política de Privacidade da Quinta dos Avós Lourenço">
 
-  <!-- CSP alinhada com o teu site -->
+  <!-- ✅ CSP alinhada com o site -->
   <meta http-equiv="Content-Security-Policy"
         content="
           default-src 'self';
@@ -21,21 +21,20 @@
         ">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
-  <link rel="stylesheet" href="css/style.css">
+  <!-- ✅ Caminho absoluto -->
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <a href="index.html">
-        <img src="images/logo.png" alt="Quinta dos Avós Lourenço" class="logo">
-      </a>
+      <a href="/"><img src="/images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a>
     </div>
     <nav class="menu" aria-label="Navegação principal">
-  <a href="/">Início</a>
-  <a href="/sobre/">Sobre</a>
-  <a href="/galeria/">Galeria</a>
-  <a href="/contactos/">Contactos</a>
-</nav>
+      <a href="/">Início</a>
+      <a href="/sobre/">Sobre</a>
+      <a href="/galeria/">Galeria</a>
+      <a href="/contactos/">Contactos</a>
+    </nav>
   </header>
 
   <main class="container section">
@@ -45,7 +44,7 @@
     <h2>1. Quem somos</h2>
     <p><strong>Quinta dos Avós Lourenço</strong> — Alojamento local (AL nº 135447/AL) na Sertã, Portugal.</p>
     <p>Contactos do responsável pelo tratamento de dados (Responsável/Encarregado):<br>
-      Email: <a href="mailto:SEU_EMAIL">alquintaavoslourenco@gmail.com</a><br>
+      Email: <a href="mailto:alquintaavoslourenco@gmail.com">alquintaavoslourenco@gmail.com</a><br>
       Telefone/WhatsApp: <a href="https://wa.me/351960446713" target="_blank" rel="noopener noreferrer">+351 960 446 713</a><br>
       Morada: Rua da Cascalheira, Sertã, Portugal
     </p>
@@ -92,7 +91,7 @@
 
     <h2>7. Os seus direitos</h2>
     <p>Ao abrigo do RGPD, tem os direitos de <strong>acesso</strong>, <strong>retificação</strong>, <strong>eliminação</strong>, <strong>limitação</strong>, <strong>oposição</strong> e <strong>portabilidade</strong> (quando aplicável). Também pode retirar o consentimento quando o tratamento se basear nele.</p>
-    <p>Para exercer os seus direitos, contacte: <a href="mailto:SEU_EMAIL">alquintaavoslourenco@gmail.com</a>. Tem ainda o direito de apresentar reclamação à <a href="https://www.cnpd.pt/" target="_blank" rel="noopener noreferrer">CNPD</a>.</p>
+    <p>Para exercer os seus direitos, contacte: <a href="mailto:alquintaavoslourenco@gmail.com">alquintaavoslourenco@gmail.com</a>. Tem ainda o direito de apresentar reclamação à <a href="https://www.cnpd.pt/" target="_blank" rel="noopener noreferrer">CNPD</a>.</p>
 
     <h2>8. Segurança</h2>
     <p>Aplicamos medidas técnicas e organizativas adequadas para proteger os dados pessoais, incluindo utilização de HTTPS, políticas de segurança no navegador (CSP) e princípio da minimização de dados.</p>
@@ -107,38 +106,20 @@
     <p>Poderemos atualizar esta política para refletir mudanças legais ou operacionais. A versão publicada no site indica sempre a data da última atualização.</p>
 
     <hr>
-    <p>Se tiver dúvidas sobre esta política, contacte-nos: <a href="mailto:SEU_EMAIL">alquintaavoslourenco@gmail.com</a>.</p>
+    <p>Se tiver dúvidas sobre esta política, contacte-nos: <a href="mailto:alquintaavoslourenco@gmail.com">alquintaavoslourenco@gmail.com</a>.</p>
   </main>
 
   <footer class="footer">
-  <p>
-    © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
-    <a href="/politica-privacidade/">Política de Privacidade</a> ·
-    <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">
-      Livro de Reclamações
-    </a>
-  </p>
-</footer>
+    <p>
+      © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
+      <a href="/politica-privacidade/">Política de Privacidade</a> ·
+      <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">
+        Livro de Reclamações
+      </a>
+    </p>
+  </footer>
 
-
-  <!-- (Opcional) Banner de cookies – se ainda não o adicionaste nesta página -->
-  <!--
-  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Aviso de cookies">
-    <p>Usamos cookies apenas para garantir o bom funcionamento do site.
-       <a href="politica-privacidade.html">Saiba mais</a></p>
-    <button id="accept-cookies">Aceitar</button>
-  </div>
-  <script>
-    const banner = document.getElementById('cookie-banner');
-    const btn = document.getElementById('accept-cookies');
-    if (localStorage.getItem('cookiesAccepted')) banner.style.display = 'none';
-    btn?.addEventListener('click', () => {
-      localStorage.setItem('cookiesAccepted', 'true');
-      banner.style.display = 'none';
-    });
-  </script>
-  -->
-
-  <script src="js/app.js"></script>
+  <!-- Scripts -->
+  <script defer src="/js/app.js"></script>
 </body>
 </html>
