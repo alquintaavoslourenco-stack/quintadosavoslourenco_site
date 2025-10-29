@@ -91,12 +91,12 @@ a:hover{ text-decoration: underline; }
 }
 
 /* ==========================================================
-   Hero (base antiga comentada)
+   Hero
    ========================================================== */
-/* .hero{ padding:72px 20px; background:#f8f5f3; text-align:center; } */
-/* .hero h1{ margin:0 0 12px; font-size: clamp(28px, 4vw, 44px); } */
-/* .hero p{ margin:0 0 24px; color:#444; font-size: clamp(16px, 2vw, 18px); } */
-/* .badge{ display:inline-block; background: var(--brand); color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; margin-bottom:10px; } */
+.hero{ padding:72px 20px; background:#f8f5f3; text-align:center; }
+.hero h1{ margin:0 0 12px; font-size: clamp(28px, 4vw, 44px); }
+.hero p{ margin:0 0 24px; color:#444; font-size: clamp(16px, 2vw, 18px); }
+.badge{ display:inline-block; background: var(--brand); color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; margin-bottom:10px; }
 
 .btn{
   display:inline-block; padding:12px 18px; border:2px solid var(--brand);
@@ -119,7 +119,7 @@ a:hover{ text-decoration: underline; }
 .card h3{ margin-top:0; color: var(--brand); }
 
 /* ==========================================================
-   Testemunhos
+   Testemunhos (slider)
    ========================================================== */
 .titulo-testemunhos{ text-align:center; font-size:28px; margin-bottom:20px; }
 .testemunhos-slider{ position:relative; max-width:700px; margin:30px auto; text-align:center; min-height:150px; }
@@ -134,14 +134,26 @@ a:hover{ text-decoration: underline; }
 .dots span.active{ background: var(--brand); }
 
 /* ==========================================================
-   Rodapé + WhatsApp + Cookies + Social
+   Galeria + Lightbox
+   ========================================================== */
+.gallery{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.gallery img{ width:100%; height:220px; object-fit:cover; border-radius:8px; cursor:pointer; transition: transform .2s; }
+.gallery img:hover{ transform: scale(1.03); }
+
+.lightbox{ position:fixed; inset:0; background:rgba(0,0,0,.8); display:none; justify-content:center; align-items:center; z-index:9999; }
+.lightbox img{ max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,.6); }
+
+/* ==========================================================
+   Rodapé
    ========================================================== */
 .footer{
   border-top:1px solid var(--border); padding:10px 0; text-align:center;
   color:var(--muted); font-size:13px; line-height:1.4; background:#fafafa;
 }
 .footer p{ margin:4px 0; }
-
+/* ==========================================================
+   WhatsApp flutuante
+   ========================================================== */
 .whatsapp-float{
   position: fixed;
   right: 20px;
@@ -150,105 +162,174 @@ a:hover{ text-decoration: underline; }
   background: var(--whatsapp); border-radius:50%;
   box-shadow: 0 4px 10px rgba(0,0,0,.25);
   display:flex; align-items:center; justify-content:center;
-  overflow:hidden; z-index: 9998;
+  overflow:hidden; z-index: 9998; /* abaixo do banner (9999) */
   transition: transform .2s, background-color .2s, bottom .2s;
 }
 .whatsapp-float:hover{ background:#1ebe5d; transform: scale(1.08); }
 .whatsapp-float img{ width:34px; height:34px; display:block; }
 
+/* Safe area iOS */
 @supports (bottom: max(0px)) {
   .whatsapp-float {
     bottom: calc(max(20px, env(safe-area-inset-bottom)) + var(--wa-offset));
   }
 }
 
+/* Pequenos ecrãs */
 @media (max-width: 480px){
   .whatsapp-float{ width:52px; height:52px; right:15px; }
   .whatsapp-float img{ width:28px; height:28px; }
   .hero{ padding:50px 16px; }
 }
 
-/* ==========================================================
-   HERO COM IMAGEM DE FUNDO — NOVO
-   ========================================================== */
+/* Sem animações para quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce){
+  .whatsapp-float{ transition: none; }
+  .whatsapp-float:hover{ transform: none; }
+}
 
-.hero {
+/* ==========================================================
+   Banner de Cookies (fundo branco + botão à direita)
+   ========================================================== */
+.cookie-banner[hidden]{ display:none !important; }
+.cookie-banner{
+  position: fixed;
+  left: 1rem; right: 1rem; bottom: 1rem;
+  background:#fff; color:#333;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  z-index: 9999;
+}
+.cookie-inner{
+  max-width: 1100px; margin: 0 auto; padding: 12px 16px;
+  display: flex; align-items: center; gap: 16px;
+}
+.cookie-text{ margin: 0; line-height: 1.4; }
+.cookie-text a{ color: var(--cookie-accent); text-decoration: underline; }
+
+.btn-accept{
+  margin-left: auto; padding: 8px 14px;
+  border: 0; border-radius: 8px;
+  background: var(--cookie-accent); color: #fff;
+  cursor: pointer; font-weight: 600;
+}
+.btn-accept:hover{ background: var(--cookie-accent-hover); }
+.btn-accept:focus{ outline: 2px solid #0b68ff; outline-offset: 2px; }
+
+@media (max-width: 420px){
+  .cookie-inner{ flex-wrap: wrap; }
+  .btn-accept{ margin-left: 0; }
+}
+/* Redes sociais abaixo dos testemunhos */
+.social-row{
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+.social-link{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  transition: transform .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.social-link:hover{ transform: translateY(-2px); border-color: #ddd; background: #fafafa; }
+.icon{
+  width: 22px; height: 22px; display: block; fill: var(--brand);
+}
+@media (prefers-reduced-motion: reduce){
+  .social-link{ transition: none; }
+  .social-link:hover{ transform: none; }
+}
+/* ===== HERO COM IMAGEM DE FUNDO (1.ª OPÇÃO) ===== */
+.hero{
   position: relative;
-  background-image: url("/images/hero.jpg");
+  /* troca os caminhos pelos teus ficheiros reais */
+  background-image: image-set(
+    url("/images/hero.avif") type("image/avif"),
+    url("/images/hero.webp") type("image/webp"),
+    url("/images/hero.jpg") type("image/jpeg")
+  );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 75vh;
+
+  /* altura responsiva */
+  min-height: clamp(420px, 72vh, 820px);
+
+  /* centraliza conteúdo */
   display: grid;
   place-items: center;
   text-align: center;
   color: #fff;
-  isolation: isolate;
-  padding: 0;
+  isolation: isolate; /* garante overlay por baixo do conteúdo */
+  padding: 0; /* sobrepõe o padding antigo */
 }
 
-.hero::before {
+/* Overlay para legibilidade do texto */
+.hero::before{
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.55),
-    rgba(0, 0, 0, 0.35)
+    rgba(0,0,0,.45),
+    rgba(0,0,0,.35)
   );
   z-index: -1;
 }
 
-.hero .container {
+/* Conteúdo interno */
+.hero .container{
   max-width: 900px;
   padding: 2rem 1.25rem;
 }
 
-.hero .badge {
+/* Título e texto do hero */
+.hero h1{
+  margin: 0 0 .5rem 0;
+  font-size: clamp(32px, 4.5vw, 54px);
+  line-height: 1.1;
+  text-shadow: 0 2px 14px rgba(0,0,0,.35);
+}
+.hero p{
+  margin: 0 0 1.1rem 0;
+  font-size: clamp(16px, 1.6vw, 20px);
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0,0,0,.35);
+}
+
+/* Badge */
+.hero .badge{
   background: var(--brand);
   color: #fff;
   padding: 6px 14px;
   font-size: 13px;
   border-radius: 999px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
 }
 
-.hero h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: clamp(32px, 4.5vw, 54px);
-  line-height: 1.1;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+/* Botões no hero (secundário invertido) */
+.hero .btn{
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
-
-.hero p {
-  margin: 0 0 1.1rem 0;
-  font-size: clamp(16px, 1.6vw, 20px);
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
-}
-
-.hero .btn {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, background-color 0.3s ease, color 0.3s ease;
-}
-
-.hero .btn:hover {
-  transform: translateY(-2px);
-}
-
-.hero .btn:not(.primary) {
+.hero .btn:not(.primary){
   border-color: #fff;
   color: #fff;
 }
-
-.hero .btn:not(.primary):hover {
+.hero .btn:not(.primary):hover{
   background: #fff;
   color: var(--brand);
 }
 
-@media (max-width: 640px) {
-  .hero {
-    min-height: 58vh;
-  }
+/* Ajuste mobile */
+@media (max-width: 640px){
+  .hero{ min-height: 58vh; }
 }
