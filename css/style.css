@@ -485,3 +485,10 @@ a:hover { text-decoration: underline; }
   }
   .topbar.is-overlay .menu.active a{ color:#333; }
 }
+/* Ajuste: mostrar mais da imagem no hero */
+.hero {
+  min-height: 60vh !important; /* estava ~72vh, reduzida para mostrar mais da parte inferior da foto */
+  padding-top: 120px; /* mantém espaço p/ o texto não colar no topo */
+}
+
+/* Opcional: se quiseres um pouco mais ainda, usa 55vh */
