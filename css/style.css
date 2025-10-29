@@ -361,3 +361,61 @@ a:hover { text-decoration: underline; }
   .social-link:hover,
   .whatsapp-float:hover { transform: none; }
 }
+/* ===== TOPBAR OVER HERO ===== */
+.topbar{
+  transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+/* Estado transparente (quando o hero está visível) */
+.topbar.is-overlay{
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+
+/* Links/branco por cima da foto */
+.topbar.is-overlay .menu a{ color:#fff; }
+.topbar.is-overlay .menu a.active{
+  color:#fff;
+  border-bottom-color:#fff;
+}
+
+/* Botão hambúrguer branco no overlay */
+.topbar.is-overlay .menu-toggle{
+  border-color:#fff;
+  color:#fff;
+}
+
+/* Logo com ligeiro contorno para legibilidade */
+.topbar.is-overlay .logo{
+  filter: drop-shadow(0 0 6px rgba(0,0,0,.35));
+}
+
+/* Estado sólido ao rolar */
+.topbar.is-solid{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+.topbar.is-solid .menu a{ color:#333; }
+.topbar.is-solid .menu a.active{
+  color:var(--brand);
+  border-bottom-color:var(--brand);
+}
+.topbar.is-solid .menu-toggle{
+  border-color:var(--brand);
+  color:var(--brand);
+}
+
+/* Mobile: quando o menu abre, força estado sólido para legibilidade */
+@media (max-width: 768px){
+  .topbar.is-overlay .menu.active{
+    /* quando aberto, tratamos como sólido */
+    background:#fff;
+    border-top:1px solid var(--border);
+  }
+  .topbar.is-overlay .menu.active a{ color:#333; }
+}
+
+/* Evitar “salto” de layout quando fica fixo no topo do hero */
+.hero{ scroll-margin-top: 90px; } /* âncoras abaixo do header */
