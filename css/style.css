@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — STYLE SHEET (versão final corrigida)
+   QUINTA DOS AVÓS LOURENÇO — STYLE SHEET (organizado)
    ========================================================== */
 
 /* ---------- Variáveis de tema ---------- */
@@ -38,16 +38,44 @@ a:hover { text-decoration: underline; }
 }
 
 /* ==========================================================
-   Header + Nav
+   Header + Nav (MENU FIXO NO TOPO)
    ========================================================== */
 .topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 999;
   display: flex; align-items: center; gap: 16px;
-  padding: 16px 20px; border-bottom: 1px solid var(--border); background: #fff;
-  position: sticky; top: 0; z-index: 50;
+  padding: 16px 20px;
+  background: transparent; /* transparente por padrão (homepage sobre o hero) */
+  border: none;
+  box-shadow: none;
+  transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
+
 .brand { margin-left: 90px; }
 .brand a { color: #111; }
 .logo { height: 100px; width: auto; background: transparent; border-radius: 8px; }
+
+/* Estado transparente (sobre o hero) */
+.topbar.is-overlay {
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+.topbar.is-overlay .menu a { color: #fff; }
+.topbar.is-overlay .menu a.active { color: #fff; border-bottom-color: #fff; }
+.topbar.is-overlay .menu-toggle { border-color: #fff; color: #fff; }
+.topbar.is-overlay .logo { filter: drop-shadow(0 0 6px rgba(0,0,0,.35)); }
+
+/* Estado sólido (ao rolar ou em páginas sem hero) */
+.topbar.is-solid {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+.topbar.is-solid .menu a { color: #333; }
+.topbar.is-solid .menu a.active { color: var(--brand); border-bottom-color: var(--brand); }
+.topbar.is-solid .menu-toggle { border-color: var(--brand); color: var(--brand); }
 
 /* Botão hambúrguer */
 .menu-toggle {
@@ -67,11 +95,7 @@ a:hover { text-decoration: underline; }
   .menu a {
     display: inline-block; font-weight: 600; color: #333; padding: 4px 0;
   }
-  .menu a.active {
-    color: var(--brand);
-    border-bottom: 2px solid var(--brand);
-    padding-bottom: 2px;
-  }
+  .menu a.active { color: var(--brand); border-bottom: 2px solid var(--brand); padding-bottom: 2px; }
 }
 
 /* Menu — Mobile */
@@ -94,6 +118,13 @@ a:hover { text-decoration: underline; }
   }
   .menu.active { max-height: 420px; opacity: 1; pointer-events: auto; }
   .menu a.active { background: #f8f5f3; color: var(--brand); border-bottom: 1px solid #eedede; }
+
+  /* Quando o menu está aberto sobre o hero, tratamos como sólido para legibilidade */
+  .topbar.is-overlay .menu.active {
+    background: #fff;
+    border-top: 1px solid var(--border);
+  }
+  .topbar.is-overlay .menu.active a { color: #333; }
 }
 
 /* ==========================================================
@@ -103,19 +134,20 @@ a:hover { text-decoration: underline; }
   position: relative;
 
   /* Caminho relativo (CSS está em /css/) */
-  background-image: url("../images/hero.jpg") !important;
+  background-image: url("../images/hero.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-
-  min-height: clamp(420px, 72vh, 820px);
+  min-height: 110vh;                /* como disseste que ficou perfeito */
   display: grid;
   place-items: center;
   text-align: center;
   color: #fff;
   isolation: isolate;
-  padding: 0;
+  margin-top: 0;
+  padding-top: 120px;               /* evita que o texto fique por baixo do header fixo */
+  scroll-margin-top: 90px;          /* âncoras abaixo do header */
 }
 
 /* Overlay escuro para contraste */
@@ -123,19 +155,12 @@ a:hover { text-decoration: underline; }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,.55),
-    rgba(0,0,0,.35)
-  );
+  background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.35));
   z-index: -1;
 }
 
 /* Conteúdo interno */
-.hero .container {
-  max-width: 900px;
-  padding: 2rem 1.25rem;
-}
+.hero .container { max-width: 900px; padding: 2rem 1.25rem; }
 
 /* Badge */
 .badge {
@@ -177,24 +202,16 @@ a:hover { text-decoration: underline; }
 .btn.primary { background: var(--brand); color: #fff; }
 .btn.primary:hover { background: var(--brand-dark); }
 
-.hero .btn {
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-}
-.hero .btn:not(.primary) {
-  border-color: #fff;
-  color: #fff;
-}
-.hero .btn:not(.primary):hover {
-  background: #fff;
-  color: var(--brand);
-}
+.hero .btn { box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.hero .btn:not(.primary) { border-color: #fff; color: #fff; }
+.hero .btn:not(.primary):hover { background: #fff; color: var(--brand); }
 
 /* Espaçamento entre hero e secção seguinte */
 .hero + .section { margin-top: 0; }
 
-/* Responsivo */
+/* Responsivo (altura mínima menor em ecrãs pequenos) */
 @media (max-width: 640px) {
-  .hero { min-height: 58vh; }
+  .hero { min-height: 75vh; }
 }
 
 /* ==========================================================
@@ -215,10 +232,7 @@ a:hover { text-decoration: underline; }
   text-align: center;
   transition: transform .2s, box-shadow .2s;
 }
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,.05);
-}
+.card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,.05); }
 .card h3 { margin-top: 0; color: var(--brand); }
 
 /* ==========================================================
@@ -361,150 +375,16 @@ a:hover { text-decoration: underline; }
   .social-link:hover,
   .whatsapp-float:hover { transform: none; }
 }
-/* ===== TOPBAR OVER HERO ===== */
-.topbar{
-  transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
 
-/* Estado transparente (quando o hero está visível) */
-.topbar.is-overlay{
-  background: transparent;
-  border-bottom-color: transparent;
-  box-shadow: none;
-}
-
-/* Links/branco por cima da foto */
-.topbar.is-overlay .menu a{ color:#fff; }
-.topbar.is-overlay .menu a.active{
-  color:#fff;
-  border-bottom-color:#fff;
-}
-
-/* Botão hambúrguer branco no overlay */
-.topbar.is-overlay .menu-toggle{
-  border-color:#fff;
-  color:#fff;
-}
-
-/* Logo com ligeiro contorno para legibilidade */
-.topbar.is-overlay .logo{
-  filter: drop-shadow(0 0 6px rgba(0,0,0,.35));
-}
-
-/* Estado sólido ao rolar */
-.topbar.is-solid{
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  box-shadow: 0 4px 14px rgba(0,0,0,.06);
-}
-.topbar.is-solid .menu a{ color:#333; }
-.topbar.is-solid .menu a.active{
-  color:var(--brand);
-  border-bottom-color:var(--brand);
-}
-.topbar.is-solid .menu-toggle{
-  border-color:var(--brand);
-  color:var(--brand);
-}
-
-/* Mobile: quando o menu abre, força estado sólido para legibilidade */
-@media (max-width: 768px){
-  .topbar.is-overlay .menu.active{
-    /* quando aberto, tratamos como sólido */
-    background:#fff;
-    border-top:1px solid var(--border);
-  }
-  .topbar.is-overlay .menu.active a{ color:#333; }
-}
-
-/* Evitar “salto” de layout quando fica fixo no topo do hero */
-.hero{ scroll-margin-top: 90px; } /* âncoras abaixo do header */
-/* ===== TOPBAR SOBRE HERO — versão sem barra branca ===== */
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  transition: background-color .25s ease, box-shadow .25s ease, padding .25s ease;
-}
-
-/* Estado transparente (hero visível) */
-.topbar.is-overlay {
-  background: transparent;
-  border-bottom: none;
-  box-shadow: none;
-}
-.topbar.is-overlay .menu a { color: #fff; }
-.topbar.is-overlay .menu a.active {
-  color: #fff;
-  border-bottom-color: #fff;
-}
-.topbar.is-overlay .menu-toggle {
-  border-color: #fff;
-  color: #fff;
-}
-.topbar.is-overlay .logo {
-  filter: drop-shadow(0 0 6px rgba(0,0,0,.35));
-}
-
-/* Estado sólido (quando rola) */
-.topbar.is-solid {
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 4px 14px rgba(0,0,0,.06);
-}
-.topbar.is-solid .menu a { color: #333; }
-.topbar.is-solid .menu a.active {
-  color: var(--brand);
-  border-bottom-color: var(--brand);
-}
-.topbar.is-solid .menu-toggle {
-  border-color: var(--brand);
-  color: var(--brand);
-}
-
-/* Hero sobe até ao topo (sem espaço) */
-.hero {
-  margin-top: 0;
-  padding-top: 120px; /* evita que o texto fique escondido atrás da topbar */
-}
-
-/* Mobile: menu aberto = header branco para legibilidade */
-@media (max-width: 768px){
-  .topbar.is-overlay .menu.active {
-    background:#fff;
-    border-top:1px solid var(--border);
-  }
-  .topbar.is-overlay .menu.active a{ color:#333; }
-}
-/* Ajuste: mostrar mais da imagem no hero */
-.hero {
-  min-height: 120vh !important; /* estava ~72vh, reduzida para mostrar mais da parte inferior da foto */
-  padding-top: 120px; /* mantém espaço p/ o texto não colar no topo */
-}
-
-/* ===== MENU FIXO (páginas sem hero) ===== */
+/* ==========================================================
+   Páginas SEM hero: menu sólido + compensação do conteúdo
+   ========================================================== */
 body:not(:has(.hero)) .topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
   background: #fff;
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
 }
-
-/* Espaçamento para não esconder o conteúdo */
+body:not(:has(.hero)) .topbar .menu a { color: #333; }
+body:not(:has(.hero)) .topbar .menu a.active { color: var(--brand); border-bottom-color: var(--brand); }
 body:not(:has(.hero)) main,
-body:not(:has(.hero)) .section:first-of-type {
-  margin-top: 120px; /* altura do header */
-}
+body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
