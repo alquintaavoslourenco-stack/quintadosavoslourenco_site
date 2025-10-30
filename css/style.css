@@ -491,4 +491,20 @@ a:hover { text-decoration: underline; }
   padding-top: 120px; /* mantém espaço p/ o texto não colar no topo */
 }
 
-/* Opcional: se quiseres um pouco mais ainda, usa 55vh */
+/* ===== MENU FIXO (páginas sem hero) ===== */
+body:not(:has(.hero)) .topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* Espaçamento para não esconder o conteúdo */
+body:not(:has(.hero)) main,
+body:not(:has(.hero)) .section:first-of-type {
+  margin-top: 120px; /* altura do header */
+}
