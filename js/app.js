@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final completa)
+   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final revisada)
    ========================================================== */
 (() => {
   'use strict';
@@ -9,7 +9,7 @@
   const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
-  /* ===================== DADOS — TESTEMUNHOS ===================== */
+  /* ===================== TESTEMUNHOS ===================== */
   const TESTEMUNHOS_AIRBNB = [
     { texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`, autor: `— Laura, Airbnb (julho 2025)` },
     { texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.`, autor: `— Tisha, Airbnb (maio 2025)` },
@@ -22,10 +22,10 @@
 
   /* ===================== RENDERIZA TESTEMUNHOS ===================== */
   function renderTestemunhos() {
-    const sliderEl = qs('.testemunhos-slider');
+    const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
     if (!sliderEl) return;
 
-    // Cria slides se não existirem
+    // cria slides
     if (!sliderEl.querySelector('.slide')) {
       TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
         const div = document.createElement('div');
@@ -39,54 +39,41 @@
       });
     }
 
-    // Cria bolinhas (dots)
-    let dotsEl = sliderEl.querySelector('.dots');
-    if (!dotsEl) {
-      dotsEl = document.createElement('div');
-      dotsEl.className = 'dots';
-      TESTEMUNHOS_AIRBNB.forEach(() => {
-        const dot = document.createElement('span');
-        dotsEl.appendChild(dot);
-      });
-      sliderEl.appendChild(dotsEl);
+    // cria bolinhas (dots)
+    if (!sliderEl.querySelector('.dots')) {
+      const dots = document.createElement('div');
+      dots.className = 'dots';
+      TESTEMUNHOS_AIRBNB.forEach(() => dots.appendChild(document.createElement('span')));
+      sliderEl.appendChild(dots);
     }
   }
 
-  /* ===================== SLIDER (testemunhos) ===================== */
+  /* ===================== SLIDER DE TESTEMUNHOS ===================== */
   function initSlider() {
     const slider = qs('.testemunhos-slider');
     if (!slider) return;
 
     const slides = qsa('.slide', slider);
     const dots = qsa('.dots span', slider);
-    if (!slides.length || !dots.length) return;
+    if (!slides.length) return;
 
     let i = 0;
-    const show = (n) => {
+    function show(n) {
       i = (n + slides.length) % slides.length;
       slides.forEach(s => s.classList.remove('active'));
       dots.forEach(d => d.classList.remove('active'));
       slides[i].classList.add('active');
       if (dots[i]) dots[i].classList.add('active');
-    };
+    }
 
     dots.forEach((d, idx) => on(d, 'click', () => show(idx)));
 
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     const INTERVAL = 6000;
-    let timer = null;
-    const start = () => { stop(); if (!reduceMotion) timer = setInterval(() => show(i + 1), INTERVAL); };
-    const stop = () => { if (timer) clearInterval(timer); };
+    let timer = setInterval(() => show(i + 1), INTERVAL);
 
-    on(document, 'visibilitychange', () => { if (document.hidden) stop(); else start(); });
-    on(slider, 'mouseenter', stop);
-    on(slider, 'mouseleave', start);
-    on(slider, 'touchstart', stop, { passive: true });
-    on(slider, 'touchend', start, { passive: true });
-    on(slider, 'keydown', e => { if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
-
+    on(slider, 'mouseenter', () => clearInterval(timer));
+    on(slider, 'mouseleave', () => timer = setInterval(() => show(i + 1), INTERVAL));
     show(0);
-    start();
   }
 
   /* ===================== GALERIA — LIGHTBOX ===================== */
@@ -100,14 +87,13 @@
     lightbox.appendChild(lightImg);
     document.body.appendChild(lightbox);
 
-    imgs.forEach(img => {
-      on(img, 'click', () => {
-        lightImg.src = img.src;
-        lightbox.style.display = 'flex';
-      });
-    });
-    on(lightbox, 'click', (e) => { if (e.target !== lightImg) lightbox.style.display = 'none'; });
-    on(document, 'keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
+    imgs.forEach(img => on(img, 'click', () => {
+      lightImg.src = img.src;
+      lightbox.style.display = 'flex';
+    }));
+
+    on(lightbox, 'click', e => { if (e.target !== lightImg) lightbox.style.display = 'none'; });
+    on(document, 'keydown', e => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
   }
 
   /* ===================== MENU MOBILE ===================== */
@@ -119,10 +105,9 @@
 
     on(toggle, 'click', () => {
       const open = menu.classList.toggle('active');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.textContent = open ? '✕' : '☰';
       topbar.classList.toggle('menu-open', open);
-      if (typeof updateOverlayCb === 'function') updateOverlayCb();
+      if (updateOverlayCb) updateOverlayCb();
     });
 
     qsa('.menu a').forEach(a => on(a, 'click', () => {
@@ -130,11 +115,11 @@
       menu.classList.remove('active');
       toggle.textContent = '☰';
       topbar.classList.remove('menu-open');
-      if (wasOpen && typeof updateOverlayCb === 'function') updateOverlayCb();
+      if (wasOpen && updateOverlayCb) updateOverlayCb();
     }));
   }
 
-  /* ===================== HEADER — FIXO E ESCONDER ===================== */
+  /* ===================== HEADER (FIXO + ESCONDER AO DESCER) ===================== */
   function initTopbar() {
     const topbar = qs('.topbar');
     const hero = qs('.hero');
@@ -180,6 +165,7 @@
         if (hideTimer) clearTimeout(hideTimer);
         hideTimer = setTimeout(() => topbar.classList.remove('is-hiding'), HIDE_MS);
       }
+
       lastY = y;
       updateOverlay();
     }
@@ -187,11 +173,10 @@
     on(window, 'scroll', onScroll, { passive: true });
     on(window, 'resize', updateOverlay);
     on(window, 'load', updateOverlay);
-
     initMobileMenu(updateOverlay);
   }
 
-  /* ===================== REDES SOCIAIS (Footer) ===================== */
+  /* ===================== REDES SOCIAIS (após testemunhos) ===================== */
   function addSocialRow() {
     if (qs('.social-row')) return;
     const wrap = document.createElement('div');
@@ -203,11 +188,14 @@
       <a class="social-link" href="https://www.instagram.com/QuintaDosAvosLourenco" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
         <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5A5.5 5.5 0 116.5 13 5.5 5.5 0 0112 7.5zm0 2A3.5 3.5 0 1015.5 13 3.5 3.5 0 0012 9.5zm5.75-3a1.25 1.25 0 11-1.25 1.25A1.25 1.25 0 0117.75 6.5z"/></svg>
       </a>`;
-    const footer = qs('.footer') || document.body;
-    footer.appendChild(wrap);
+
+    // Coloca logo após os testemunhos
+    const slider = qs('#testemunhos .testemunhos-slider');
+    if (slider) slider.insertAdjacentElement('afterend', wrap);
+    else document.body.appendChild(wrap);
   }
 
-  /* ===================== BOOT ===================== */
+  /* ===================== INICIALIZAÇÃO ===================== */
   on(document, 'DOMContentLoaded', () => {
     renderTestemunhos();
     initSlider();
