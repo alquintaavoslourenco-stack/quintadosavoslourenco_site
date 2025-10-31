@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — APP.JS
+   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final 2025)
    ========================================================== */
 (() => {
   'use strict';
@@ -25,7 +25,6 @@
     const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
     if (!sliderEl) return;
 
-    // cria .dots se não existir
     let dotsEl = sliderEl.querySelector('.dots');
     if (!dotsEl) {
       dotsEl = document.createElement('div');
@@ -33,7 +32,6 @@
       sliderEl.appendChild(dotsEl);
     }
 
-    // evita duplicar slides
     if (sliderEl.querySelectorAll('.slide').length === 0) {
       TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
         const div = document.createElement('div');
@@ -48,7 +46,7 @@
     }
   }
 
-  /* ===================== Slider (infinito) ===================== */
+  /* ===================== Slider infinito ===================== */
   function initSlider() {
     const slider = qs('.testemunhos-slider');
     if (!slider) return;
@@ -61,7 +59,6 @@
     let slideIndex = 0;
     let autoPlay = null;
 
-    // (Re)cria pontos
     if (dotsContainer) {
       dotsContainer.innerHTML = '';
       slides.forEach((_, i) => {
@@ -75,7 +72,6 @@
     }
 
     function showSlide(index) {
-      // índice circular (loop infinito)
       slideIndex = (index + slides.length) % slides.length;
       slides.forEach(s => s.classList.remove('active'));
       dots.forEach(d => d.classList.remove('active'));
@@ -90,23 +86,15 @@
     const startAutoPlay = () => { stopAutoPlay(); if (!reduceMotion) autoPlay = setInterval(nextSlide, INTERVAL); };
     const stopAutoPlay  = () => { if (autoPlay) { clearInterval(autoPlay); autoPlay = null; } };
 
-    // pausa/resume no tab oculto
     on(document, 'visibilitychange', () => { if (document.hidden) stopAutoPlay(); else startAutoPlay(); });
-
-    // hover/touch control
     on(slider, 'mouseenter', stopAutoPlay);
     on(slider, 'mouseleave', startAutoPlay);
     on(slider, 'touchstart', stopAutoPlay, { passive: true });
     on(slider, 'touchend',   startAutoPlay, { passive: true });
-
-    // teclado
-    on(slider, 'keydown', (e) => {
-      if (e.key === 'ArrowRight') nextSlide();
-      if (e.key === 'ArrowLeft')  showSlide(slideIndex - 1);
-    });
+    on(slider, 'keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft')  showSlide(slideIndex - 1); });
 
     showSlide(0);
-    startAutoPlay(); // ➜ nunca “pára no fim”; o índice é circular
+    startAutoPlay();
   }
 
   /* ===================== Galeria — Lightbox ===================== */
@@ -128,7 +116,6 @@
       on(img, 'click', () => {
         lightboxImg.src = img.getAttribute('src');
         lightbox.style.display = 'flex';
-        lightbox.focus?.();
       });
     });
 
@@ -136,12 +123,17 @@
     on(document, 'keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
   }
 
-  /* ===================== Header overlay sobre o HERO ===================== */
-  function initTopbarOverlay() {
+  /* ===================== Menu + Header ===================== */
+  function initTopbar() {
     const topbar = qs('.topbar');
     const hero   = qs('.hero');
     const menu   = qs('.menu');
-    if (!topbar || !hero) return;
+    const toggle = qs('.menu-toggle');
+    if (!topbar) return;
+
+    let lastY = window.scrollY;
+    const SHOW_AT_TOP = 10;
+    const DELTA = 6;
 
     const setOverlay = (isOverlay) => {
       if (isOverlay) {
@@ -153,131 +145,87 @@
       }
     };
 
-    // Decide estado pelo scroll/posição do hero
-    const applyByScroll = () => {
+    const updateOverlay = () => {
       const menuIsOpen = menu && menu.classList.contains('active');
       if (menuIsOpen) { setOverlay(false); return; }
-      const rect = hero.getBoundingClientRect();
-      // hero visível se parte do topo estiver no viewport
-      const heroVisible = rect.bottom > 80 && rect.top < (window.innerHeight * 0.9);
-      setOverlay(heroVisible);
+      const needSolid = !hero || window.scrollY > 40;
+      setOverlay(!needSolid ? true : false);
     };
 
-    // IntersectionObserver para suavidade
-    const io = new IntersectionObserver((entries) => {
-      const entry = entries[0];
-      const menuIsOpen = menu && menu.classList.contains('active');
-      if (menuIsOpen) { setOverlay(false); return; }
-      setOverlay(entry.isIntersecting);
-    }, { threshold: 0.1 });
+    const setTopbarHeight = () => {
+      const h = topbar.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--topbar-h', `${h}px`);
+    };
 
-    io.observe(hero);
+    // Mostrar transparente sobre o hero
+    on(window, 'scroll', updateOverlay, { passive: true });
+    on(window, 'resize', setTopbarHeight);
 
-    // Fallback inicial e em scroll
-    on(window, 'load', applyByScroll, { passive:true });
-    on(window, 'scroll', applyByScroll, { passive:true });
+    // Esconder ao rolar para baixo, mostrar só no topo
+    on(window, 'scroll', () => {
+      const y = window.scrollY || 0;
+      const dy = y - lastY;
 
-    // Reage ao evento personalizado do menu mobile
-    on(document, 'menu:state', (e) => {
-      const open = !!(e && e.detail && e.detail.open);
-      if (open) setOverlay(false);
-      else applyByScroll();
-    });
-  }
-
-  /* ===================== Menu Mobile ===================== */
-  function initMobileMenu() {
-    const menu   = qs('.menu');
-    const toggle = qs('.menu-toggle');
-    if (!menu || !toggle) return;
-
-    on(toggle, 'click', () => {
-      const open = menu.classList.toggle('active');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.textContent = open ? '✕' : '☰';
-
-      // notifica overlay sobre o estado do menu
-      document.dispatchEvent(new CustomEvent('menu:state', { detail: { open } }));
-    });
-
-    qsa('.menu a').forEach(a => {
-      on(a, 'click', () => {
-        const wasOpen = menu.classList.contains('active');
-        menu.classList.remove('active');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.textContent = '☰';
-        if (wasOpen) {
-          document.dispatchEvent(new CustomEvent('menu:state', { detail: { open:false } }));
-        }
-      });
-    });
-
-    on(window, 'resize', () => {
-      if (window.innerWidth > 768) {
-        const wasOpen = menu.classList.contains('active');
-        menu.classList.remove('active');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.textContent = '☰';
-        if (wasOpen) {
-          document.dispatchEvent(new CustomEvent('menu:state', { detail: { open:false } }));
-        }
+      if (y <= SHOW_AT_TOP) {
+        topbar.classList.remove('is-hidden');
+      } else if (dy > DELTA) {
+        topbar.classList.add('is-hidden');
       }
+
+      lastY = y;
+    }, { passive: true });
+
+    // Menu mobile
+    if (toggle && menu) {
+      on(toggle, 'click', () => {
+        const open = menu.classList.toggle('active');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.textContent = open ? '✕' : '☰';
+        topbar.classList.toggle('menu-open', open);
+        updateOverlay();
+      });
+
+      qsa('.menu a').forEach(a => {
+        on(a, 'click', () => {
+          menu.classList.remove('active');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.textContent = '☰';
+          topbar.classList.remove('menu-open');
+          updateOverlay();
+        });
+      });
+    }
+
+    on(window, 'load', () => {
+      updateOverlay();
+      setTopbarHeight();
     });
   }
 
-  /* ===================== Redes sociais — injeta em todas as páginas ===================== */
+  /* ===================== Redes Sociais ===================== */
   function addSocialRow() {
-    // evita duplicações
     if (qs('.social-row')) return;
-
-    // cria o bloco
     const wrap = document.createElement('div');
     wrap.className = 'social-row';
-    wrap.setAttribute('aria-label', 'Siga-nos nas redes sociais');
     wrap.innerHTML = `
-      <a class="social-link" href="https://www.facebook.com/QuintaDosAvosLourenco" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M22 12.06C22 6.49 17.52 2 12 2S2 6.49 2 12.06c0 5.01 3.66 9.17 8.44 9.94v-7.03H7.9v-2.91h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.91h-2.33V22c4.78-.77 8.44-4.93 8.44-9.94z"/>
-        </svg>
+      <a class="social-link" href="https://www.facebook.com/QuintaDosAvosLourenco" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 12.06C22 6.49 17.52 2 12 2S2 6.49 2 12.06c0 5.01 3.66 9.17 8.44 9.94v-7.03H7.9v-2.91h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.91h-2.33V22c4.78-.77 8.44-4.93 8.44-9.94z"/></svg>
       </a>
-      <a class="social-link" href="https://www.instagram.com/QuintaDosAvosLourenco" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm5.75-3a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 17.75 6.5z"/>
-        </svg>
+      <a class="social-link" href="https://www.instagram.com/QuintaDosAvosLourenco" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm5.75-3a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 17.75 6.5z"/></svg>
       </a>
     `;
-
-    // 1) Homepage: insere logo a seguir ao slider de testemunhos
-    const slider = qs('#testemunhos .testemunhos-slider');
-    if (slider) {
-      slider.insertAdjacentElement('afterend', wrap);
-      return;
-    }
-
-    // 2) Outras páginas: tenta dentro do main, senão no fim da última .section
-    const mainContainer = qs('main.section .container') || qs('main.section');
-    if (mainContainer) {
-      mainContainer.appendChild(wrap);
-      return;
-    }
-
     const lastSection = qsa('.section').pop();
-    if (lastSection) {
-      lastSection.appendChild(wrap);
-      return;
-    }
-
-    // 3) Fallback
-    document.body.appendChild(wrap);
+    if (lastSection) lastSection.appendChild(wrap);
+    else document.body.appendChild(wrap);
   }
 
   /* ===================== Boot ===================== */
   on(document, 'DOMContentLoaded', () => {
     renderTestemunhos();
-    initSlider();         // loop infinito
+    initSlider();
     initLightbox();
-    initMobileMenu();     // controla menu + emite "menu:state"
-    initTopbarOverlay();  // torna header transparente sobre hero e sólido ao rolar
-    addSocialRow();       // ícones FB/IG
+    initTopbar();
+    addSocialRow();
   });
 })();
