@@ -1,92 +1,89 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final)
+   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final completa)
    ========================================================== */
-(function () {
+(() => {
   'use strict';
 
-  /* Helpers */
-  function qs(sel, root) { return (root || document).querySelector(sel); }
-  function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
-  function on(el, ev, fn, opts) { if (el) el.addEventListener(ev, fn, opts || false); }
+  /* ======== Helpers ======== */
+  const qs  = (sel, root=document) => root.querySelector(sel);
+  const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
   /* ===================== DADOS — TESTEMUNHOS ===================== */
-  var TESTEMUNHOS_AIRBNB = [
-    { texto: "Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!", autor: "— Laura, Airbnb (julho 2025)" },
-    { texto: "Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.", autor: "— Tisha, Airbnb (maio 2025)" },
-    { texto: "Casa incrivelmente equipada: beleza do antigo com comodidades do presente. Vista incrível. Excelente estadia.", autor: "— Joana, Airbnb (abril 2025)" },
-    { texto: "Estadia maravilhosa: casa muito limpa, rústica e acolhedora com comodidades modernas. Anfitrião sempre disponível.", autor: "— Beatriz, Airbnb (abril 2025)" },
-    { texto: "Refúgio na serra para descansar. Pequeno-almoço divinal e anfitriões 24/7. Casa ampla e exterior impecável.", autor: "— Patrícia, Airbnb (fevereiro 2025)" },
-    { texto: "Propriedade incrível: muito limpa e confortável. Cão e gato felizes. Amei o burro Uva e os porcos Elvis e Shakira.", autor: "— Juliane, Airbnb (setembro 2025)" },
-    { texto: "Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.", autor: "— Diogo, Airbnb (março 2025)" }
+  const TESTEMUNHOS_AIRBNB = [
+    { texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`, autor: `— Laura, Airbnb (julho 2025)` },
+    { texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.`, autor: `— Tisha, Airbnb (maio 2025)` },
+    { texto: `Casa incrivelmente equipada: beleza do antigo com comodidades do presente. Vista incrível. Excelente estadia.`, autor: `— Joana, Airbnb (abril 2025)` },
+    { texto: `Estadia maravilhosa: casa muito limpa, rústica e acolhedora com comodidades modernas. Anfitrião sempre disponível.`, autor: `— Beatriz, Airbnb (abril 2025)` },
+    { texto: `Refúgio na serra para descansar. Pequeno-almoço divinal e anfitriões 24/7. Casa ampla e exterior impecável.`, autor: `— Patrícia, Airbnb (fevereiro 2025)` },
+    { texto: `Propriedade incrível: muito limpa e confortável. Cão e gato felizes. Amei o burro Uva e os porcos Elvis e Shakira.`, autor: `— Juliane, Airbnb (setembro 2025)` },
+    { texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.`, autor: `— Diogo, Airbnb (março 2025)` }
   ];
 
-  /* ===================== RENDER — TESTEMUNHOS ===================== */
+  /* ===================== RENDERIZA TESTEMUNHOS ===================== */
   function renderTestemunhos() {
-    var sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
+    const sliderEl = qs('.testemunhos-slider');
     if (!sliderEl) return;
 
-    // Cria slides apenas se ainda não existirem
-    if (sliderEl.querySelectorAll('.slide').length === 0) {
-      TESTEMUNHOS_AIRBNB.forEach(function (item, idx) {
-        var div = document.createElement('div');
+    // Cria slides se não existirem
+    if (!sliderEl.querySelector('.slide')) {
+      TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
+        const div = document.createElement('div');
         div.className = 'slide' + (idx === 0 ? ' active' : '');
-        div.innerHTML =
-          '<p style="color:#FFD700; font-size:20px; margin-bottom:6px;">★★★★★</p>' +
-          '<p><em>' + item.texto + '</em></p>' +
-          '<p class="note">' + item.autor + '</p>';
+        div.innerHTML = `
+          <p style="color:#FFD700; font-size:20px; margin-bottom:6px;">★★★★★</p>
+          <p><em>${item.texto}</em></p>
+          <p class="note">${item.autor}</p>
+        `;
         sliderEl.appendChild(div);
       });
     }
 
-    // Cria dots (pontinhos) se não existirem
-    var dotsEl = sliderEl.querySelector('.dots');
+    // Cria bolinhas (dots)
+    let dotsEl = sliderEl.querySelector('.dots');
     if (!dotsEl) {
       dotsEl = document.createElement('div');
       dotsEl.className = 'dots';
-      TESTEMUNHOS_AIRBNB.forEach(function () {
-        var dot = document.createElement('span');
+      TESTEMUNHOS_AIRBNB.forEach(() => {
+        const dot = document.createElement('span');
         dotsEl.appendChild(dot);
       });
       sliderEl.appendChild(dotsEl);
     }
   }
 
-  /* ===================== SLIDER — TESTEMUNHOS ===================== */
+  /* ===================== SLIDER (testemunhos) ===================== */
   function initSlider() {
-    var slider = qs('.testemunhos-slider');
+    const slider = qs('.testemunhos-slider');
     if (!slider) return;
 
-    var slides = qsa('.slide', slider);
-    var dots = qsa('.dots span', slider);
+    const slides = qsa('.slide', slider);
+    const dots = qsa('.dots span', slider);
     if (!slides.length || !dots.length) return;
 
-    var idx = 0;
-    function show(n) {
-      idx = (n + slides.length) % slides.length;
-      slides.forEach(function (s) { s.classList.remove('active'); });
-      dots.forEach(function (d) { d.classList.remove('active'); });
-      slides[idx].classList.add('active');
-      if (dots[idx]) dots[idx].classList.add('active');
-    }
+    let i = 0;
+    const show = (n) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      slides[i].classList.add('active');
+      if (dots[i]) dots[i].classList.add('active');
+    };
 
-    dots.forEach(function (d, i) { on(d, 'click', function () { show(i); }); });
+    dots.forEach((d, idx) => on(d, 'click', () => show(idx)));
 
-    var reduceMotion = false;
-    try { reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-    var INTERVAL = 6000, timer = null;
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    const INTERVAL = 6000;
+    let timer = null;
+    const start = () => { stop(); if (!reduceMotion) timer = setInterval(() => show(i + 1), INTERVAL); };
+    const stop = () => { if (timer) clearInterval(timer); };
 
-    function start() { stop(); if (!reduceMotion) timer = setInterval(function () { show(idx + 1); }, INTERVAL); }
-    function stop() { if (timer) { clearInterval(timer); timer = null; } }
-
-    on(document, 'visibilitychange', function () { if (document.hidden) stop(); else start(); });
+    on(document, 'visibilitychange', () => { if (document.hidden) stop(); else start(); });
     on(slider, 'mouseenter', stop);
     on(slider, 'mouseleave', start);
     on(slider, 'touchstart', stop, { passive: true });
     on(slider, 'touchend', start, { passive: true });
-    on(slider, 'keydown', function (e) {
-      if (e.key === 'ArrowRight') show(idx + 1);
-      if (e.key === 'ArrowLeft') show(idx - 1);
-    });
+    on(slider, 'keydown', e => { if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
 
     show(0);
     start();
@@ -94,158 +91,128 @@
 
   /* ===================== GALERIA — LIGHTBOX ===================== */
   function initLightbox() {
-    var imgs = qsa('.gallery img');
+    const imgs = qsa('.gallery img');
     if (!imgs.length) return;
 
-    var lightbox = document.createElement('div');
+    const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
-    lightbox.setAttribute('role', 'dialog');
-    lightbox.setAttribute('aria-modal', 'true');
-
-    var lightImg = document.createElement('img');
+    const lightImg = document.createElement('img');
     lightbox.appendChild(lightImg);
     document.body.appendChild(lightbox);
 
-    imgs.forEach(function (img) {
-      img.style.cursor = 'pointer';
-      on(img, 'click', function () {
-        var src = img.getAttribute('src');
-        if (!src) return;
-        lightImg.src = src;
+    imgs.forEach(img => {
+      on(img, 'click', () => {
+        lightImg.src = img.src;
         lightbox.style.display = 'flex';
       });
     });
-
-    on(lightbox, 'click', function (e) {
-      if (e.target !== lightImg) lightbox.style.display = 'none';
-    });
-    on(document, 'keydown', function (e) {
-      if (e.key === 'Escape') lightbox.style.display = 'none';
-    });
+    on(lightbox, 'click', (e) => { if (e.target !== lightImg) lightbox.style.display = 'none'; });
+    on(document, 'keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
   }
 
   /* ===================== MENU MOBILE ===================== */
   function initMobileMenu(updateOverlayCb) {
-    var menu = qs('.menu');
-    var toggle = qs('.menu-toggle');
-    var topbar = qs('.topbar');
+    const menu = qs('.menu');
+    const toggle = qs('.menu-toggle');
+    const topbar = qs('.topbar');
     if (!menu || !toggle || !topbar) return;
 
-    on(toggle, 'click', function () {
-      var open = menu.classList.toggle('active');
+    on(toggle, 'click', () => {
+      const open = menu.classList.toggle('active');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.textContent = open ? '✕' : '☰';
       topbar.classList.toggle('menu-open', open);
       if (typeof updateOverlayCb === 'function') updateOverlayCb();
     });
 
-    qsa('.menu a').forEach(function (a) {
-      on(a, 'click', function () {
-        var wasOpen = menu.classList.contains('active');
-        menu.classList.remove('active');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.textContent = '☰';
-        topbar.classList.remove('menu-open');
-        if (wasOpen && typeof updateOverlayCb === 'function') updateOverlayCb();
-      });
-    });
-
-    on(window, 'resize', function () {
-      if (window.innerWidth > 768 && menu.classList.contains('active')) {
-        menu.classList.remove('active');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.textContent = '☰';
-        topbar.classList.remove('menu-open');
-        if (typeof updateOverlayCb === 'function') updateOverlayCb();
-      }
-    });
+    qsa('.menu a').forEach(a => on(a, 'click', () => {
+      const wasOpen = menu.classList.contains('active');
+      menu.classList.remove('active');
+      toggle.textContent = '☰';
+      topbar.classList.remove('menu-open');
+      if (wasOpen && typeof updateOverlayCb === 'function') updateOverlayCb();
+    }));
   }
 
-  /* ===================== HEADER (FIXO + OVERLAY + ESCONDER) ===================== */
+  /* ===================== HEADER — FIXO E ESCONDER ===================== */
   function initTopbar() {
-    var topbar = qs('.topbar');
-    var hero = qs('.hero');
-    var menu = qs('.menu');
+    const topbar = qs('.topbar');
+    const hero = qs('.hero');
+    const menu = qs('.menu');
     if (!topbar) return;
 
-    var lastY = window.scrollY || 0;
-    var SHOW_AT_TOP = 10;
-    var DELTA = 6;
-    var HIDE_MS = 250; // deve bater com o CSS (.25s)
-    var hideTimer = null;
+    let lastY = window.scrollY;
+    const SHOW_AT_TOP = 10;
+    const DELTA = 6;
+    const HIDE_MS = 250;
+    let hideTimer = null;
 
     function setOverlay(isOverlay) {
-      if (isOverlay) {
-        topbar.classList.add('is-overlay');
-        topbar.classList.remove('is-solid');
-      } else {
-        topbar.classList.remove('is-overlay');
-        topbar.classList.add('is-solid');
-      }
+      if (isOverlay) { topbar.classList.add('is-overlay'); topbar.classList.remove('is-solid'); }
+      else { topbar.classList.remove('is-overlay'); topbar.classList.add('is-solid'); }
     }
 
-    function heroBehindHeader() {
+    function heroVisible() {
       if (!hero) return false;
-      var rect = hero.getBoundingClientRect();
-      return rect.bottom > 60 && rect.top < (window.innerHeight * 0.9);
+      const rect = hero.getBoundingClientRect();
+      return rect.bottom > 60 && rect.top < window.innerHeight * 0.9;
     }
 
     function updateOverlay() {
-      var menuOpen = menu && menu.classList.contains('active');
-      if (menuOpen) { setOverlay(false); return; }
-
-      var isHiding = topbar.classList.contains('is-hidden') || topbar.classList.contains('is-hiding');
-      var nearHero = heroBehindHeader();
-
-      // Evita “flash” branco: se está a esconder e ainda sobre o hero → manter transparente
-      if (isHiding && nearHero) { setOverlay(true); return; }
-
-      var needSolid = !hero || (window.scrollY > 40 && !nearHero);
-      setOverlay(!needSolid ? true : false);
+      const menuOpen = menu?.classList.contains('active');
+      if (menuOpen) return setOverlay(false);
+      const isHiding = topbar.classList.contains('is-hidden') || topbar.classList.contains('is-hiding');
+      const nearHero = heroVisible();
+      if (isHiding && nearHero) return setOverlay(true);
+      const needSolid = !hero || (window.scrollY > 40 && !nearHero);
+      setOverlay(!needSolid);
     }
 
-    function setTopbarHeightVar() {
-      var h = topbar.getBoundingClientRect().height;
-      document.documentElement.style.setProperty('--topbar-h', h + 'px');
-    }
-
-    function onScrollHideShow() {
-      var y = window.scrollY || 0;
-      var dy = y - lastY;
+    function onScroll() {
+      const y = window.scrollY;
+      const dy = y - lastY;
 
       if (y <= SHOW_AT_TOP) {
-        // Topo: mostra e limpa estados
-        topbar.classList.remove('is-hidden');
-        topbar.classList.remove('is-hiding');
-        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
-      } else if (dy > DELTA) {
-        // A descer: esconder (apenas se ainda não estiver escondido)
-        if (!topbar.classList.contains('is-hidden')) {
-          topbar.classList.add('is-hiding');
-          topbar.classList.add('is-hidden');
-          if (hideTimer) clearTimeout(hideTimer);
-          hideTimer = setTimeout(function () {
-            topbar.classList.remove('is-hiding');
-            updateOverlay();
-          }, HIDE_MS);
-        }
+        topbar.classList.remove('is-hidden', 'is-hiding');
+        if (hideTimer) clearTimeout(hideTimer);
+      } else if (dy > DELTA && !topbar.classList.contains('is-hidden')) {
+        topbar.classList.add('is-hiding', 'is-hidden');
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => topbar.classList.remove('is-hiding'), HIDE_MS);
       }
       lastY = y;
+      updateOverlay();
     }
 
-    on(window, 'scroll', function () { onScrollHideShow(); updateOverlay(); }, { passive: true });
-    on(window, 'resize', function () { setTopbarHeightVar(); updateOverlay(); });
-    on(window, 'load', function () { setTopbarHeightVar(); updateOverlay(); });
+    on(window, 'scroll', onScroll, { passive: true });
+    on(window, 'resize', updateOverlay);
+    on(window, 'load', updateOverlay);
 
-    // Integra com menu mobile
     initMobileMenu(updateOverlay);
   }
 
+  /* ===================== REDES SOCIAIS (Footer) ===================== */
+  function addSocialRow() {
+    if (qs('.social-row')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'social-row';
+    wrap.innerHTML = `
+      <a class="social-link" href="https://www.facebook.com/QuintaDosAvosLourenco" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 12.06C22 6.49 17.52 2 12 2S2 6.49 2 12.06c0 5.01 3.66 9.17 8.44 9.94v-7.03H7.9v-2.91h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.91h-2.33V22c4.78-.77 8.44-4.93 8.44-9.94z"/></svg>
+      </a>
+      <a class="social-link" href="https://www.instagram.com/QuintaDosAvosLourenco" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5A5.5 5.5 0 116.5 13 5.5 5.5 0 0112 7.5zm0 2A3.5 3.5 0 1015.5 13 3.5 3.5 0 0012 9.5zm5.75-3a1.25 1.25 0 11-1.25 1.25A1.25 1.25 0 0117.75 6.5z"/></svg>
+      </a>`;
+    const footer = qs('.footer') || document.body;
+    footer.appendChild(wrap);
+  }
+
   /* ===================== BOOT ===================== */
-  on(document, 'DOMContentLoaded', function () {
-    try { renderTestemunhos(); } catch (e) { /* silencioso */ }
-    try { initSlider(); } catch (e) { /* silencioso */ }
-    try { initLightbox(); } catch (e) { /* silencioso */ }
-    try { initTopbar(); } catch (e) { /* silencioso */ }
+  on(document, 'DOMContentLoaded', () => {
+    renderTestemunhos();
+    initSlider();
+    initLightbox();
+    initTopbar();
+    addSocialRow();
   });
 })();
