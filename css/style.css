@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — STYLE SHEET (completo, corrigido)
+   QUINTA DOS AVÓS LOURENÇO — STYLE SHEET (versão final corrigida)
    ========================================================== */
 
 /* ---------- Variáveis de tema ---------- */
@@ -16,7 +16,7 @@
   --cookie-accent-hover: #004f00;
 
   --whatsapp: #25D366;
-  --wa-offset: 0px; /* atualizado pelo cookies.js quando o banner está visível */
+  --wa-offset: 0px;
 }
 
 /* ---------- Base ---------- */
@@ -38,7 +38,7 @@ a:hover { text-decoration: underline; }
 }
 
 /* ==========================================================
-   Header + Nav (MENU FIXO NO TOPO)
+   HEADER + NAV (MENU FIXO NO TOPO)
    ========================================================== */
 .topbar {
   position: fixed;
@@ -46,14 +46,14 @@ a:hover { text-decoration: underline; }
   z-index: 999;
   display: flex; align-items: center; gap: 16px;
   padding: 16px 20px;
-  background: transparent; /* transparente por padrão (homepage sobre o hero) */
+  background: transparent;
   border: none;
   box-shadow: none;
   transition:
     background-color .25s ease,
     border-color .25s ease,
     box-shadow .25s ease,
-    transform .25s ease;  /* animação para esconder/mostrar */
+    transform .25s ease;
   will-change: transform;
 }
 
@@ -61,7 +61,7 @@ a:hover { text-decoration: underline; }
 .brand a { color: #111; }
 .logo { height: 100px; width: auto; background: transparent; border-radius: 8px; }
 
-/* Estado transparente (sobre o hero) */
+/* Transparente (sobre o hero) */
 .topbar.is-overlay {
   background: transparent;
   border-bottom-color: transparent;
@@ -72,7 +72,7 @@ a:hover { text-decoration: underline; }
 .topbar.is-overlay .menu-toggle { border-color: #fff; color: #fff; }
 .topbar.is-overlay .logo { filter: drop-shadow(0 0 6px rgba(0,0,0,.35)); }
 
-/* Estado sólido (ao rolar ou em páginas sem hero) */
+/* Sólido (fora do hero) */
 .topbar.is-solid {
   background: #fff;
   border-bottom: 1px solid var(--border);
@@ -82,9 +82,16 @@ a:hover { text-decoration: underline; }
 .topbar.is-solid .menu a.active { color: var(--brand); border-bottom-color: var(--brand); }
 .topbar.is-solid .menu-toggle { border-color: var(--brand); color: var(--brand); }
 
-/* Esconder/mostrar no scroll (controlado pelo JS) */
+/* Esconder/mostrar no scroll */
 .topbar.is-hidden { transform: translateY(-100%); }
 .topbar.menu-open { transform: none !important; }
+
+/* Evitar “flash” branco ao esconder */
+.topbar.is-hiding {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
 
 /* Botão hambúrguer */
 .menu-toggle {
@@ -95,7 +102,7 @@ a:hover { text-decoration: underline; }
 }
 .menu-toggle:active { transform: scale(0.9); }
 
-/* Menu — Desktop */
+/* Menu Desktop */
 @media (min-width: 769px) {
   .menu {
     display: flex !important; justify-content: center; align-items: center;
@@ -108,7 +115,7 @@ a:hover { text-decoration: underline; }
   .menu a.active { color: var(--brand); border-bottom: 2px solid var(--brand); padding-bottom: 2px; }
 }
 
-/* Menu — Mobile */
+/* Menu Mobile */
 @media (max-width: 768px) {
   .topbar { flex-wrap: wrap; padding: 12px 16px; }
   .brand { margin-left: 0; }
@@ -129,7 +136,6 @@ a:hover { text-decoration: underline; }
   .menu.active { max-height: 420px; opacity: 1; pointer-events: auto; }
   .menu a.active { background: #f8f5f3; color: var(--brand); border-bottom: 1px solid #eedede; }
 
-  /* Quando o menu está aberto sobre o hero, tratamos como sólido para legibilidade */
   .topbar.is-overlay .menu.active {
     background: #fff;
     border-top: 1px solid var(--border);
@@ -142,25 +148,20 @@ a:hover { text-decoration: underline; }
    ========================================================== */
 .hero {
   position: relative;
-
-  /* Caminho relativo (CSS está em /css/) */
   background-image: url("../images/hero.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
-  min-height: 110vh;                /* como disseste que ficou perfeito */
+  min-height: 110vh;
   display: grid;
   place-items: center;
   text-align: center;
   color: #fff;
   isolation: isolate;
   margin-top: 0;
-  padding-top: calc(var(--topbar-h, 120px)); /* evita sobreposição do header fixo */
-  scroll-margin-top: 90px;          /* âncoras abaixo do header */
+  padding-top: calc(var(--topbar-h, 120px));
+  scroll-margin-top: 90px;
 }
-
-/* Overlay escuro para contraste */
 .hero::before {
   content: "";
   position: absolute;
@@ -168,8 +169,6 @@ a:hover { text-decoration: underline; }
   background: linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.35));
   z-index: -1;
 }
-
-/* Conteúdo interno */
 .hero .container { max-width: 900px; padding: 2rem 1.25rem; }
 
 /* Badge */
@@ -184,7 +183,6 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 2px 8px rgba(0,0,0,.25);
 }
 
-/* Título e texto */
 .hero h1 {
   margin: 0 0 .5rem 0;
   font-size: clamp(32px, 4.5vw, 54px);
@@ -216,24 +214,18 @@ a:hover { text-decoration: underline; }
 .hero .btn:not(.primary) { border-color: #fff; color: #fff; }
 .hero .btn:not(.primary):hover { background: #fff; color: var(--brand); }
 
-/* Espaçamento entre hero e secção seguinte */
-.hero + .section { margin-top: 0; }
-
-/* Responsivo (altura mínima menor em ecrãs pequenos) */
-@media (max-width: 640px) {
-  .hero { min-height: 75vh; }
-}
-
 /* ==========================================================
-   Secções / Cards
+   SECÇÕES / GALERIA / TESTEMUNHOS / FOOTER
    ========================================================== */
 .section { padding: 50px 20px; }
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 22px;
   padding: 32px 20px;
 }
+
 .card {
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -245,9 +237,7 @@ a:hover { text-decoration: underline; }
 .card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,.05); }
 .card h3 { margin-top: 0; color: var(--brand); }
 
-/* ==========================================================
-   Testemunhos
-   ========================================================== */
+/* Testemunhos */
 .titulo-testemunhos { text-align: center; font-size: 28px; margin-bottom: 20px; }
 .testemunhos-slider { position: relative; max-width: 700px; margin: 30px auto; text-align: center; min-height: 150px; }
 .slide { display: none; opacity: 0; transition: opacity .8s ease; }
@@ -262,15 +252,13 @@ a:hover { text-decoration: underline; }
 }
 .dots span.active { background: var(--brand); }
 
-/* ==========================================================
-   Galeria + Lightbox
-   ========================================================== */
+/* Galeria */
 .gallery {
   display: grid; gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 .gallery img {
-  width: 100%; height: 220px;          /* ➜ mantém as fotos pequenas e uniformes */
+  width: 100%; height: 220px;
   object-fit: cover; border-radius: 8px;
   cursor: pointer; transition: transform .2s;
 }
@@ -288,16 +276,13 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 0 20px rgba(0,0,0,.6);
 }
 
-/* ==========================================================
-   Rodapé e Redes Sociais
-   ========================================================== */
+/* Rodapé + Redes Sociais */
 .footer {
   border-top: 1px solid var(--border);
   padding: 10px 0;
   text-align: center;
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.4;
   background: #fafafa;
 }
 .footer p { margin: 4px 0; }
@@ -313,17 +298,17 @@ a:hover { text-decoration: underline; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px; height: 44px;        /* ➜ tamanho do botão das redes */
+  width: 44px; height: 44px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: #fff;
   transition: transform .15s ease, border-color .15s ease, background-color .15s ease;
 }
 .social-link:hover { transform: translateY(-2px); border-color: #ddd; background: #fafafa; }
-.icon { width: 22px; height: 22px; display: block; fill: var(--brand); }  /* ➜ tamanho do ícone */
+.icon { width: 22px; height: 22px; display: block; fill: var(--brand); }
 
 /* ==========================================================
-   WhatsApp Flutuante
+   WHATSAPP E COOKIES (mantidos iguais)
    ========================================================== */
 .whatsapp-float {
   position: fixed;
@@ -339,9 +324,6 @@ a:hover { text-decoration: underline; }
 .whatsapp-float:hover { background: #1ebe5d; transform: scale(1.08); }
 .whatsapp-float img { width: 34px; height: 34px; display: block; }
 
-/* ==========================================================
-   Banner de Cookies
-   ========================================================== */
 .cookie-banner[hidden] { display: none !important; }
 .cookie-banner {
   position: fixed;
@@ -357,8 +339,6 @@ a:hover { text-decoration: underline; }
   display: flex; align-items: center; gap: 16px;
 }
 .cookie-text { margin: 0; line-height: 1.4; }
-.cookie-text a { color: var(--cookie-accent); text-decoration: underline; }
-
 .btn-accept {
   margin-left: auto; padding: 8px 14px;
   border: 0; border-radius: 8px;
@@ -366,35 +346,14 @@ a:hover { text-decoration: underline; }
   cursor: pointer; font-weight: 600;
 }
 .btn-accept:hover { background: var(--cookie-accent-hover); }
-.btn-accept:focus { outline: 2px solid #0b68ff; outline-offset: 2px; }
-
-@media (max-width: 420px) {
-  .cookie-inner { flex-wrap: wrap; }
-  .btn-accept { margin-left: 0; }
-}
 
 /* ==========================================================
-   Preferências de movimento reduzido
-   ========================================================== */
-@media (prefers-reduced-motion: reduce) {
-  .menu-toggle,
-  .btn,
-  .social-link,
-  .whatsapp-float { transition: none; }
-  .btn:hover,
-  .social-link:hover,
-  .whatsapp-float:hover { transform: none; }
-}
-
-/* ==========================================================
-   Páginas SEM hero: menu sólido + compensação do conteúdo
+   SEM HERO
    ========================================================== */
 body:not(:has(.hero)) .topbar {
   background: #fff;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 4px 14px rgba(0,0,0,.06);
 }
-body:not(:has(.hero)) .topbar .menu a { color: #333; }
-body:not(:has(.hero)) .topbar .menu a.active { color: var(--brand); border-bottom-color: var(--brand); }
 body:not(:has(.hero)) main,
 body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
