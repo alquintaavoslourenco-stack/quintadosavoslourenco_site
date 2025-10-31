@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final estável e fiel)
+   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final e testada)
    ========================================================== */
 (() => {
   'use strict';
@@ -20,10 +20,10 @@
     { texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.`, autor: `— Diogo, Airbnb (março 2025)` }
   ];
 
-  /* ===================== RENDERIZA TESTEMUNHOS (só na homepage) ===================== */
+  /* ===================== RENDERIZA TESTEMUNHOS (só homepage) ===================== */
   function renderTestemunhos() {
     const sliderEl = qs('#testemunhos .testemunhos-slider');
-    if (!sliderEl) return; // só existe na homepage
+    if (!sliderEl) return; // só na homepage
 
     if (!sliderEl.querySelector('.slide')) {
       TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
@@ -68,6 +68,7 @@
 
     const INTERVAL = 6000;
     let timer = setInterval(() => show(i + 1), INTERVAL);
+
     on(slider, 'mouseenter', () => clearInterval(timer));
     on(slider, 'mouseleave', () => timer = setInterval(() => show(i + 1), INTERVAL));
     show(0);
@@ -171,12 +172,13 @@
     initMobileMenu(updateOverlay);
   }
 
-  /* ===================== REDES SOCIAIS — EM TODAS AS PÁGINAS ===================== */
+  /* ===================== REDES SOCIAIS (todas as páginas) ===================== */
   function addSocialRow() {
     if (qs('.social-row')) return;
 
     const wrap = document.createElement('div');
     wrap.className = 'social-row';
+    wrap.style.marginBottom = '40px'; // afasta do rodapé
     wrap.innerHTML = `
       <a class="social-link" href="https://www.facebook.com/QuintaDosAvosLourenco" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
         <svg class="icon" viewBox="0 0 24 24"><path d="M22 12.06C22 6.49 17.52 2 12 2S2 6.49 2 12.06c0 5.01 3.66 9.17 8.44 9.94v-7.03H7.9v-2.91h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.91h-2.33V22c4.78-.77 8.44-4.93 8.44-9.94z"/></svg>
@@ -191,7 +193,7 @@
   }
 
   /* ===================== INICIALIZAÇÃO ===================== */
-  on(document, 'DOMContentLoaded', () => {
+  on(window, 'load', () => {
     renderTestemunhos();
     initSlider();
     initLightbox();
