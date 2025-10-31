@@ -1,5 +1,5 @@
 /* ==========================================================
-   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final revisada)
+   QUINTA DOS AVÓS LOURENÇO — APP.JS (versão final estável e fiel)
    ========================================================== */
 (() => {
   'use strict';
@@ -9,7 +9,7 @@
   const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
-  /* ===================== TESTEMUNHOS ===================== */
+  /* ===================== DADOS — TESTEMUNHOS ===================== */
   const TESTEMUNHOS_AIRBNB = [
     { texto: `Estadia perfeita: lugar lindo, casa impecável e anfitriões extremamente simpáticos. Levámos 5 patudos; adoraram o exterior e o A/C. Queremos voltar!`, autor: `— Laura, Airbnb (julho 2025)` },
     { texto: `Local perfeito para fugir à correria: comodidades excelentes e jardim fantástico. Animais felizes e pão quentinho no portão. Sentimo-nos em casa.`, autor: `— Tisha, Airbnb (maio 2025)` },
@@ -20,12 +20,11 @@
     { texto: `Anfitriões afáveis e sempre disponíveis. Casa bem equipada; exterior fantástico e cercado. Pequeno-almoço diário delicioso.`, autor: `— Diogo, Airbnb (março 2025)` }
   ];
 
-  /* ===================== RENDERIZA TESTEMUNHOS ===================== */
+  /* ===================== RENDERIZA TESTEMUNHOS (só na homepage) ===================== */
   function renderTestemunhos() {
-    const sliderEl = qs('#testemunhos .testemunhos-slider') || qs('.testemunhos-slider');
-    if (!sliderEl) return;
+    const sliderEl = qs('#testemunhos .testemunhos-slider');
+    if (!sliderEl) return; // só existe na homepage
 
-    // cria slides
     if (!sliderEl.querySelector('.slide')) {
       TESTEMUNHOS_AIRBNB.forEach((item, idx) => {
         const div = document.createElement('div');
@@ -39,7 +38,6 @@
       });
     }
 
-    // cria bolinhas (dots)
     if (!sliderEl.querySelector('.dots')) {
       const dots = document.createElement('div');
       dots.className = 'dots';
@@ -48,14 +46,14 @@
     }
   }
 
-  /* ===================== SLIDER DE TESTEMUNHOS ===================== */
+  /* ===================== SLIDER — TESTEMUNHOS ===================== */
   function initSlider() {
-    const slider = qs('.testemunhos-slider');
+    const slider = qs('#testemunhos .testemunhos-slider');
     if (!slider) return;
 
     const slides = qsa('.slide', slider);
     const dots = qsa('.dots span', slider);
-    if (!slides.length) return;
+    if (!slides.length || !dots.length) return;
 
     let i = 0;
     function show(n) {
@@ -63,14 +61,13 @@
       slides.forEach(s => s.classList.remove('active'));
       dots.forEach(d => d.classList.remove('active'));
       slides[i].classList.add('active');
-      if (dots[i]) dots[i].classList.add('active');
+      dots[i].classList.add('active');
     }
 
     dots.forEach((d, idx) => on(d, 'click', () => show(idx)));
 
     const INTERVAL = 6000;
     let timer = setInterval(() => show(i + 1), INTERVAL);
-
     on(slider, 'mouseenter', () => clearInterval(timer));
     on(slider, 'mouseleave', () => timer = setInterval(() => show(i + 1), INTERVAL));
     show(0);
@@ -156,7 +153,6 @@
     function onScroll() {
       const y = window.scrollY;
       const dy = y - lastY;
-
       if (y <= SHOW_AT_TOP) {
         topbar.classList.remove('is-hidden', 'is-hiding');
         if (hideTimer) clearTimeout(hideTimer);
@@ -165,7 +161,6 @@
         if (hideTimer) clearTimeout(hideTimer);
         hideTimer = setTimeout(() => topbar.classList.remove('is-hiding'), HIDE_MS);
       }
-
       lastY = y;
       updateOverlay();
     }
@@ -176,9 +171,10 @@
     initMobileMenu(updateOverlay);
   }
 
-  /* ===================== REDES SOCIAIS (após testemunhos) ===================== */
+  /* ===================== REDES SOCIAIS — EM TODAS AS PÁGINAS ===================== */
   function addSocialRow() {
     if (qs('.social-row')) return;
+
     const wrap = document.createElement('div');
     wrap.className = 'social-row';
     wrap.innerHTML = `
@@ -189,9 +185,8 @@
         <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5A5.5 5.5 0 116.5 13 5.5 5.5 0 0112 7.5zm0 2A3.5 3.5 0 1015.5 13 3.5 3.5 0 0012 9.5zm5.75-3a1.25 1.25 0 11-1.25 1.25A1.25 1.25 0 0117.75 6.5z"/></svg>
       </a>`;
 
-    // Coloca logo após os testemunhos
-    const slider = qs('#testemunhos .testemunhos-slider');
-    if (slider) slider.insertAdjacentElement('afterend', wrap);
+    const footer = qs('.footer');
+    if (footer) footer.insertAdjacentElement('beforebegin', wrap);
     else document.body.appendChild(wrap);
   }
 
