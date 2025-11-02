@@ -1,4 +1,4 @@
-// QUINTA DOS AVÓS LOURENÇO — cookies.js (força /cookies/ no "Saber mais")
+// QUINTA DOS AVÓS LOURENÇO — cookies.js (final fix /cookies/)
 (function () {
   const KEY = 'qdal-consent-v1';
 
@@ -24,42 +24,37 @@
     });
   };
 
-  // URL absoluto para a página de cookies (domínio próprio)
-  const ABS_COOKIES = window.location.origin + '/cookies/';
+  const ABS_COOKIES = `${window.location.origin}/cookies/`;
 
-  // Substitui o link por um novo nó (remove listeners antigos que possam redirecionar)
-  function replaceCookieLink() {
-    const oldLink = document.getElementById('cookie-more');
-    if (!oldLink) return null;
-
-    const newLink = document.createElement('a');
-    newLink.id = 'cookie-more';
-    newLink.href = ABS_COOKIES;           // URL absoluto
-    newLink.rel = 'nofollow noopener';
-    newLink.textContent = oldLink.textContent || 'Saber mais';
-
-    // Força a navegação e bloqueia outros handlers
-    newLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-      window.location.assign(ABS_COOKIES);
+  // Cria ou substitui o link Saber mais (sem listeners herdados)
+  function ensureCookieLink() {
+    const existing = document.getElementById('cookie-more');
+    if (!existing) return;
+    const cleanLink = existing.cloneNode(true);
+    cleanLink.href = ABS_COOKIES;
+    cleanLink.rel = 'nofollow noopener';
+    cleanLink.removeAttribute('onclick');
+    cleanLink.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      window.location.href = ABS_COOKIES;
     });
-
-    oldLink.replaceWith(newLink);
-    return newLink;
+    existing.replaceWith(cleanLink);
   }
 
-  // Captura cliques no "Saber mais" ANTES de qualquer outro script (fase de captura)
-  document.addEventListener('click', (e) => {
-    const target = e.target && (e.target.closest ? e.target.closest('#cookie-more') : null);
-    if (target) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-      window.location.assign(ABS_COOKIES);
-    }
-  }, true); // <- capture = true
+  // Captura qualquer clique no Saber mais (fase de captura)
+  document.addEventListener(
+    'click',
+    (e) => {
+      const a = e.target.closest?.('#cookie-more');
+      if (a) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window.location.href = ABS_COOKIES;
+      }
+    },
+    true
+  );
 
   const start = () => {
     const banner = document.getElementById('cookie-consent');
@@ -79,25 +74,31 @@
     } catch {}
 
     show(banner);
-    replaceCookieLink(); // garante link limpo
+    ensureCookieLink();
 
     // ESC aceita/fecha
     banner.addEventListener('keydown', (ev) => {
       if (ev.key === 'Escape' || ev.key === 'Esc') {
-        try { localStorage.setItem(KEY, 'true'); } catch {}
+        try {
+          localStorage.setItem(KEY, 'true');
+        } catch {}
         hide(banner);
-        banner.dispatchEvent(new CustomEvent('cookie-accepted'));
       }
     });
 
-    // Aceitar
-    btn.addEventListener('click', () => {
-      try { localStorage.setItem(KEY, 'true'); } catch {}
-      hide(banner);
-      banner.dispatchEvent(new CustomEvent('cookie-accepted'));
-    }, { once: true });
+    // Botão aceitar
+    btn.addEventListener(
+      'click',
+      () => {
+        try {
+          localStorage.setItem(KEY, 'true');
+        } catch {}
+        hide(banner);
+      },
+      { once: true }
+    );
 
-    // Ajustar offset em resize
+    // Ajusta offset em resize
     window.addEventListener('resize', () => {
       if (!banner.hasAttribute('hidden')) {
         const h = banner.getBoundingClientRect().height || 0;
@@ -112,16 +113,22 @@
     start();
   }
 
-  // Helpers
+  // Helpers no console
   window.qdalConsent = {
     reset() {
-      try { localStorage.removeItem(KEY); } catch {}
+      try {
+        localStorage.removeItem(KEY);
+      } catch {}
       const b = document.getElementById('cookie-consent');
       if (b) show(b);
-      replaceCookieLink();
+      ensureCookieLink();
     },
     accepted() {
-      try { return localStorage.getItem(KEY) === 'true'; } catch { return false; }
-    }
+      try {
+        return localStorage.getItem(KEY) === 'true';
+      } catch {
+        return false;
+      }
+    },
   };
 })();
