@@ -1,4 +1,4 @@
-// QUINTA DOS AVÓS LOURENÇO — cookies.js (versão acessível e refinada)
+// QUINTA DOS AVÓS LOURENÇO — cookies.js (versão final corrigida)
 (function () {
   const KEY = 'qdal-consent-v1'; // chave única do projeto
 
@@ -20,7 +20,7 @@
     banner.setAttribute('aria-live', 'polite');
     banner.focus();
 
-    // mede altura e ajusta botão WhatsApp
+    // mede a altura do banner e ajusta o WhatsApp
     requestAnimationFrame(() => {
       const h = banner.getBoundingClientRect().height || 0;
       setWaOffset(h + 12);
@@ -30,41 +30,41 @@
   const start = () => {
     const banner = document.getElementById('cookie-consent');
     const btn = document.getElementById('cookie-accept');
+    const link = document.getElementById('cookie-more');
     if (!banner || !btn) return;
 
-    // acessibilidade: banner com papel de diálogo
+    // acessibilidade
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-modal', 'true');
     banner.setAttribute('tabindex', '0');
 
-    // se já aceitou, não mostrar
+    // se já aceitou, esconder
     try {
       if (localStorage.getItem(KEY) === 'true') {
         hide(banner);
         return;
       }
-    } catch (e) { /* continua mesmo sem localStorage */ }
+    } catch (e) { /* ignora erros de localStorage */ }
 
     // mostrar banner
     show(banner);
 
-    // aceitar
+    // aceitar cookies
     btn.addEventListener('click', () => {
       try { localStorage.setItem(KEY, 'true'); } catch {}
       hide(banner);
       banner.dispatchEvent(new CustomEvent('cookie-accepted'));
     }, { once: true });
 
-    // tecla ESC = aceitar/fechar
-    banner.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Escape' || ev.key === 'Esc') {
-        try { localStorage.setItem(KEY, 'true'); } catch {}
-        hide(banner);
-        banner.dispatchEvent(new CustomEvent('cookie-accepted'));
-      }
-    });
+    // link “Saber mais” → abre página de cookies
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = '/cookies/';
+      });
+    }
 
-    // ajustar offset em resize
+    // ajustar offset do WhatsApp ao redimensionar
     window.addEventListener('resize', () => {
       if (!banner.hasAttribute('hidden')) {
         const h = banner.getBoundingClientRect().height || 0;
@@ -73,14 +73,13 @@
     });
   };
 
-  // iniciar quando o DOM estiver pronto
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
   } else {
     start();
   }
 
-  // helpers de debug no console
+  // helpers de teste no console
   window.qdalConsent = {
     reset() {
       try { localStorage.removeItem(KEY); } catch {}
