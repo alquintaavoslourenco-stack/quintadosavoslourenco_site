@@ -1,5 +1,15 @@
+# robots.txt — Quinta dos Avós Lourenço
+# Gerado automaticamente pelo build_sitemap.py
+
 User-agent: *
 Allow: /
 
+# ❌ Páginas que não devem ser indexadas
+Disallow: /cookies/
+Disallow: /politica-privacidade/
+Disallow: /termos-e-condicoes/
+Disallow: /404.html
+
+# 🗺️ Mapas do site (sitemap.xml + imagens)
 Sitemap: https://quintadosavoslourenco.pt/sitemap.xml
 Sitemap: https://quintadosavoslourenco.pt/sitemap-images.xml
