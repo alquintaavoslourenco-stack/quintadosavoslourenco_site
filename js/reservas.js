@@ -1,38 +1,92 @@
 // /js/reservas.js
-// Validações + envio AJAX (Formspree) + mínimo 2 noites (aplicado só no envio)
+// Validações + envio AJAX (Formspree) com feedback NO PRÓPRIO BOTÃO
 
 (function () {
   const $ = (s, c = document) => c.querySelector(s);
 
-  const form     = $("#bookingForm");
-  if (!form) {
-    console.warn("⚠️ #bookingForm não encontrado. Confirma o ID no HTML e se o script está no fim com defer.");
-    return;
-  }
+  const form      = $("#bookingForm");
+  if (!form) { console.warn("⚠️ #bookingForm não encontrado."); return; }
 
-  const ok       = $("#status-ok");
-  const err      = $("#status-err");
-  const nome     = $("#nome");
-  const email    = $("#email");
-  const telefone = $("#telefone");
-  const checkin  = $("#checkin");
-  const checkout = $("#checkout");
-  const adultos  = $("#adultos");
-  const criancas = $("#criancas");
+  const ok        = $("#status-ok");   // continua disponível para erros genéricos, se quiseres
+  const err       = $("#status-err");
+  const nome      = $("#nome");
+  const email     = $("#email");
+  const telefone  = $("#telefone");
+  const checkin   = $("#checkin");
+  const checkout  = $("#checkout");
+  const adultos   = $("#adultos");
+  const criancas  = $("#criancas");
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const BTN_TEXT_DEFAULT = submitBtn ? submitBtn.textContent.trim() : "Pedir disponibilidade";
 
   const MIN_NIGHTS = 2;
 
   const toISO = d => d.toISOString().slice(0, 10);
   const parseISO = s => (s ? new Date(s + "T00:00:00") : null);
 
-  // ===== 1) Datas (nunca passado). Permite 1 noite; mostra aviso. =====
+  // ===== Helpers de UI (botão e estados) =====
+  function setLoading(loading) {
+    if (!submitBtn) return;
+    submitBtn.classList.toggle("is-loading", loading);
+    submitBtn.disabled = loading;
+
+    // Texto do botão
+    if (loading) {
+      submitBtn.dataset.prev = submitBtn.textContent;
+      submitBtn.textContent = "A enviar…";
+    } else {
+      // não repõe aqui; quem chama decide o texto final
+    }
+
+    // Desativar/ativar campos
+    const controls = form.querySelectorAll("input, select, textarea, button");
+    controls.forEach(el => {
+      if (el === submitBtn) return;
+      el.disabled = loading;
+    });
+    form.setAttribute("aria-busy", loading ? "true" : "false");
+  }
+
+  function showButtonSuccess(tempMs = 4000) {
+    if (!submitBtn) return;
+    submitBtn.classList.remove("is-loading");
+    submitBtn.classList.add("is-success");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "✅ Pedido enviado com sucesso";
+    window.clearTimeout(showButtonSuccess._t);
+    showButtonSuccess._t = setTimeout(() => {
+      submitBtn.classList.remove("is-success");
+      submitBtn.textContent = BTN_TEXT_DEFAULT;
+    }, tempMs);
+  }
+
+  function showError(message) {
+    if (!err) return;
+    err.textContent = message;
+    err.style.display = "block";
+    err.scrollIntoView({ behavior: "smooth", block: "center" });
+    // feedback visual no botão (opcional)
+    if (submitBtn) {
+      submitBtn.classList.remove("is-loading");
+      submitBtn.classList.add("is-error");
+      submitBtn.textContent = BTN_TEXT_DEFAULT;
+      setTimeout(() => submitBtn.classList.remove("is-error"), 1200);
+    }
+  }
+
+  function clearMessages() {
+    if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
+    if (err) { err.style.display = "none"; err.textContent = ""; }
+  }
+
+  // ===== 1) Datas (nunca passado). Permite 1 noite; aviso se 1 noite. =====
   (function initDates() {
     if (!checkin || !checkout) return;
 
     const today = new Date(); today.setHours(0,0,0,0);
     const todayISO = toISO(today);
 
-    // placeholders com a data de hoje
+    // placeholders (só exemplo visual)
     checkin.placeholder  = todayISO;
     checkout.placeholder = todayISO;
 
@@ -40,14 +94,13 @@
     checkin.min  = todayISO;
     checkout.min = todayISO;
 
-    // valores padrão: hoje → amanhã (1 noite)
+    // por defeito: hoje -> amanhã (1 noite)
     if (!checkin.value)  checkin.value  = todayISO;
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     if (!checkout.value || checkout.value < toISO(tomorrow)) {
       checkout.value = toISO(tomorrow);
     }
 
-    // impedir data passada ao escrever
     checkin.addEventListener("input", () => {
       if (!checkin.value) return;
       const ci = parseISO(checkin.value);
@@ -56,7 +109,6 @@
       showNightsHintIfNeeded();
     });
 
-    // ao mudar check-in, checkout mínimo = +1 dia (permite 1 noite)
     checkin.addEventListener("change", () => {
       updateCheckoutMinAllowOneNight();
       showNightsHintIfNeeded();
@@ -107,7 +159,7 @@
   clampNumber(adultos);   // max 7
   clampNumber(criancas);  // max 6
 
-  // ===== 3) Aviso (1 noite) em vermelho =====
+  // ===== 3) Aviso (1 noite) junto ao checkout =====
   let nightsHint = document.getElementById("nights-hint");
   if (!nightsHint && checkout) {
     nightsHint = document.createElement("small");
@@ -134,12 +186,10 @@
     }
   }
 
-  // ===== 4) Submissão AJAX (sem redirecionar) =====
+  // ===== 4) Submissão AJAX (sem redirecionar) — feedback no botão =====
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
-    if (err) { err.style.display = "none"; err.textContent = ""; }
+    clearMessages();
 
     // Honeypot
     if (form.website && form.website.value.trim() !== "") return;
@@ -173,7 +223,7 @@
       return showError("Máximo 6 crianças.");
     }
 
-    // datas: corrigir automaticamente para mínimo 2 noites no envio
+    // datas: se só 1 noite, corrigimos para 2 no envio
     if (checkin && checkout) {
       const ci = parseISO(checkin.value);
       const co = parseISO(checkout.value);
@@ -189,10 +239,12 @@
       }
     }
 
-    // Envio AJAX para o endpoint do Formspree definido no HTML
+    // Envio AJAX
     try {
+      setLoading(true);
+
       const data = new FormData(form);
-      // acrescenta nº de noites (útil no email)
+      // nº de noites (útil no email)
       if (checkin && checkout) {
         const ci = parseISO(checkin.value);
         const co = parseISO(checkout.value);
@@ -216,25 +268,28 @@
         if (checkout) checkout.value = toISO(tomorrow);
         nightsHint && (nightsHint.style.display = "none");
 
-        if (ok) {
-          ok.textContent = "Pedido enviado com sucesso. Obrigado!";
-          ok.style.display = "block";
-          ok.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
+        // feedback no botão
+        showButtonSuccess(4000);
       } else {
-        const j = await resp.json().catch(() => null);
-        throw new Error((j && (j.error || j.message)) || "Erro ao enviar. Tente novamente.");
+        let msg = "Erro ao enviar. Tente novamente.";
+        try {
+          const j = await resp.json();
+          if (j && Array.isArray(j.errors) && j.errors.length) {
+            msg = j.errors.map(e => e.message || "Erro de validação.").join(" ");
+          }
+        } catch (_) {}
+        throw new Error(msg);
       }
     } catch (ex) {
       showError(ex.message || "Erro ao enviar. Tente novamente.");
+    } finally {
+      setLoading(false); // reativa os campos; o texto final do botão é tratado por showButtonSuccess() em caso de sucesso
+      if (!submitBtn.classList.contains("is-success")) {
+        // se não teve sucesso, volta texto ao normal
+        submitBtn.textContent = BTN_TEXT_DEFAULT;
+      }
     }
   });
-
-  function showError(message) {
-    if (!err) return;
-    err.textContent = message;
-    err.style.display = "block";
-    err.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
 })();
+
 
