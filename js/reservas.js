@@ -1,5 +1,5 @@
 // /js/reservas.js
-// Validações completas + envio AJAX (sem redirecionamento Formspree)
+// Validações + envio AJAX (sem redirecionar) com mínimo de 2 noites aplicado só no envio
 
 (function () {
   const $ = (s, c = document) => c.querySelector(s);
@@ -10,18 +10,16 @@
   const ok       = $("#status-ok");
   const err      = $("#status-err");
   const nome     = $("#nome");
-  const email    = $("#email");
   const telefone = $("#telefone");
-  const aloj     = $("#alojamento");
   const checkin  = $("#checkin");
   const checkout = $("#checkout");
   const adultos  = $("#adultos");
   const criancas = $("#criancas");
 
-  const MIN_NIGHTS = 2; // estadia mínima
+  const MIN_NIGHTS = 2; // regra de estadia mínima (aplicada no submit)
 
-  const toISO = d => d.toISOString().slice(0, 10);
-  const parseISO = str => (str ? new Date(str + "T00:00:00") : null);
+  const toISO    = d => d.toISOString().slice(0, 10);
+  const parseISO = s => (s ? new Date(s + "T00:00:00") : null);
 
   // ===== 1) Inicializar datas =====
   (function initDates() {
@@ -30,21 +28,19 @@
     const today = new Date(); today.setHours(0,0,0,0);
     const todayISO = toISO(today);
 
-    // placeholders com data de hoje
-    checkin.placeholder = todayISO;
+    // placeholders com a data de hoje (apenas nos campos de data)
+    checkin.placeholder  = todayISO;
     checkout.placeholder = todayISO;
 
-    // limites mínimos
+    // limites mínimos (nunca passado)
     checkin.min  = todayISO;
     checkout.min = todayISO;
 
-    // valores por defeito
+    // valores por defeito: 1 noite (hoje -> amanhã)
     if (!checkin.value)  checkin.value  = todayISO;
-    const coMin = new Date(today);
-    coMin.setDate(today.getDate() + MIN_NIGHTS);
-    checkout.min = toISO(coMin);
-    if (!checkout.value || checkout.value < checkout.min) {
-      checkout.value = checkout.min;
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    if (!checkout.value || checkout.value < toISO(tomorrow)) {
+      checkout.value = toISO(tomorrow);
     }
 
     // impedir data passada
@@ -52,25 +48,24 @@
       if (!checkin.value) return;
       const ci = parseISO(checkin.value);
       if (ci < today) checkin.value = todayISO;
-      updateCheckoutMin();
+      updateCheckoutMinAllowOneNight();
       showNightsHintIfNeeded();
     });
 
-    // atualizar checkout min ao mudar check-in
+    // quando muda check-in, permitir 1 noite (min = ci + 1)
     checkin.addEventListener("change", () => {
-      updateCheckoutMin();
+      updateCheckoutMinAllowOneNight();
       showNightsHintIfNeeded();
     });
 
-    // aviso se só 1 noite
+    // feedback quando o utilizador ajusta o checkout
     checkout.addEventListener("input", showNightsHintIfNeeded);
     checkout.addEventListener("change", showNightsHintIfNeeded);
 
-    function updateCheckoutMin() {
+    function updateCheckoutMinAllowOneNight() {
       if (!checkin.value) return;
       const ci = parseISO(checkin.value);
-      const coMin = new Date(ci);
-      coMin.setDate(ci.getDate() + MIN_NIGHTS);
+      const coMin = new Date(ci); coMin.setDate(ci.getDate() + 1); // ← permite 1 noite
       const coISO = toISO(coMin);
       checkout.min = coISO;
       if (!checkout.value || checkout.value < coISO) checkout.value = coISO;
@@ -80,16 +75,16 @@
   // ===== 2) Filtros em tempo real =====
   if (nome) {
     nome.addEventListener("input", () => {
-      nome.value = nome.value.replace(/[0-9]/g, "");
+      nome.value = nome.value.replace(/[0-9]/g, ""); // sem números
     });
-    nome.placeholder = "Ex.: João Silva";
+    // (sem placeholder no nome, como pediste)
   }
 
   if (telefone) {
     telefone.addEventListener("input", () => {
       let v = telefone.value;
-      v = v.replace(/[^0-9+()\- \t]/g, "");
-      v = v.replace(/(?!^)\+/g, "");
+      v = v.replace(/[^0-9+()\- \t]/g, ""); // só dígitos e símbolos usuais
+      v = v.replace(/(?!^)\+/g, "");        // só um '+' e no início
       if (v.indexOf("+") > 0) v = v.replace(/\+/g, "");
       telefone.value = v;
     });
@@ -107,10 +102,10 @@
       input.value = String(val);
     });
   }
-  clampNumber(adultos);
-  clampNumber(criancas);
+  clampNumber(adultos);   // max 7
+  clampNumber(criancas);  // max 6
 
-  // ===== 3) Mensagem informativa de noites =====
+  // ===== 3) Mensagem informativa se for só 1 noite (sem bloquear) =====
   let nightsHint = document.getElementById("nights-hint");
   if (!nightsHint && checkout) {
     nightsHint = document.createElement("small");
@@ -128,24 +123,26 @@
     const co = parseISO(checkout.value);
     const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
     if (nights === 1) {
-      nightsHint.textContent = "⚠️ Estadia mínima: 2 noites. Por favor selecione pelo menos 2 noites.";
+      nightsHint.textContent = "ℹ️ Estadia mínima: 2 noites. No envio, o check-out será ajustado.";
       nightsHint.style.display = "block";
     } else {
       nightsHint.style.display = "none";
+      nightsHint.textContent = "";
     }
   }
 
   // ===== 4) Submissão (sem redirecionamento) =====
   form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // nunca navega
 
+    // limpar mensagens
     if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
     if (err) { err.style.display = "none"; err.textContent = ""; }
 
-    // honeypot
+    // Honeypot
     if (form.website && form.website.value.trim() !== "") return;
 
-    // verificar obrigatórios
+    // obrigatórios
     const required = form.querySelectorAll("[required]");
     const faltam = [];
     required.forEach(el => {
@@ -171,7 +168,7 @@
       return showError("Máximo 6 crianças.");
     }
 
-    // validar datas e noites
+    // datas e noites (corrigir automaticamente se só 1 noite)
     if (checkin && checkout) {
       const ci = parseISO(checkin.value);
       const co = parseISO(checkout.value);
@@ -180,7 +177,11 @@
       }
       const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
       if (nights < MIN_NIGHTS) {
-        return showError("Estadia mínima: 2 noites. Por favor ajuste as datas.");
+        // ajusta checkout para 2 noites e informa o utilizador
+        const coMin = new Date(ci); coMin.setDate(ci.getDate() + MIN_NIGHTS);
+        checkout.value = toISO(coMin);
+        showNightsHintIfNeeded();
+        return showError("Estadia mínima: 2 noites. Ajustámos automaticamente o check-out.");
       }
     }
 
@@ -203,12 +204,12 @@
 
       if (resp.ok) {
         form.reset();
-        // repor defaults de datas
+
+        // repõe defaults: 1 noite (hoje -> amanhã)
         const today = new Date(); today.setHours(0,0,0,0);
-        const coMin = new Date(today);
-        coMin.setDate(today.getDate() + MIN_NIGHTS);
-        if (checkin)  checkin.value = toISO(today);
-        if (checkout) checkout.value = toISO(coMin);
+        const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+        if (checkin)  checkin.value  = toISO(today);
+        if (checkout) checkout.value = toISO(tomorrow);
         nightsHint && (nightsHint.style.display = "none");
 
         if (ok) {
@@ -217,7 +218,7 @@
           ok.scrollIntoView({ behavior: "smooth", block: "center" });
         }
 
-        // opcional: redirecionar para /obrigado/
+        // opcional:
         // window.location.href = "/obrigado/";
       } else {
         const j = await resp.json().catch(() => null);
