@@ -1,11 +1,14 @@
 // /js/reservas.js
-// Validações + envio AJAX (sem redirecionar) + regras atualizadas
+// Validações + envio AJAX (Formspree) + regras de campos + mínimo 2 noites
 
 (function () {
   const $ = (s, c = document) => c.querySelector(s);
 
   const form     = $("#bookingForm");
-  if (!form) return;
+  if (!form) {
+    console.warn("⚠️ Formulário #bookingForm não encontrado. Verifica o ID no HTML.");
+    return;
+  }
 
   const ok       = $("#status-ok");
   const err      = $("#status-err");
@@ -37,46 +40,31 @@
     checkin.min  = todayISO;
     checkout.min = todayISO;
 
-    // valores por defeito: 1 noite (hoje → amanhã)
+    // valores padrão (hoje → amanhã)
     if (!checkin.value)  checkin.value  = todayISO;
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     if (!checkout.value || checkout.value < toISO(tomorrow)) {
       checkout.value = toISO(tomorrow);
     }
 
-    // impedir data passada
-    checkin.addEventListener("input", () => {
-      if (!checkin.value) return;
-      const ci = parseISO(checkin.value);
-      if (ci < today) checkin.value = todayISO;
-      updateCheckoutMinAllowOneNight();
-      showNightsHintIfNeeded();
-    });
-
-    // quando muda check-in, permitir 1 noite (min = ci + 1)
-    checkin.addEventListener("change", () => {
-      updateCheckoutMinAllowOneNight();
-      showNightsHintIfNeeded();
-    });
-
-    // feedback quando o utilizador ajusta o checkout
-    checkout.addEventListener("input", showNightsHintIfNeeded);
+    checkin.addEventListener("change", () => updateCheckout());
     checkout.addEventListener("change", showNightsHintIfNeeded);
 
-    function updateCheckoutMinAllowOneNight() {
-      if (!checkin.value) return;
+    function updateCheckout() {
       const ci = parseISO(checkin.value);
-      const coMin = new Date(ci); coMin.setDate(ci.getDate() + 1); // permite 1 noite
+      if (!ci) return;
+      const coMin = new Date(ci); coMin.setDate(ci.getDate() + 1);
       const coISO = toISO(coMin);
       checkout.min = coISO;
       if (!checkout.value || checkout.value < coISO) checkout.value = coISO;
+      showNightsHintIfNeeded();
     }
   })();
 
   // ===== 2) Filtros em tempo real =====
   if (nome) {
     nome.addEventListener("input", () => {
-      nome.value = nome.value.replace(/[0-9]/g, ""); // sem números
+      nome.value = nome.value.replace(/[0-9]/g, "");
     });
   }
 
@@ -105,21 +93,20 @@
   clampNumber(adultos);
   clampNumber(criancas);
 
-  // ===== 3) Mensagem informativa (mínimo 2 noites) =====
+  // ===== 3) Mensagem “mínimo 2 noites” =====
   let nightsHint = document.getElementById("nights-hint");
   if (!nightsHint && checkout) {
     nightsHint = document.createElement("small");
     nightsHint.id = "nights-hint";
     nightsHint.style.display = "none";
-    nightsHint.style.color = "#991b1b"; // vermelho
+    nightsHint.style.color = "#991b1b";
     nightsHint.style.fontWeight = "600";
     nightsHint.style.marginTop = "6px";
-    const p = checkout.closest("p") || checkout.parentElement;
-    p && p.appendChild(nightsHint);
+    checkout.parentElement.appendChild(nightsHint);
   }
 
   function showNightsHintIfNeeded() {
-    if (!checkin || !checkout || !nightsHint || !checkin.value || !checkout.value) return;
+    if (!checkin || !checkout || !checkin.value || !checkout.value) return;
     const ci = parseISO(checkin.value);
     const co = parseISO(checkout.value);
     const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
@@ -128,21 +115,19 @@
       nightsHint.style.display = "block";
     } else {
       nightsHint.style.display = "none";
-      nightsHint.textContent = "";
     }
   }
 
-  // ===== 4) Submissão (sem redirecionamento) =====
+  // ===== 4) Submissão (AJAX Formspree) =====
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
     if (err) { err.style.display = "none"; err.textContent = ""; }
 
-    // Honeypot
     if (form.website && form.website.value.trim() !== "") return;
 
-    // obrigatórios
+    // validação obrigatórios
     const required = form.querySelectorAll("[required]");
     const faltam = [];
     required.forEach(el => {
@@ -164,6 +149,7 @@
     if (email && !email.value.includes("@")) {
       return showError("Por favor insira um email válido.");
     }
+
     if (adultos && (+adultos.value > 7)) {
       return showError("Máximo 7 adultos.");
     }
@@ -171,13 +157,10 @@
       return showError("Máximo 6 crianças.");
     }
 
-    // datas e noites (corrige automaticamente se só 1)
+    // mínimo 2 noites
     if (checkin && checkout) {
       const ci = parseISO(checkin.value);
       const co = parseISO(checkout.value);
-      if (!(co > ci)) {
-        return showError("A data de check-out deve ser posterior à de check-in.");
-      }
       const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
       if (nights < MIN_NIGHTS) {
         const coMin = new Date(ci); coMin.setDate(ci.getDate() + MIN_NIGHTS);
@@ -187,19 +170,11 @@
       }
     }
 
-    // envio AJAX (Formspree)
+    // envio AJAX
     try {
       const data = new FormData(form);
-
-      if (checkin && checkout) {
-        const ci = parseISO(checkin.value);
-        const co = parseISO(checkout.value);
-        const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
-        if (!Number.isNaN(nights) && nights > 0) data.append("noites", String(nights));
-      }
-
       const resp = await fetch(form.action, {
-        method: form.method || "POST",
+        method: "POST",
         body: data,
         headers: { "Accept": "application/json" }
       });
@@ -207,27 +182,22 @@
       if (resp.ok) {
         form.reset();
 
-        // repor defaults: hoje → amanhã
         const today = new Date(); today.setHours(0,0,0,0);
         const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
         if (checkin)  checkin.value  = toISO(today);
         if (checkout) checkout.value = toISO(tomorrow);
-        nightsHint && (nightsHint.style.display = "none");
 
         if (ok) {
           ok.textContent = "Pedido enviado com sucesso. Obrigado!";
           ok.style.display = "block";
           ok.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-
-        // opcional:
-        // window.location.href = "/obrigado/";
       } else {
         const j = await resp.json().catch(() => null);
-        throw new Error((j && (j.error || j.message)) || "Não foi possível enviar. Tente novamente.");
+        throw new Error((j && (j.error || j.message)) || "Erro ao enviar. Tente novamente.");
       }
     } catch (ex) {
-      showError(ex.message || "Não foi possível enviar. Tente novamente.");
+      showError(ex.message || "Erro ao enviar. Tente novamente.");
     }
   });
 
