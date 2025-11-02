@@ -61,21 +61,21 @@
     });
   }
 
-  // Limitar números (clamp) para adultos/crianças
-  function clampNumber(input) {
-    if (!input) return;
-    input.addEventListener("input", () => {
-      const min = parseInt(input.min || "0", 10);
-      const max = parseInt(input.max || "999", 10);
-      let val = parseInt(input.value || String(min), 10);
-      if (Number.isNaN(val)) val = min;
-      if (val < min) val = min;
-      if (val > max) val = max;
-      input.value = String(val);
-    });
-  }
-  clampNumber(adultos);  // max 7
-  clampNumber(criancas); // max 6
+ // Limitar números (clamp) para adultos/crianças
+function clampNumber(input) {
+  if (!input) return;
+  input.addEventListener("change", () => {
+    const min = parseInt(input.min || "0", 10);
+    const max = parseInt(input.max || "999", 10);
+    let val = parseInt(input.value || String(min), 10);
+    if (Number.isNaN(val)) val = min;
+    if (val < min) val = min;
+    if (val > max) val = max;
+    input.value = String(val);
+  });
+}
+clampNumber(adultos);  // max 7
+clampNumber(criancas); // max 6
 
   // ========== 3) Submissão ==========
   form.addEventListener("submit", async (e) => {
