@@ -41,7 +41,6 @@
   // Nome: não permitir dígitos (mantém letras, acentos, espaços e sinais comuns)
   if (nome) {
     nome.addEventListener("input", () => {
-      // remove números
       nome.value = nome.value.replace(/[0-9]/g, "");
     });
   }
@@ -50,95 +49,74 @@
   if (telefone) {
     telefone.addEventListener("input", () => {
       let v = telefone.value;
-      // mantém apenas os caracteres permitidos
       v = v.replace(/[^0-9+()\- \t]/g, "");
-      // permitir apenas um '+' e apenas na primeira posição
-      v = v.replace(/(?!^)\+/g, "");      // remove '+' que não sejam o primeiro
-      if (v.indexOf("+") > 0) {
-        v = v.replace(/\+/g, "");         // se houver '+' mas não em 0, remove todos
-      }
+      // permitir apenas um '+' e só no início
+      v = v.replace(/(?!^)\+/g, "");
+      if (v.indexOf("+") > 0) v = v.replace(/\+/g, "");
       telefone.value = v;
     });
   }
 
- // Limitar números (clamp) para adultos/crianças
-function clampNumber(input) {
-  if (!input) return;
-  input.addEventListener("change", () => {
-    const min = parseInt(input.min || "0", 10);
-    const max = parseInt(input.max || "999", 10);
-    let val = parseInt(input.value || String(min), 10);
-    if (Number.isNaN(val)) val = min;
-    if (val < min) val = min;
-    if (val > max) val = max;
-    input.value = String(val);
-  });
-}
-clampNumber(adultos);  // max 7
-clampNumber(criancas); // max 6
+  // Limitar números (clamp) para adultos/crianças ao terminar edição
+  function clampNumber(input) {
+    if (!input) return;
+    input.addEventListener("change", () => {
+      const min = parseInt(input.min || "0", 10);
+      const max = parseInt(input.max || "999", 10);
+      let val = parseInt(input.value || String(min), 10);
+      if (Number.isNaN(val)) val = min;
+      if (val < min) val = min;
+      if (val > max) val = max;
+      input.value = String(val);
+    });
+  }
+  clampNumber(adultos);  // max 7
+  clampNumber(criancas); // max 6
 
-  // ========== 3) Submissão ==========
+  // ========== 3) Submissão (sem qualquer redirecionamento) ==========
   form.addEventListener("submit", async (e) => {
+    // trava SEMPRE a navegação
+    e.preventDefault();
+
     // limpar mensagens
     if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
     if (err) { err.style.display = "none"; err.textContent = ""; }
 
     // Honeypot anti-spam
     if (form.website && form.website.value.trim() !== "") {
-      e.preventDefault();
       return;
     }
 
-    // Validação HTML5
+    // Validação HTML5 (mostra mensagens nativas se faltar algo)
     if (!form.checkValidity()) {
-      // deixa o browser indicar os campos obrigatórios/padrões
+      form.reportValidity();
       return;
     }
 
-    // Regras adicionais
-    // 3.1 Nome sem números (defesa extra, além do pattern)
+    // Regras extra
     if (nome && /[0-9]/.test(nome.value)) {
-      e.preventDefault();
-      showError("O nome não deve conter números.");
-      return;
+      return showError("O nome não deve conter números.");
     }
-
-    // 3.2 Telefone: bloquear letras (defesa extra)
     if (telefone && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(telefone.value)) {
-      e.preventDefault();
-      showError("O telefone deve conter apenas números e símbolos + ( ) - .");
-      return;
+      return showError("O telefone deve conter apenas números e símbolos + ( ) - .");
     }
-
-    // 3.3 Limites adultos/crianças
     if (adultos && (+adultos.value > 7)) {
-      e.preventDefault();
-      showError("Máximo 7 adultos.");
-      return;
+      return showError("Máximo 7 adultos.");
     }
     if (criancas && (+criancas.value > 6)) {
-      e.preventDefault();
-      showError("Máximo 6 crianças.");
-      return;
+      return showError("Máximo 6 crianças.");
     }
-
-    // 3.4 Datas coerentes
     if (checkin && checkout) {
       const ci = new Date(checkin.value + "T00:00:00");
       const co = new Date(checkout.value + "T00:00:00");
-      if (!(co > ci)) {
-        e.preventDefault();
-        showError("A data de check-out deve ser posterior à de check-in.");
-        return;
-      }
+      if (!(co > ci)) return showError("A data de check-out deve ser posterior à de check-in.");
     }
 
-    // 3.5 Envio AJAX (Formspree)
-    e.preventDefault();
+    // Envio AJAX (Formspree) — sem redirect
     try {
       const data = new FormData(form);
 
-      // acrescenta nº de noites (conveniente para ti)
+      // acrescenta nº de noites
       if (checkin && checkout) {
         const ci = new Date(checkin.value + "T00:00:00");
         const co = new Date(checkout.value + "T00:00:00");
@@ -157,7 +135,11 @@ clampNumber(criancas); // max 6
         if (ok) {
           ok.textContent = "Pedido enviado com sucesso. Obrigado!";
           ok.style.display = "block";
+          ok.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+
+        // OPCIONAL: redirecionar para a tua página de obrigado
+        // window.location.href = "/obrigado/";
       } else {
         const j = await resp.json().catch(() => null);
         throw new Error((j && (j.error || j.message)) || "Não foi possível enviar. Tente novamente.");
@@ -171,5 +153,6 @@ clampNumber(criancas); // max 6
     if (!err) return;
     err.textContent = message;
     err.style.display = "block";
+    err.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 })();
