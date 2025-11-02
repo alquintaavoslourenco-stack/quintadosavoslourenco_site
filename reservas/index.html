@@ -1,1 +1,279 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <title>Reservas · Quinta dos Avós Lourenço</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Faça aqui o seu pedido de reserva na Quinta dos Avós Lourenço." />
+  <style>
+    :root { --max: 980px; }
+    html,body{height:100%}
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.5; color: #1f2937; margin:0; background:#fafafa; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 1rem; }
+    /* NAV */
+    .site-nav { position:sticky; top:0; background:#fff; border-bottom: 1px solid #eee; z-index:10; }
+    .site-nav .wrap { display:flex; align-items:center; justify-content:space-between; }
+    .brand { font-weight: 700; padding: .75rem 0; }
+    .menu { display:flex; gap:1rem; align-items:center; }
+    .menu a { text-decoration:none; color:inherit; padding:.5rem .6rem; border-radius:.5rem; }
+    .menu a.active, .menu a.btn-reservas { font-weight:600; border:1px solid currentColor; }
+    @media (max-width: 800px) { .menu { flex-wrap: wrap; gap:.5rem; } }
+    /* HERO */
+    .hero { text-align:center; padding: 2.5rem 0 1rem; }
+    .hero h1 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); margin: 0; }
+    .hero p { color:#4b5563; margin:.5rem auto 0; max-width: 46ch; }
+    /* FORM */
+    .card { border:1px solid #e5e7eb; border-radius: .9rem; padding: 1.25rem; background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02) }
+    form { display:grid; gap:1rem; }
+    .row { display:grid; gap:1rem; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 720px){ .row { grid-template-columns: 1fr; } }
+    label { display:block; font-weight:600; margin-bottom:.35rem; }
+    .help { font-size:.9rem; color:#6b7280; }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea {
+      width:100%; border:1px solid #d1d5db; border-radius:.6rem; padding:.65rem .75rem; font:inherit; background:#fff;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .consent { display:flex; gap:.6rem; align-items:flex-start; }
+    .consent input { margin-top:.2rem; }
+    .actions { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+    button[type="submit"] {
+      border:0; background:#111827; color:#fff; padding:.7rem 1rem; border-radius:.7rem; cursor:pointer; font-weight:600;
+    }
+    .ghost { background:transparent; border:1px solid #d1d5db; color:inherit; text-decoration:none; padding:.6rem .9rem; border-radius:.7rem; }
+    .note { font-size:.93rem; color:#4b5563; }
+    .status { display:none; padding:.8rem 1rem; border-radius:.6rem; margin-top:.5rem }
+    .status.ok { display:block; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; }
+    .status.err { display:block; background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
+    .muted { color:#6b7280; font-size:.9rem; }
+    .badges { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .badge { border:1px solid #e5e7eb; border-radius:999px; padding:.25rem .6rem; font-size:.85rem; background:#fff }
+    /* HONEYPOT */
+    .hp { position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
+    footer { text-align:center; color:#6b7280; font-size:.9rem; padding:2rem 0 }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <header class="site-nav">
+    <div class="wrap">
+      <div class="brand">Quinta dos Avós Lourenço</div>
+      <nav class="menu" aria-label="Menu principal">
+        <a href="#">Início</a>
+        <a href="#">Sobre</a>
+        <a href="#">Galeria</a>
+        <a href="#">Contactos</a>
+        <a href="#" aria-current="page" class="btn-reservas active">Reservas</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Pedido de Reserva</h1>
+      <p>Preencha o formulário abaixo para verificar disponibilidade. Respondemos o mais breve possível por email ou telefone.</p>
+      <div class="badges" aria-hidden="true">
+        <span class="badge">Check-in: 16:00–22:00</span>
+        <span class="badge">Check-out: até 11:00</span>
+        <span class="badge">Cancelamento: sob consulta</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title" class="muted" style="margin-top:0">Os seus dados</h2>
+
+      <!-- MODO DEMO: altera DEMO=false no script para ativar envio real e coloca o teu endpoint no action -->
+      <form id="bookingForm" action="/api/reservas.php" method="POST" novalidate>
+        <!-- Honeypot -->
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" />
+
+        <div class="row">
+          <div>
+            <label for="nome">Nome completo *</label>
+            <input id="nome" name="nome" type="text" required autocomplete="name" />
+          </div>
+          <div>
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="telefone">Telefone *</label>
+            <input id="telefone" name="telefone" type="tel" required inputmode="tel" pattern="^[0-9+()\-\s]{6,}$" placeholder="+351 ..." />
+            <div class="help">Aceita dígitos, espaços e +</div>
+          </div>
+          <div>
+            <label for="alojamento">Tipo de alojamento *</label>
+            <select id="alojamento" name="alojamento" required>
+              <option value="">— Selecionar —</option>
+              <option>Casa completa</option>
+              <option>Quarto duplo</option>
+              <option>Quarto familiar</option>
+              <option>Outro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="checkin">Check-in *</label>
+            <input id="checkin" name="checkin" type="date" required />
+          </div>
+          <div>
+            <label for="checkout">Check-out *</label>
+            <input id="checkout" name="checkout" type="date" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="adultos">Adultos *</label>
+            <input id="adultos" name="adultos" type="number" min="1" max="20" value="2" required />
+          </div>
+          <div>
+            <label for="criancas">Crianças</label>
+            <input id="criancas" name="criancas" type="number" min="0" max="20" value="0" />
+          </div>
+        </div>
+
+        <div>
+          <label for="mensagem">Mensagem / pedidos especiais</label>
+          <textarea id="mensagem" name="mensagem" placeholder="Ex.: berço, check-in tardio, alergias…"></textarea>
+        </div>
+
+        <div class="consent">
+          <input id="consent" name="consent" type="checkbox" required />
+          <label for="consent">Aceito o tratamento dos meus dados para efeitos de gestão de reserva, de acordo com a
+            <a href="#" target="_blank" rel="noopener">Política de Privacidade</a>. *</label>
+        </div>
+
+        <p class="note">Ao submeter, iremos verificar disponibilidade e responder com confirmação e/ou orçamento.</p>
+
+        <div class="actions">
+          <button type="submit">Pedir disponibilidade</button>
+          <a class="ghost" href="https://wa.me/351000000000?text=Ol%C3%A1,%20gostava%20de%20saber%20disponibilidade" target="_blank" rel="noopener">Contactar por WhatsApp</a>
+        </div>
+
+        <div id="status-ok" class="status ok" role="status" aria-live="polite"></div>
+        <div id="status-err" class="status err" role="alert" aria-live="assertive"></div>
+
+        <input type="hidden" name="_subject" value="Novo pedido de reserva — Site" />
+        <input type="hidden" name="_page" value="/reservas" />
+      </form>
+    </section>
+
+    <section style="margin:2rem 0 3rem">
+      <h2 class="muted" style="margin-bottom:.5rem">Preferes plataformas?</h2>
+      <p class="note">Também podes reservar via:</p>
+      <div class="actions" style="margin-top:.5rem">
+        <a class="ghost" href="https://www.airbnb.pt/rooms/SEU_ID" target="_blank" rel="noopener">Airbnb</a>
+        <a class="ghost" href="https://www.booking.com/hotel/pt/SEU_ID.pt-pt.html" target="_blank" rel="noopener">Booking</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">© Quinta dos Avós Lourenço</div>
+  </footer>
+
+  <script>
+    // ===== Configuração =====
+    const DEMO = false; // <- Muda para false quando colocares um endpoint real no action do <form>
+
+    const $ = (sel, ctx=document) => ctx.querySelector(sel);
+
+    // Datas: mínimo hoje; checkout >= checkin + 1
+    (function initDates(){
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const toISO = d => d.toISOString().slice(0,10);
+      const checkin = $("#checkin");
+      const checkout = $("#checkout");
+      const min = toISO(today);
+      checkin.min = min;
+      checkout.min = min;
+
+      checkin.addEventListener("change", () => {
+        if (!checkin.value) return;
+        const ci = new Date(checkin.value + "T00:00:00");
+        const coMin = new Date(ci); coMin.setDate(ci.getDate()+1);
+        const coMinISO = toISO(coMin);
+        checkout.min = coMinISO;
+        if (checkout.value && checkout.value < coMinISO) {
+          checkout.value = coMinISO;
+        }
+      });
+    })();
+
+    // Validação + envio (demo ou real)
+    (function handleSubmit(){
+      const form = $("#bookingForm");
+      const ok = $("#status-ok");
+      const err = $("#status-err");
+
+      form.addEventListener("submit", async (e) => {
+        ok.textContent = ""; ok.style.display="none"; ok.classList.remove("ok");
+        err.textContent = ""; err.style.display="none"; err.classList.remove("err");
+
+        // Honeypot
+        if (form.website && form.website.value.trim() !== "") {
+          e.preventDefault();
+          return;
+        }
+
+        // Deixa o browser validar campos obrigatórios e padrões
+        if (!form.checkValidity()) { return; }
+
+        // Check lógico: checkout > checkin
+        const ci = new Date(form.checkin.value + "T00:00:00");
+        const co = new Date(form.checkout.value + "T00:00:00");
+        if (!(co > ci)) {
+          e.preventDefault();
+          err.textContent = "A data de check-out deve ser posterior à de check-in.";
+          err.classList.add("err"); err.style.display="block";
+          return;
+        }
+
+        e.preventDefault();
+        const data = new FormData(form);
+        const nights = Math.round((co - ci)/(1000*60*60*24));
+        data.append("noites", String(nights));
+
+        try {
+          if (DEMO) {
+            // Simula uma submissão com sucesso após 800ms
+            await new Promise(r => setTimeout(r, 800));
+            form.reset();
+            $("#checkout").min = $("#checkin").min;
+            ok.textContent = "(DEMO) Recebemos o seu pedido. Obrigado!";
+            ok.classList.add("ok"); ok.style.display="block";
+            return;
+          }
+
+          // Envio real
+          const resp = await fetch(form.action, {
+            method: form.method || "POST",
+            body: data,
+            headers: { "Accept": "application/json" }
+          });
+
+          if (resp.ok) {
+            form.reset();
+            $("#checkout").min = $("#checkin").min;
+            ok.textContent = "Recebemos o seu pedido. Obrigado! Em breve entraremos em contacto para confirmar.";
+            ok.classList.add("ok"); ok.style.display="block";
+          } else {
+            const j = await resp.json().catch(()=>null);
+            throw new Error((j && (j.error || j.message)) || "Não foi possível enviar. Tente de novo mais tarde.");
+          }
+        } catch (ex) {
+          err.textContent = ex.message;
+          err.classList.add("err"); err.style.display="block";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
 
