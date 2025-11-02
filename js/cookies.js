@@ -1,4 +1,4 @@
-// QUINTA DOS AVÓS LOURENÇO — cookies.js
+// QUINTA DOS AVÓS LOURENÇO — cookies.js (versão acessível e refinada)
 (function () {
   const KEY = 'qdal-consent-v1'; // chave única do projeto
 
@@ -9,16 +9,21 @@
   const hide = (banner) => {
     banner.setAttribute('hidden', '');
     banner.setAttribute('aria-hidden', 'true');
-    setWaOffset(0); // volta o WhatsApp ao fundo
+    banner.setAttribute('aria-live', 'off');
+    banner.setAttribute('tabindex', '-1');
+    setWaOffset(0);
   };
 
   const show = (banner) => {
     banner.removeAttribute('hidden');
     banner.setAttribute('aria-hidden', 'false');
-    // mede a altura do banner e ajusta o WhatsApp
+    banner.setAttribute('aria-live', 'polite');
+    banner.focus();
+
+    // mede altura e ajusta botão WhatsApp
     requestAnimationFrame(() => {
       const h = banner.getBoundingClientRect().height || 0;
-      setWaOffset(h + 12); // 12px de folga
+      setWaOffset(h + 12);
     });
   };
 
@@ -27,7 +32,12 @@
     const btn = document.getElementById('cookie-accept');
     if (!banner || !btn) return;
 
-    // Já aceitou?
+    // acessibilidade: banner com papel de diálogo
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-modal', 'true');
+    banner.setAttribute('tabindex', '0');
+
+    // se já aceitou, não mostrar
     try {
       if (localStorage.getItem(KEY) === 'true') {
         hide(banner);
@@ -35,24 +45,26 @@
       }
     } catch (e) { /* continua mesmo sem localStorage */ }
 
-    // Mostrar banner
+    // mostrar banner
     show(banner);
 
-    // Aceitar (uma vez)
+    // aceitar
     btn.addEventListener('click', () => {
       try { localStorage.setItem(KEY, 'true'); } catch {}
       hide(banner);
+      banner.dispatchEvent(new CustomEvent('cookie-accepted'));
     }, { once: true });
 
-    // Acessibilidade: ESC fecha/aceita
+    // tecla ESC = aceitar/fechar
     banner.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Escape') {
+      if (ev.key === 'Escape' || ev.key === 'Esc') {
         try { localStorage.setItem(KEY, 'true'); } catch {}
         hide(banner);
+        banner.dispatchEvent(new CustomEvent('cookie-accepted'));
       }
     });
 
-    // Atualiza offset em resize
+    // ajustar offset em resize
     window.addEventListener('resize', () => {
       if (!banner.hasAttribute('hidden')) {
         const h = banner.getBoundingClientRect().height || 0;
@@ -61,15 +73,22 @@
     });
   };
 
+  // iniciar quando o DOM estiver pronto
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
   } else {
     start();
   }
 
-  // Helpers de teste no console
+  // helpers de debug no console
   window.qdalConsent = {
-    reset() { try { localStorage.removeItem(KEY); } catch {} const b = document.getElementById('cookie-consent'); if (b) show(b); },
-    accepted() { try { return localStorage.getItem(KEY) === 'true'; } catch { return false; } }
+    reset() {
+      try { localStorage.removeItem(KEY); } catch {}
+      const b = document.getElementById('cookie-consent');
+      if (b) show(b);
+    },
+    accepted() {
+      try { return localStorage.getItem(KEY) === 'true'; } catch { return false; }
+    }
   };
 })();
