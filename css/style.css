@@ -486,3 +486,15 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
+
+
+/* ===== Reservas: remover a barra cinza entre o formulário e a secção seguinte ===== */
+.page-reservas hr,
+.page-reservas .section hr,
+.page-reservas .container > hr,
+.page-reservas [role="separator"] {
+  display: none !important;
+  border: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+}
