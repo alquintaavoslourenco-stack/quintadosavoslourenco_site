@@ -64,14 +64,13 @@
       }
     });
 
-    // link “Saber mais” → página de cookies
-    if (link) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        // Caminho absoluto para funcionar no GitHub Pages
-        window.location.href = window.location.origin + '/cookies/index.html';
-      });
-    }
+   // link “Saber mais” → página de cookies
+if (link) {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = window.location.origin + '/cookies/index.html';
+  });
+}
 
     // ajustar offset do WhatsApp
     window.addEventListener('resize', () => {
