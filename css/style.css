@@ -437,3 +437,25 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   .page-reservas #bookingForm { grid-template-columns: 1fr; }
 }
 
+
+
+
+/* ===== Página Reservas: checkbox e botão ===== */
+.page-reservas #bookingForm p:has(#consent) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 400;
+}
+.page-reservas #bookingForm #consent {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+}
+.page-reservas #bookingForm label {
+  font-weight: 400;
+}
+.page-reservas #bookingForm button[type="submit"] {
+  justify-self: center;
+}
+
