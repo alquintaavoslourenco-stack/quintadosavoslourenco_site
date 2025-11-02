@@ -1,5 +1,5 @@
 // /js/reservas.js
-// Validações e envio do formulário de Reservas (GitHub Pages + Formspree)
+// Validações completas + envio AJAX (sem redirecionamento Formspree)
 
 (function () {
   const $ = (s, c = document) => c.querySelector(s);
@@ -18,7 +18,7 @@
   const adultos  = $("#adultos");
   const criancas = $("#criancas");
 
-  // ========== 1) Datas: mínimo hoje; checkout >= checkin + 1 ==========
+  // ========== 1) Datas ==========
   (function initDates() {
     if (!checkin || !checkout) return;
     const today = new Date(); today.setHours(0,0,0,0);
@@ -38,26 +38,22 @@
   })();
 
   // ========== 2) Filtros em tempo real ==========
-  // Nome: não permitir dígitos (mantém letras, acentos, espaços e sinais comuns)
   if (nome) {
     nome.addEventListener("input", () => {
       nome.value = nome.value.replace(/[0-9]/g, "");
     });
   }
 
-  // Telefone: só números, espaços e símbolos usuais (+ () -)
   if (telefone) {
     telefone.addEventListener("input", () => {
       let v = telefone.value;
       v = v.replace(/[^0-9+()\- \t]/g, "");
-      // permitir apenas um '+' e só no início
       v = v.replace(/(?!^)\+/g, "");
       if (v.indexOf("+") > 0) v = v.replace(/\+/g, "");
       telefone.value = v;
     });
   }
 
-  // Limitar números (clamp) para adultos/crianças ao terminar edição
   function clampNumber(input) {
     if (!input) return;
     input.addEventListener("change", () => {
@@ -70,30 +66,35 @@
       input.value = String(val);
     });
   }
-  clampNumber(adultos);  // max 7
-  clampNumber(criancas); // max 6
+  clampNumber(adultos);
+  clampNumber(criancas);
 
-  // ========== 3) Submissão (sem qualquer redirecionamento) ==========
+  // ========== 3) Submissão ==========
   form.addEventListener("submit", async (e) => {
-    // trava SEMPRE a navegação
-    e.preventDefault();
+    e.preventDefault(); // nunca redireciona
 
     // limpar mensagens
     if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
     if (err) { err.style.display = "none"; err.textContent = ""; }
 
     // Honeypot anti-spam
-    if (form.website && form.website.value.trim() !== "") {
-      return;
+    if (form.website && form.website.value.trim() !== "") return;
+
+    // 3.1 Verificar se todos os obrigatórios estão preenchidos
+    const required = form.querySelectorAll("[required]");
+    let faltam = [];
+    required.forEach((el) => {
+      if (!el.value || (el.type === "checkbox" && !el.checked)) {
+        faltam.push(el);
+      }
+    });
+
+    if (faltam.length > 0) {
+      faltam[0].focus();
+      return showError("Por favor, preencha todos os campos obrigatórios antes de enviar.");
     }
 
-    // Validação HTML5 (mostra mensagens nativas se faltar algo)
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    // Regras extra
+    // 3.2 Validações adicionais
     if (nome && /[0-9]/.test(nome.value)) {
       return showError("O nome não deve conter números.");
     }
@@ -112,11 +113,10 @@
       if (!(co > ci)) return showError("A data de check-out deve ser posterior à de check-in.");
     }
 
-    // Envio AJAX (Formspree) — sem redirect
+    // 3.3 Envio AJAX (Formspree)
     try {
       const data = new FormData(form);
 
-      // acrescenta nº de noites
       if (checkin && checkout) {
         const ci = new Date(checkin.value + "T00:00:00");
         const co = new Date(checkout.value + "T00:00:00");
@@ -138,7 +138,7 @@
           ok.scrollIntoView({ behavior: "smooth", block: "center" });
         }
 
-        // OPCIONAL: redirecionar para a tua página de obrigado
+        // OPCIONAL: redirecionar para uma página personalizada
         // window.location.href = "/obrigado/";
       } else {
         const j = await resp.json().catch(() => null);
@@ -149,6 +149,7 @@
     }
   });
 
+  // ========== Função para mostrar erros ==========
   function showError(message) {
     if (!err) return;
     err.textContent = message;
