@@ -98,14 +98,26 @@ with open("sitemap-images.xml","w",encoding="utf-8") as out:
         out.write("  </url>\n")
     out.write("</urlset>\n")
 
+# 4) robots.txt com os 2 sitemaps e exclusões
 robots = "\n".join([
+    "# robots.txt — Quinta dos Avós Lourenço",
+    "# Gerado automaticamente pelo build_sitemap.py",
+    "",
     "User-agent: *",
     "Allow: /",
     "",
+    "# ❌ Páginas que não devem ser indexadas",
+    "Disallow: /cookies/",
+    "Disallow: /politica-privacidade/",
+    "Disallow: /termos-e-condicoes/",
+    "Disallow: /404.html",
+    "",
+    "# 🗺️ Mapas do site (sitemap.xml + imagens)",
     f"Sitemap: {BASE_URL}/sitemap.xml",
     f"Sitemap: {BASE_URL}/sitemap-images.xml",
     "",
 ])
 with open("robots.txt","w",encoding="utf-8") as wf:
     wf.write(robots)
-print("✅ sitemaps e robots.txt gerados/atualizados")
+print("✅ robots.txt atualizado automaticamente com exclusões")
+
