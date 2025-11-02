@@ -178,7 +178,7 @@
     const co = parseISO(checkout.value);
     const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
     if (nights === 1) {
-      nightsHint.textContent = "ℹ️ Estadia mínima: 2 noites.";
+      nightsHint.textContent = "Estadia mínima: 2 noites.";
       nightsHint.style.display = "block";
     } else {
       nightsHint.style.display = "none";
@@ -235,7 +235,7 @@
         const coMin = new Date(ci); coMin.setDate(ci.getDate() + MIN_NIGHTS);
         checkout.value = toISO(coMin);
         showNightsHintIfNeeded();
-        return showError("ℹ️ Estadia mínima: 2 noites.");
+        return showError("Estadia mínima: 2 noites.");
       }
     }
 
