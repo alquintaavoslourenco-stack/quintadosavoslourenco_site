@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aviso de Cookies · Quinta dos Avós Lourenço</title>
+  <meta name="description" content="Aviso de Cookies da Quinta dos Avós Lourenço: usamos apenas armazenamento local essencial para lembrar a sua aceitação.">
+
+  <!-- CSP alinhada com o site -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          script-src 'self';
+          style-src  'self' 'unsafe-inline';
+          img-src    'self' data:;
+          font-src   'self' data:;
+          connect-src 'self';
+          base-uri   'self';
+          form-action 'self';
+          upgrade-insecure-requests;
+        ">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Cabeçalho -->
+  <header class="topbar">
+    <div class="brand">
+      <a href="/"><img src="/images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a>
+    </div>
+    <nav class="menu" aria-label="Navegação principal">
+      <a href="/">Início</a>
+      <a href="/sobre/">Sobre</a>
+      <a href="/galeria/">Galeria</a>
+      <a href="/contactos/">Contactos</a>
+      <a href="/reservas/">Reservas</a>
+    </nav>
+  </header>
+
+  <!-- Conteúdo -->
+  <main class="container section">
+    <h1>Aviso de Cookies</h1>
+    <p><em>Última atualização: 2 de novembro de 2025</em></p>
+
+    <h2>1. O que usamos</h2>
+    <p>
+      Este website utiliza exclusivamente <strong>armazenamento local essencial</strong> no seu navegador para
+      <strong>memorizar a aceitação do banner de cookies</strong>. Não utilizamos cookies de analítica, marketing
+      ou perfis, nem carregamos scripts de terceiros que definam cookies.
+    </p>
+
+    <h2>2. Detalhes técnicos</h2>
+    <ul>
+      <li><strong>Chave de consentimento:</strong> <code>qdal-consent-v1</code> (armazenada em <em>localStorage</em>)</li>
+      <li><strong>Finalidade:</strong> recordar que já aceitou o aviso de cookies para não o mostrar novamente</li>
+      <li><strong>Duração:</strong> até o utilizador apagar o armazenamento local do navegador ou a chave ser alterada</li>
+      <li><strong>Conteúdo:</strong> valor booleano <code>"true"</code> (sem identificação pessoal)</li>
+    </ul>
+
+    <h2>3. Como gerir</h2>
+    <p>
+      Pode apagar este registo através das definições do seu navegador (limpar dados do site/armazenamento local) ou,
+      se pretender testar, usando o atalho disponibilizado pelo site:
+    </p>
+    <pre style="padding:12px;border:1px solid #eee;border-radius:8px;background:#fafafa;overflow:auto">
+/* console do navegador */
+qdalConsent.reset();   // volta a mostrar o banner
+qdalConsent.accepted(); // devolve true/false
+    </pre>
+
+    <h2>4. WhatsApp e ligações externas</h2>
+    <p>
+      O botão flutuante de WhatsApp abre uma ligação externa para <em>wa.me</em>. Ao utilizar serviços externos
+      (p. ex., Airbnb, Booking, WhatsApp), aplicam-se as respetivas políticas de privacidade e cookies. Recomendamos
+      a leitura dessas políticas antes de fornecer dados nessas plataformas.
+    </p>
+
+    <h2>5. Alterações futuras</h2>
+    <p>
+      Se, no futuro, introduzirmos <strong>cookies não essenciais</strong> (por exemplo, analítica),
+      será apresentado um <strong>banner de consentimento</strong> com opção de aceitar/recusar antes de ativar esses recursos,
+      e este aviso será atualizado em conformidade.
+    </p>
+
+    <p>Para mais informação, consulte a nossa <a href="/politica-privacidade/">Política de Privacidade</a>.</p>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+    <p>
+      © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
+      <a href="/politica-privacidade/">Política de Privacidade</a> ·
+      <a href="/termos-e-condicoes/">Termos e Condições</a> ·
+      <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">Livro de Reclamações</a>
+    </p>
+  </footer>
+
+  <!-- (Opcional) Se quiseres mostrar o banner também nesta página, inclui o markup abaixo e o script -->
+  <!--
+  <div id="cookie-consent" class="cookie-banner" role="dialog" aria-live="polite" hidden>
+    <div class="cookie-inner">
+      <p class="cookie-text">
+        Usamos cookies apenas para garantir o bom funcionamento do site.
+        <a href="/cookies/">Saiba mais</a>
+      </p>
+      <button id="cookie-accept" type="button" class="btn-accept">Aceitar</button>
+    </div>
+  </div>
+  <script defer src="/js/cookies.js"></script>
+  -->
+
+  <script defer src="/js/app.js"></script>
+</body>
+</html>
