@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
-Sitemap: https://quintadosavoslourenco.pt/sitemap.xml
 
+Sitemap: https://quintadosavoslourenco.pt/sitemap.xml
+Sitemap: https://quintadosavoslourenco.pt/sitemap-images.xml
