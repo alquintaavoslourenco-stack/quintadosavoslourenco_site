@@ -308,7 +308,7 @@ a:hover { text-decoration: underline; }
 .icon { width: 22px; height: 22px; display: block; fill: var(--brand); }
 
 /* ==========================================================
-   WHATSAPP E COOKIES (mantidos iguais)
+   WHATSAPP E COOKIES
    ========================================================== */
 .whatsapp-float {
   position: fixed;
@@ -369,10 +369,12 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   grid-template-columns: 1fr 1fr;
   gap: 16px 20px;
   background: #fff;
-  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+
+  /* ALTERAÇÃO 1: remover barra cinza e manter sombra */
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06) !important;
 }
 
 /* cada <p> do formulário passa a um campo */
@@ -419,14 +421,40 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
 .page-reservas #status-err,
 .page-reservas #bookingForm p:has(#consent) { grid-column: 1 / -1; }
 
-/* botão no estilo do site */
+/* botão no estilo do site — ALTERAÇÃO 2: estados visuais */
 .page-reservas #bookingForm button[type="submit"] {
   justify-self: center;
   min-width: 240px;
+  position: relative;
+  transition: background-color .3s, transform .2s, box-shadow .3s, opacity .2s;
 }
-.page-reservas #bookingForm button[type="submit"].btn { border-width: 2px; }
-.page-reservas #bookingForm button[type="submit"].btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
-.page-reservas #bookingForm button[type="submit"].btn.primary:hover { background: var(--brand-dark); }
+.page-reservas #bookingForm button.is-loading {
+  pointer-events: none;
+  opacity: .85;
+}
+.page-reservas #bookingForm button.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 18px; height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 3px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: reservas-spin .9s linear infinite;
+}
+.page-reservas #bookingForm button.is-success {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+  transform: scale(1.02);
+}
+.page-reservas #bookingForm button.is-error {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  color: #fff;
+  animation: reservas-shake .25s ease-in-out 2;
+}
 
 /* mensagens */
 .page-reservas #status-ok,
@@ -436,9 +464,6 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
 @media (max-width: 720px) {
   .page-reservas #bookingForm { grid-template-columns: 1fr; }
 }
-
-
-
 
 /* ===== Página Reservas: checkbox e botão ===== */
 .page-reservas #bookingForm p:has(#consent) {
@@ -452,9 +477,12 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   height: 18px;
   accent-color: var(--brand);
 }
-.page-reservas #bookingForm label {
-  font-weight: 400;
-}
-.page-reservas #bookingForm button[type="submit"] {
-  justify-self: center;
+.page-reservas #bookingForm label { font-weight: 400; }
+
+/* Animações auxiliares */
+@keyframes reservas-spin { to { transform: rotate(360deg); } }
+@keyframes reservas-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
