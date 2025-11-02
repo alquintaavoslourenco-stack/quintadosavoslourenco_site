@@ -1,4 +1,4 @@
-// QUINTA DOS AVÓS LOURENÇO — cookies.js (versão final corrigida)
+// QUINTA DOS AVÓS LOURENÇO — cookies.js (versão final afinada)
 (function () {
   const KEY = 'qdal-consent-v1'; // chave única do projeto
 
@@ -10,7 +10,6 @@
     banner.setAttribute('hidden', '');
     banner.setAttribute('aria-hidden', 'true');
     banner.setAttribute('aria-live', 'off');
-    banner.setAttribute('tabindex', '-1');
     setWaOffset(0);
   };
 
@@ -18,9 +17,11 @@
     banner.removeAttribute('hidden');
     banner.setAttribute('aria-hidden', 'false');
     banner.setAttribute('aria-live', 'polite');
-    banner.focus();
 
-    // mede a altura do banner e ajusta o WhatsApp
+    // evita contorno azul (outline) no foco automático
+    banner.style.outline = 'none';
+
+    // mede altura do banner e ajusta botão WhatsApp
     requestAnimationFrame(() => {
       const h = banner.getBoundingClientRect().height || 0;
       setWaOffset(h + 12);
@@ -33,20 +34,18 @@
     const link = document.getElementById('cookie-more');
     if (!banner || !btn) return;
 
-    // acessibilidade
     banner.setAttribute('role', 'dialog');
     banner.setAttribute('aria-modal', 'true');
-    banner.setAttribute('tabindex', '0');
+    banner.tabIndex = 0;
 
-    // se já aceitou, esconder
+    // já aceitou?
     try {
       if (localStorage.getItem(KEY) === 'true') {
         hide(banner);
         return;
       }
-    } catch (e) { /* ignora erros de localStorage */ }
+    } catch (e) { /* continua sem localStorage */ }
 
-    // mostrar banner
     show(banner);
 
     // aceitar cookies
@@ -56,15 +55,25 @@
       banner.dispatchEvent(new CustomEvent('cookie-accepted'));
     }, { once: true });
 
-    // link “Saber mais” → abre página de cookies
+    // tecla ESC fecha/aceita
+    banner.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' || ev.key === 'Esc') {
+        try { localStorage.setItem(KEY, 'true'); } catch {}
+        hide(banner);
+        banner.dispatchEvent(new CustomEvent('cookie-accepted'));
+      }
+    });
+
+    // link “Saber mais” → página de cookies
     if (link) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        window.location.href = '/cookies/';
+        // Caminho absoluto para funcionar no GitHub Pages
+        window.location.href = window.location.origin + '/cookies/index.html';
       });
     }
 
-    // ajustar offset do WhatsApp ao redimensionar
+    // ajustar offset do WhatsApp
     window.addEventListener('resize', () => {
       if (!banner.hasAttribute('hidden')) {
         const h = banner.getBoundingClientRect().height || 0;
@@ -84,7 +93,9 @@
     reset() {
       try { localStorage.removeItem(KEY); } catch {}
       const b = document.getElementById('cookie-consent');
-      if (b) show(b);
+      if (b) {
+        show(b);
+      }
     },
     accepted() {
       try { return localStorage.getItem(KEY) === 'true'; } catch { return false; }
