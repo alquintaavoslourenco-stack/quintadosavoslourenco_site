@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Quinta dos Avós Lourenço · Alojamento rural na Sertã</title>
   <meta name="description" content="Alojamento rural na Sertã, refúgio tranquilo desde 1853.">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JS7FTWGPQX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JS7FTWGPQX');
+</script>
   
  <!-- ✅ Ícone da aba do navegador -->
   <!-- Favicons -->
@@ -14,17 +24,17 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   
   <!-- ✅ Segurança -->
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self';
-    style-src  'self' 'unsafe-inline';
-    img-src    'self' data:;
-    font-src   'self' data:;
-    connect-src 'self';
-    base-uri   'self';
-    form-action 'self';
-    upgrade-insecure-requests;
-  ">
+ <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com;
+  style-src  'self' 'unsafe-inline';
+  img-src    'self' data: https://www.google-analytics.com;
+  font-src   'self' data:;
+  connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com;
+  base-uri   'self';
+  form-action 'self';
+  upgrade-insecure-requests;
+">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <link rel="stylesheet" href="css/style.css">
