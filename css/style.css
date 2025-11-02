@@ -459,3 +459,7 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   justify-self: center;
 }
 
+.status.err {
+  border: none !important;
+  box-shadow: none !important;
+}
