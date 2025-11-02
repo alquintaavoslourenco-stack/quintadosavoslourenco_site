@@ -357,3 +357,83 @@ body:not(:has(.hero)) .topbar {
 }
 body:not(:has(.hero)) main,
 body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
+
+/* ==========================================================
+   PÁGINA: RESERVAS (layout e campos)
+   ========================================================== */
+.page-reservas .section { padding-top: 60px; } /* respira um pouco abaixo do topo fixo */
+.page-reservas .container { max-width: 760px; margin-inline: auto; }
+
+.page-reservas #bookingForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+
+/* cada <p> do formulário passa a um campo */
+.page-reservas #bookingForm > p { margin: 0; }
+
+/* rótulos e inputs */
+.page-reservas #bookingForm label { display: block; font-weight: 600; margin-bottom: 6px; color: #333; }
+.page-reservas #bookingForm input,
+.page-reservas #bookingForm select,
+.page-reservas #bookingForm textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  background: #fafafa;
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+/* foco acessível com a cor da marca */
+.page-reservas #bookingForm input:focus,
+.page-reservas #bookingForm select:focus,
+.page-reservas #bookingForm textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  background: #fff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 20%, transparent);
+}
+
+/* colunas (sem alterar HTML) */
+.page-reservas #bookingForm p:has(#nome),
+.page-reservas #bookingForm p:has(#email),
+.page-reservas #bookingForm p:has(#telefone),
+.page-reservas #bookingForm p:has(#alojamento),
+.page-reservas #bookingForm p:has(#checkin),
+.page-reservas #bookingForm p:has(#checkout),
+.page-reservas #bookingForm p:has(#adultos),
+.page-reservas #bookingForm p:has(#criancas) { grid-column: span 1; }
+
+/* campos que devem ocupar a largura toda */
+.page-reservas #bookingForm p:has(#mensagem),
+.page-reservas #bookingForm p:has(button),
+.page-reservas #status-ok,
+.page-reservas #status-err,
+.page-reservas #bookingForm p:has(#consent) { grid-column: 1 / -1; }
+
+/* botão no estilo do site */
+.page-reservas #bookingForm button[type="submit"] {
+  justify-self: center;
+  min-width: 240px;
+}
+.page-reservas #bookingForm button[type="submit"].btn { border-width: 2px; }
+.page-reservas #bookingForm button[type="submit"].btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.page-reservas #bookingForm button[type="submit"].btn.primary:hover { background: var(--brand-dark); }
+
+/* mensagens */
+.page-reservas #status-ok,
+.page-reservas #status-err { text-align: center; font-weight: 600; }
+
+/* responsivo: 1 coluna em ecrãs pequenos */
+@media (max-width: 720px) {
+  .page-reservas #bookingForm { grid-template-columns: 1fr; }
+}
+
