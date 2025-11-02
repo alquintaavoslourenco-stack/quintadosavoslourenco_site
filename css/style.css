@@ -458,8 +458,3 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
 .page-reservas #bookingForm button[type="submit"] {
   justify-self: center;
 }
-
-.status.err {
-  border: none !important;
-  box-shadow: none !important;
-}
