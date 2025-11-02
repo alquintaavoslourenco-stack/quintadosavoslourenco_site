@@ -1,12 +1,12 @@
 // /js/reservas.js
-// Validações + envio AJAX (Formspree) + regras de campos + mínimo 2 noites
+// Validações + envio AJAX (Formspree) + mínimo 2 noites (aplicado só no envio)
 
 (function () {
   const $ = (s, c = document) => c.querySelector(s);
 
   const form     = $("#bookingForm");
   if (!form) {
-    console.warn("⚠️ Formulário #bookingForm não encontrado. Verifica o ID no HTML.");
+    console.warn("⚠️ #bookingForm não encontrado. Confirma o ID no HTML e se o script está no fim com defer.");
     return;
   }
 
@@ -25,7 +25,7 @@
   const toISO = d => d.toISOString().slice(0, 10);
   const parseISO = s => (s ? new Date(s + "T00:00:00") : null);
 
-  // ===== 1) Inicializar datas =====
+  // ===== 1) Datas (nunca passado). Permite 1 noite; mostra aviso. =====
   (function initDates() {
     if (!checkin || !checkout) return;
 
@@ -40,39 +40,53 @@
     checkin.min  = todayISO;
     checkout.min = todayISO;
 
-    // valores padrão (hoje → amanhã)
+    // valores padrão: hoje → amanhã (1 noite)
     if (!checkin.value)  checkin.value  = todayISO;
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     if (!checkout.value || checkout.value < toISO(tomorrow)) {
       checkout.value = toISO(tomorrow);
     }
 
-    checkin.addEventListener("change", () => updateCheckout());
+    // impedir data passada ao escrever
+    checkin.addEventListener("input", () => {
+      if (!checkin.value) return;
+      const ci = parseISO(checkin.value);
+      if (ci < today) checkin.value = todayISO;
+      updateCheckoutMinAllowOneNight();
+      showNightsHintIfNeeded();
+    });
+
+    // ao mudar check-in, checkout mínimo = +1 dia (permite 1 noite)
+    checkin.addEventListener("change", () => {
+      updateCheckoutMinAllowOneNight();
+      showNightsHintIfNeeded();
+    });
+
+    checkout.addEventListener("input", showNightsHintIfNeeded);
     checkout.addEventListener("change", showNightsHintIfNeeded);
 
-    function updateCheckout() {
+    function updateCheckoutMinAllowOneNight() {
+      if (!checkin.value) return;
       const ci = parseISO(checkin.value);
-      if (!ci) return;
-      const coMin = new Date(ci); coMin.setDate(ci.getDate() + 1);
+      const coMin = new Date(ci); coMin.setDate(ci.getDate() + 1); // permite 1 noite
       const coISO = toISO(coMin);
       checkout.min = coISO;
       if (!checkout.value || checkout.value < coISO) checkout.value = coISO;
-      showNightsHintIfNeeded();
     }
   })();
 
   // ===== 2) Filtros em tempo real =====
   if (nome) {
     nome.addEventListener("input", () => {
-      nome.value = nome.value.replace(/[0-9]/g, "");
+      nome.value = nome.value.replace(/[0-9]/g, ""); // sem números
     });
   }
 
   if (telefone) {
     telefone.addEventListener("input", () => {
       let v = telefone.value;
-      v = v.replace(/[^0-9+()\- \t]/g, "");
-      v = v.replace(/(?!^)\+/g, "");
+      v = v.replace(/[^0-9+()\- \t]/g, ""); // só dígitos e símbolos usuais
+      v = v.replace(/(?!^)\+/g, "");        // apenas um '+' e no início
       if (v.indexOf("+") > 0) v = v.replace(/\+/g, "");
       telefone.value = v;
     });
@@ -90,19 +104,20 @@
       input.value = String(val);
     });
   }
-  clampNumber(adultos);
-  clampNumber(criancas);
+  clampNumber(adultos);   // max 7
+  clampNumber(criancas);  // max 6
 
-  // ===== 3) Mensagem “mínimo 2 noites” =====
+  // ===== 3) Aviso (1 noite) em vermelho =====
   let nightsHint = document.getElementById("nights-hint");
   if (!nightsHint && checkout) {
     nightsHint = document.createElement("small");
     nightsHint.id = "nights-hint";
-    nightsHint.style.display = "none";
-    nightsHint.style.color = "#991b1b";
-    nightsHint.style.fontWeight = "600";
+    nightsHint.style.display   = "none";
+    nightsHint.style.color     = "#991b1b"; // vermelho
+    nightsHint.style.fontWeight= "600";
     nightsHint.style.marginTop = "6px";
-    checkout.parentElement.appendChild(nightsHint);
+    const p = checkout.closest("p") || checkout.parentElement;
+    p && p.appendChild(nightsHint);
   }
 
   function showNightsHintIfNeeded() {
@@ -115,19 +130,21 @@
       nightsHint.style.display = "block";
     } else {
       nightsHint.style.display = "none";
+      nightsHint.textContent = "";
     }
   }
 
-  // ===== 4) Submissão (AJAX Formspree) =====
+  // ===== 4) Submissão AJAX (sem redirecionar) =====
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (ok)  { ok.style.display = "none"; ok.textContent  = ""; }
     if (err) { err.style.display = "none"; err.textContent = ""; }
 
+    // Honeypot
     if (form.website && form.website.value.trim() !== "") return;
 
-    // validação obrigatórios
+    // obrigatórios
     const required = form.querySelectorAll("[required]");
     const faltam = [];
     required.forEach(el => {
@@ -149,7 +166,6 @@
     if (email && !email.value.includes("@")) {
       return showError("Por favor insira um email válido.");
     }
-
     if (adultos && (+adultos.value > 7)) {
       return showError("Máximo 7 adultos.");
     }
@@ -157,10 +173,13 @@
       return showError("Máximo 6 crianças.");
     }
 
-    // mínimo 2 noites
+    // datas: corrigir automaticamente para mínimo 2 noites no envio
     if (checkin && checkout) {
       const ci = parseISO(checkin.value);
       const co = parseISO(checkout.value);
+      if (!(co > ci)) {
+        return showError("A data de check-out deve ser posterior à de check-in.");
+      }
       const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
       if (nights < MIN_NIGHTS) {
         const coMin = new Date(ci); coMin.setDate(ci.getDate() + MIN_NIGHTS);
@@ -170,9 +189,17 @@
       }
     }
 
-    // envio AJAX
+    // Envio AJAX para o endpoint do Formspree definido no HTML
     try {
       const data = new FormData(form);
+      // acrescenta nº de noites (útil no email)
+      if (checkin && checkout) {
+        const ci = parseISO(checkin.value);
+        const co = parseISO(checkout.value);
+        const nights = Math.round((co - ci) / (1000 * 60 * 60 * 24));
+        if (!Number.isNaN(nights) && nights > 0) data.append("noites", String(nights));
+      }
+
       const resp = await fetch(form.action, {
         method: "POST",
         body: data,
@@ -182,10 +209,12 @@
       if (resp.ok) {
         form.reset();
 
+        // repor defaults: hoje → amanhã
         const today = new Date(); today.setHours(0,0,0,0);
         const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
         if (checkin)  checkin.value  = toISO(today);
         if (checkout) checkout.value = toISO(tomorrow);
+        nightsHint && (nightsHint.style.display = "none");
 
         if (ok) {
           ok.textContent = "Pedido enviado com sucesso. Obrigado!";
@@ -208,3 +237,4 @@
     err.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 })();
+
