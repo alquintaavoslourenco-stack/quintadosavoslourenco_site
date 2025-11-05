@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reservas · Quinta dos Avós Lourenço | Alojamento Rural na Sertã</title>
   <meta name="description" content="Reserve a sua estadia na Quinta dos Avós Lourenço — alojamento rural na Sertã. Verifique preços, disponibilidade e faça o seu pedido de reserva.">
-  <link rel="canonical" href="https://quintadosavoslourenco.pt/reservas/">
   <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://quintadosavoslourenco.pt/reservas/">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <!-- CSP igual ao site, com permissões para Formspree -->
@@ -26,11 +26,12 @@
   <meta property="og:title" content="Reservas · Quinta dos Avós Lourenço">
   <meta property="og:description" content="Faça o seu pedido de reserva na Quinta dos Avós Lourenço, alojamento rural na Sertã.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://quintadosavoslourenço.pt/reservas/">
+  <meta property="og:url" content="https://quintadosavoslourenco.pt/reservas/">
 
   <!-- CSS principal -->
   <link rel="stylesheet" href="/css/style.css">
 
+  <!-- Estilos apenas para o simulador (não mexem no resto do site) -->
   <style>
     .simulador{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;box-shadow:0 6px 16px rgba(0,0,0,.06);margin:24px 0}
     .sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -47,28 +48,37 @@
     .consent-line{display:flex;align-items:flex-start;gap:8px}
     .consent-line input[type="checkbox"]{margin-top:2px}
 
-    /* Inputs arredondados locais + fix iOS */
-    .round-field{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;appearance:none;-webkit-appearance:none;-moz-appearance:textfield;}
-    .with-spinner{position:relative}
-    .with-spinner .spinner{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px}
-    .with-spinner .spinner button{border:none;background:none;cursor:pointer;line-height:1;padding:0;font-size:14px;color:#8b5e34}
-    input[type="date"].round-field{height:52px;font-size:16px;color:#111827;-webkit-text-fill-color:currentColor;}
+    /* Campos arredondados locais + fix iOS + letra maior */
+    #simulador-precos label{font-size:16px}
+    .round-field{
+      width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;
+      appearance:none;-webkit-appearance:none;-moz-appearance:textfield;
+      color:#111827;-webkit-text-fill-color:currentColor;font-size:16px;
+    }
+    input[type="date"].round-field{height:52px}
     input[type="date"]::-webkit-date-and-time-value{text-align:left}
+
+    /* Spinners: maiores e alinhados dentro da caixa (mobile e desktop) */
+    .with-spinner{position:relative}
+    .with-spinner .spinner{
+      position:absolute; right:8px; top:6px; bottom:6px;
+      width:34px; display:flex; flex-direction:column; justify-content:center; gap:6px; pointer-events:auto;
+    }
+    .with-spinner .spinner button{
+      width:100%; height:22px; font-size:16px; line-height:1;
+      color:#8b5e34; background:#fff; border:1px solid #e5e7eb; border-radius:8px;
+      display:flex; align-items:center; justify-content:center; cursor:pointer;
+    }
+    .with-spinner .spinner button:active{transform:translateY(1px)}
   </style>
 </head>
 
 <body class="page-reservas">
   <header class="topbar">
-    <div class="brand">
-      <a href="/"><img src="/images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a>
-    </div>
+    <div class="brand"><a href="/"><img src="/images/logo.png" alt="Quinta dos Avós Lourenço" class="logo"></a></div>
     <button class="menu-toggle" aria-expanded="false" aria-label="Abrir menu">☰</button>
     <nav class="menu" aria-label="Navegação principal">
-      <a href="/">Início</a>
-      <a href="/sobre/">Sobre</a>
-      <a href="/galeria/">Galeria</a>
-      <a href="/contactos/">Contactos</a>
-      <a href="/reservas/" class="active">Reservas</a>
+      <a href="/">Início</a><a href="/sobre/">Sobre</a><a href="/galeria/">Galeria</a><a href="/contactos/">Contactos</a><a href="/reservas/" class="active">Reservas</a>
     </nav>
   </header>
 
@@ -90,22 +100,22 @@
             <input id="checkout" name="checkout" type="date" class="round-field">
           </div>
 
-          <!-- Adultos com setas -->
+          <!-- Adultos com setas e sem teclado -->
           <div class="with-spinner">
             <label for="adultos">Adultos</label>
             <input id="adultos" name="adultos" type="number" min="1" max="7" value="2"
-                   class="round-field" readonly aria-readonly="true" style="padding-right:48px;caret-color:transparent;">
+                   class="round-field" readonly aria-readonly="true" style="padding-right:62px;caret-color:transparent;">
             <div class="spinner">
               <button type="button" class="spin-up"   data-target="adultos" aria-label="Mais adultos">▲</button>
               <button type="button" class="spin-down" data-target="adultos" aria-label="Menos adultos">▼</button>
             </div>
           </div>
 
-          <!-- Crianças (0–4 anos) com setas -->
+          <!-- Crianças 0–4 com setas e sem teclado -->
           <div class="with-spinner">
             <label for="criancas">Crianças (0–4 anos)</label>
             <input id="criancas" name="criancas" type="number" min="0" max="6" value="0"
-                   class="round-field" readonly aria-readonly="true" style="padding-right:48px;caret-color:transparent;">
+                   class="round-field" readonly aria-readonly="true" style="padding-right:62px;caret-color:transparent;">
             <div class="spinner">
               <button type="button" class="spin-up"   data-target="criancas" aria-label="Mais crianças">▲</button>
               <button type="button" class="spin-down" data-target="criancas" aria-label="Menos crianças">▼</button>
@@ -135,7 +145,7 @@
         <p class="note">
           Regras: <strong>137€ / noite</strong> inclui <strong>1–2 adultos</strong> (pequeno-almoço).
           Adultos extra: <strong>+35€ / adulto / noite</strong>. <strong>Crianças 0–4 anos: gratuito</strong>
-          (não acrescentam custo). Acima de 4 anos conta como adulto.
+          (não acrescentam custo; >4 anos contam como adulto).
           Mínimo <strong>2 noites</strong>, máximo <strong>30 noites</strong>, capacidade <strong>até 7 pessoas</strong> (adultos + crianças).
         </p>
 
@@ -167,13 +177,11 @@
             <input id="consent-privacy" type="checkbox" required>
             <span>Li e aceito a <a href="/politica-privacidade/" target="_blank" rel="noopener">Política de Privacidade</a>.</span>
           </label>
-
           <button id="sim-reservar" type="button" class="btn primary">Reservar agora</button>
         </div>
       </section>
 
       <hr>
-
       <h2 style="text-align:center">Outras formas de reservar</h2>
       <p style="text-align:center">
         <a href="https://www.airbnb.pt/rooms/875560493639889462" target="_blank" rel="noopener">Airbnb</a> ·
@@ -184,24 +192,20 @@
   </main>
 
   <footer class="footer">
-    <p>
-      © 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
+    <p>© 2023–2025 Quinta dos Avós Lourenço · 135447/AL ·
       <a href="/politica-privacidade/">Política de Privacidade</a> ·
       <a href="/termos-e-condicoes/">Termos e Condições</a> ·
       <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener noreferrer">Livro de Reclamações</a>
     </p>
   </footer>
 
-  <a href="https://wa.me/351960446713?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Louren%C3%A7o." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp" title="Enviar mensagem no WhatsApp">
+  <a href="https://wa.me/351960446713?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Quinta%20dos%20Avós%20Lourenço." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem no WhatsApp" title="Enviar mensagem no WhatsApp">
     <img src="/images/whatsapp-icon.svg" alt="WhatsApp">
   </a>
 
   <div id="cookie-consent" class="cookie-banner" role="dialog" aria-live="polite" hidden>
     <div class="cookie-inner">
-      <p class="cookie-text">
-        Usamos cookies apenas para garantir o bom funcionamento do site.
-        <a href="/cookies/">Saiba mais</a>
-      </p>
+      <p class="cookie-text">Usamos cookies apenas para garantir o bom funcionamento do site. <a href="/cookies/">Saiba mais</a></p>
       <button id="cookie-accept" type="button" class="btn-accept">Aceitar</button>
     </div>
   </div>
