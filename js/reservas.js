@@ -8,23 +8,23 @@
   const FORM_ENDPOINT = 'https://formspree.io/f/xanllrjv';
   const PRICES = Object.freeze({
     baseNightly: 137,
-    extraPerAdultPerNight: 35, // <-- só adultos
+    extraPerAdultPerNight: 35,
     minNights: 2,
     maxNights: 30,
     maxPeople: 7,
   });
 
   const $ = (s, c=document) => c.querySelector(s);
-  const fmtEUR = (n) => new Intl.NumberFormat('pt-PT', {style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+  const fmtEUR = (n) => new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
   const toISO = (d) => d.toISOString().slice(0,10);
   const diffNights = (ci, co) => {
     if (!ci || !co) return 0;
     const a = new Date(ci), b = new Date(co);
     if (isNaN(a) || isNaN(b)) return 0;
-    return Math.max(0, Math.round((b.setHours(12,0,0,0) - a.setHours(12,0,0,0)) / 86400000));
+    return Math.max(0, Math.round((b.setHours(12,0,0,0)-a.setHours(12,0,0,0))/86400000));
   };
 
-  // cálculo: extra só por ADULTOS acima de 2; crianças (0–4) não acrescentam custo
+  // extra só por ADULTOS acima de 2; crianças 0–4 não contam custo
   const computeQuote = (ci, co, adults, kids04) => {
     const nights = diffNights(ci, co);
     const a = Math.max(1, parseInt(adults,10) || 1);
@@ -32,15 +32,15 @@
     const partyTotal = a + k;
 
     const adultsAboveTwo = Math.max(0, a - 2);
-    const nightlyExtras   = adultsAboveTwo * PRICES.extraPerAdultPerNight;
-    const nightlyTotal    = PRICES.baseNightly + nightlyExtras;
-    const total           = nights * nightlyTotal;
+    const nightlyExtras = adultsAboveTwo * PRICES.extraPerAdultPerNight;
+    const nightlyTotal  = PRICES.baseNightly + nightlyExtras;
+    const total         = nights * nightlyTotal;
 
     let valid = true, message = '';
-    if (nights === 0)                   { valid=false; message='Selecione datas válidas.'; }
-    if (nights>0 && nights<PRICES.minNights){ valid=false; message='Estadia mínima: 2 noites.'; }
-    if (nights>PRICES.maxNights)        { valid=false; message='Estadia máxima: 30 noites.'; }
-    if (partyTotal>PRICES.maxPeople)    { valid=false; message='Capacidade máxima: 7 pessoas.'; }
+    if (nights === 0) valid=false, message='Selecione datas válidas.';
+    else if (nights < PRICES.minNights) valid=false, message='Estadia mínima: 2 noites.';
+    else if (nights > PRICES.maxNights) valid=false, message='Estadia máxima: 30 noites.';
+    if (partyTotal > PRICES.maxPeople) valid=false, message='Capacidade máxima: 7 pessoas.';
 
     return { nights, a, k, partyTotal, adultsAboveTwo, nightlyTotal, nightlyExtras, total, valid, message };
   };
@@ -213,7 +213,7 @@
       console.assert(q1.nightlyTotal===PRICES.baseNightly,'Crianças grátis não somam extra');
       const q2 = computeQuote('2025-01-01','2025-01-03',4,0);
       console.assert(q2.nightlyTotal===PRICES.baseNightly+2*PRICES.extraPerAdultPerNight,'Extra só por adultos>2');
-      const q3 = computeQuote('2025-01-01','2025-01-05',6,2); // 8 pessoas
+      const q3 = computeQuote('2025-01-01','2025-01-05',6,2);
       console.assert(q3.valid===false && q3.partyTotal===8,'Capacidade 7');
     } catch(e){ console.warn('Tests falharam:', e.message); }
   });
