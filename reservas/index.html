@@ -22,6 +22,25 @@
 
   <!-- CSS principal do site -->
   <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    /* Estilos leves para o simulador (podes mover para /css/style.css) */
+    .simulador{background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:16px; box-shadow:0 6px 16px rgba(0,0,0,.06); margin:24px 0}
+    .sim-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:800px){.sim-grid{grid-template-columns:1fr}}
+    .sim-kpi{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px}
+    .sim-kpi .k{flex:1 1 120px; background:#fafafa; border:1px dashed #e5e7eb; border-radius:10px; padding:10px}
+    .sim-kpi .k b{display:block; font-size:18px}
+    .sim-total{margin-top:12px; padding:14px; border:1px solid #efe7df; border-radius:12px; background:linear-gradient(135deg,#fff,#faf7f2)}
+    .sim-total .row{display:flex; justify-content:space-between; margin:6px 0}
+    .sim-total .grand{font-weight:700; font-size:20px}
+    .sim-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .btn{appearance:none; border:0; background:#8b5e34; color:#fff; border-radius:10px; padding:10px 14px; cursor:pointer}
+    .btn.secondary{background:#374151}
+    .note{font-size:12px; color:#6b7280; margin-top:6px}
+    .warn{color:#991b1b; font-size:13px}
+    .hp{display:none}
+  </style>
 </head>
 
 <body class="page-reservas">
@@ -46,6 +65,52 @@
       <h1 style="text-align:center">Pedido de Reserva</h1>
       <p style="text-align:center">Preencha o formulário para verificarmos disponibilidade. Respondemos por email ou telefone.</p>
 
+      <!-- Simulador de preços -->
+      <section id="simulador-precos" class="simulador" aria-labelledby="sim-title">
+        <h2 id="sim-title" style="margin-top:0">Simulador de preços</h2>
+        <div class="sim-grid">
+          <div>
+            <label for="checkin">Check-in</label>
+            <input id="checkin" name="checkin" type="date">
+          </div>
+          <div>
+            <label for="checkout">Check-out</label>
+            <input id="checkout" name="checkout" type="date">
+          </div>
+          <div>
+            <label for="adultos">Adultos</label>
+            <input id="adultos" name="adultos" type="number" min="1" max="7" value="2">
+          </div>
+          <div>
+            <label for="criancas">Crianças</label>
+            <input id="criancas" name="criancas" type="number" min="0" max="6" value="0">
+          </div>
+        </div>
+
+        <p class="note">Regras: <strong>137€ / noite</strong> inclui <strong>1–2 pessoas</strong> (pequeno-almoço). Pessoas extra: <strong>+35€ / pessoa / noite</strong>. Mínimo <strong>2 noites</strong>, máximo <strong>30 noites</strong>, capacidade <strong>até 7 pessoas</strong>.</p>
+
+        <div class="sim-kpi">
+          <div class="k"><b id="k-noites">0</b><span>noites</span></div>
+          <div class="k"><b id="k-base">137 €</b><span>base / noite</span></div>
+          <div class="k"><b id="k-grupo">2</b><span>pessoas (total)</span></div>
+        </div>
+
+        <div class="sim-total" id="sim-total">
+          <div class="row"><span>Noites</span><span id="bk-noites">0</span></div>
+          <div class="row"><span>Base (1–2 pessoas)</span><span id="bk-base">137 € / noite</span></div>
+          <div class="row"><span>Pessoas extra</span><span id="bk-extra">0 €</span></div>
+          <div class="row"><span>Pequeno-almoço</span><span>Incluído</span></div>
+          <div class="row" style="border-top:1px dashed #e5e7eb; padding-top:8px; margin-top:8px">
+            <span class="grand">Total estimado</span>
+            <span class="grand" id="bk-total">0 €</span>
+          </div>
+          <p id="sim-msg" class="warn" hidden></p>
+        </div>
+        <div class="sim-actions">
+          <button id="sim-copy" type="button" class="btn secondary">Copiar orçamento</button>
+        </div>
+      </section>
+
       <!-- Formulário -->
       <form id="bookingForm" action="https://formspree.io/f/xanllrjv" method="POST" novalidate>
         <!-- Honeypot anti-spam -->
@@ -63,7 +128,6 @@
 
         <p>
           <label for="telefone">Telefone *</label>
-          <!-- sem pattern para evitar erro; JS trata da validação -->
           <input id="telefone" name="telefone" type="tel" required inputmode="tel" placeholder="+351 ...">
         </p>
 
@@ -75,29 +139,33 @@
         </p>
 
         <p>
-          <label for="checkin">Check-in *</label>
-          <input id="checkin" name="checkin" type="date" required>
+          <label for="checkin-form">Check-in *</label>
+          <input id="checkin-form" name="checkin_form" type="date" required>
         </p>
 
         <p>
-          <label for="checkout">Check-out *</label>
-          <input id="checkout" name="checkout" type="date" required>
+          <label for="checkout-form">Check-out *</label>
+          <input id="checkout-form" name="checkout_form" type="date" required>
         </p>
 
         <p>
-          <label for="adultos">Adultos *</label>
-          <input id="adultos" name="adultos" type="number" min="1" max="7" value="2" required>
+          <label for="adultos-form">Adultos *</label>
+          <input id="adultos-form" name="adultos_form" type="number" min="1" max="7" value="2" required>
         </p>
 
         <p>
-          <label for="criancas">Crianças</label>
-          <input id="criancas" name="criancas" type="number" min="0" max="6" value="0">
+          <label for="criancas-form">Crianças</label>
+          <input id="criancas-form" name="criancas_form" type="number" min="0" max="6" value="0">
         </p>
 
         <p>
           <label for="mensagem">Mensagem / pedidos especiais</label>
           <textarea id="mensagem" name="mensagem" rows="5" placeholder="Ex.: berço, check-in tardio, alergias…"></textarea>
         </p>
+
+        <!-- Metadados do simulador para enviar com o formulário -->
+        <input type="hidden" id="sim-total-hidden" name="simulacao_total" value="">
+        <input type="hidden" id="sim-breakdown-hidden" name="simulacao_detalhe" value="">
 
         <p class="consent">
           <input id="consent" name="consent" type="checkbox" required>
@@ -157,9 +225,10 @@
     </div>
   </div>
 
-  <!-- Scripts (corrigido: /js/ e não /ls/) -->
+  <!-- Scripts (deferred) -->
   <script defer src="/js/cookies.js"></script>
   <script defer src="/js/app.js"></script>
+  <!-- reservas.js contém toda a lógica do simulador + validações; não há JS inline por causa da CSP -->
   <script defer src="/js/reservas.js"></script>
 </body>
 </html>
