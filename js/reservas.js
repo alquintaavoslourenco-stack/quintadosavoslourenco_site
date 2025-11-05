@@ -1,13 +1,14 @@
-/* /js/reservas.js — Simulador + validações + envio AJAX (Formspree)
+/* /js/reservas.js — Simulador (sem formulário) + envio AJAX (Formspree)
    Regras: 137€/noite (1–2 pessoas); +35€/pessoa/noite acima de 2;
            mínimo 2 noites; máximo 30 noites; capacidade até 7 pessoas.
-   Seguro contra DOM incompleto (tudo corre após DOMContentLoaded) e com listeners defensivos.
+   Compatível com CSP (sem inline JS). Tudo corre após DOMContentLoaded.
 */
 
-(function(){
+(function () {
   'use strict';
 
-  // ===== Configuração =====
+  // ===== Config =====
+  const FORM_ENDPOINT = 'https://formspree.io/f/xanllrjv';
   const PRICES = Object.freeze({
     baseNightly: 137,
     extraPerPersonPerNight: 35,
@@ -16,265 +17,227 @@
     maxPeople: 7,
   });
 
-  const fmtEUR = (n) => new Intl.NumberFormat('pt-PT', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
-  const $ = (s, c=document) => c.querySelector(s);
+  // ===== Utils =====
+  const $ = (s, c = document) => c.querySelector(s);
+  const fmtEUR = (n) =>
+    new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
 
-  // ===== Utilitários de data =====
-  const toISO = (d) => d.toISOString().slice(0,10);
-  const parseISO = (s) => (s ? new Date(s+"T00:00:00") : null);
+  const toISO = (d) => d.toISOString().slice(0, 10);
+  const parseISO = (s) => (s ? new Date(s + 'T00:00:00') : null);
   const diffNights = (ci, co) => {
-    if(!ci || !co) return 0;
-    const start = new Date(ci); const end = new Date(co);
-    if(isNaN(start) || isNaN(end)) return 0;
-    // normalizar para meio‑dia para evitar DST
-    const ms = end.setHours(12,0,0,0) - start.setHours(12,0,0,0);
-    return Math.max(0, Math.round(ms/86400000));
+    if (!ci || !co) return 0;
+    const start = new Date(ci);
+    const end = new Date(co);
+    if (isNaN(start) || isNaN(end)) return 0;
+    // normalizar para meio-dia para mitigar DST
+    const ms = end.setHours(12, 0, 0, 0) - start.setHours(12, 0, 0, 0);
+    return Math.max(0, Math.round(ms / 86400000));
   };
 
-  // ===== Cálculo central =====
   const computeQuote = (ci, co, adultos, criancas) => {
     const nights = diffNights(ci, co);
-    const a = parseInt(adultos,10)||0;
-    const c = parseInt(criancas,10)||0;
+    const a = parseInt(adultos, 10) || 0;
+    const c = parseInt(criancas, 10) || 0;
     const partyTotal = a + c;
     const extraPeople = Math.max(0, partyTotal - 2);
     const nightlyExtras = extraPeople * PRICES.extraPerPersonPerNight;
-    const nightlyTotal  = PRICES.baseNightly + nightlyExtras;
+    const nightlyTotal = PRICES.baseNightly + nightlyExtras;
     const total = nights * nightlyTotal;
 
-    let valid = true; let message = '';
-    if(nights === 0){ valid=false; message='Selecione datas válidas.'; }
-    if(nights>0 && nights<PRICES.minNights){ valid=false; message='Estadia mínima: 2 noites.'; }
-    if(nights>PRICES.maxNights){ valid=false; message='Estadia máxima: 30 noites.'; }
-    if(partyTotal>PRICES.maxPeople){ valid=false; message='Capacidade máxima: 7 pessoas.'; }
+    let valid = true;
+    let message = '';
+    if (nights === 0) { valid = false; message = 'Selecione datas válidas.'; }
+    if (nights > 0 && nights < PRICES.minNights) { valid = false; message = 'Estadia mínima: 2 noites.'; }
+    if (nights > PRICES.maxNights) { valid = false; message = 'Estadia máxima: 30 noites.'; }
+    if (partyTotal > PRICES.maxPeople) { valid = false; message = 'Capacidade máxima: 7 pessoas.'; }
 
-    return { nights, partyTotal, extraPeople, nightlyBase:PRICES.baseNightly, nightlyExtras, nightlyTotal, total, valid, message };
+    return {
+      nights, partyTotal, extraPeople,
+      nightlyBase: PRICES.baseNightly, nightlyExtras, nightlyTotal,
+      total, valid, message,
+    };
   };
 
-  // ===== Arranque após DOM =====
+  // ===== App =====
   document.addEventListener('DOMContentLoaded', () => {
-    // Elementos do simulador
-    const sim = {
+    // Campos do simulador
+    const els = {
       checkin:  $('#checkin'),
       checkout: $('#checkout'),
       adultos:  $('#adultos'),
       criancas: $('#criancas'),
+
       kNoites:  $('#k-noites'),
       kBase:    $('#k-base'),
       kGrupo:   $('#k-grupo'),
+
       bkNoites: $('#bk-noites'),
       bkBase:   $('#bk-base'),
       bkExtra:  $('#bk-extra'),
       bkTotal:  $('#bk-total'),
       msg:      $('#sim-msg'),
-      copy:     $('#sim-copy'),
+
+      consentTerms:   $('#consent-terms'),
+      consentPrivacy: $('#consent-privacy'),
+      reservarBtn:    $('#sim-reservar'),
     };
 
-    // Elementos do formulário
-    const form = $('#bookingForm');
-    const elsF = form ? {
-      ok: $('#status-ok'),
-      err: $('#status-err'),
-      nome: $('#nome'),
-      email: $('#email'),
-      telefone: $('#telefone'),
-      aloj: $('#alojamento'),
-      fCheckin: $('#checkin-form'),
-      fCheckout: $('#checkout-form'),
-      fAdultos: $('#adultos-form'),
-      fCriancas: $('#criancas-form'),
-      hiddenTotal: $('#sim-total-hidden'),
-      hiddenBreak: $('#sim-breakdown-hidden'),
-      submitBtn: form.querySelector('button[type="submit"]'),
-    } : {};
+    // Abort early if simulator elements don’t exist
+    if (!els.checkin || !els.checkout || !els.reservarBtn) {
+      console.warn('Simulador incompleto no DOM.');
+      return;
+    }
 
-    const BTN_TEXT_DEFAULT = elsF.submitBtn ? elsF.submitBtn.textContent.trim() : 'Pedir disponibilidade';
-
-    // ===== Inicialização de datas (simulador) =====
-    (function initDates(){
-      if(!sim.checkin || !sim.checkout) return;
+    // Defaults de datas (hoje -> amanhã) + limites de passado
+    (function initDates() {
       const today = new Date(); today.setHours(0,0,0,0);
-      const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-      if(!sim.checkin.value) sim.checkin.value = toISO(today);
-      if(!sim.checkout.value) sim.checkout.value = toISO(tomorrow);
-      // limites: nunca passado
-      const minISO = toISO(today);
-      sim.checkin.min = minISO;
-      sim.checkout.min = toISO(tomorrow); // pelo menos 1 noite na UI; regra aplica min 2 na lógica
+      const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+
+      if (!els.checkin.value)  els.checkin.value  = toISO(today);
+      if (!els.checkout.value) els.checkout.value = toISO(tomorrow);
+
+      els.checkin.min  = toISO(today);
+      els.checkout.min = toISO(tomorrow);
     })();
 
-    // ===== Render da simulação =====
+    // Renderização do resumo
     const render = () => {
-      if(!sim.checkin || !sim.checkout) return;
-      const q = computeQuote(sim.checkin.value, sim.checkout.value, sim.adultos?.value, sim.criancas?.value);
-      if(sim.kNoites) sim.kNoites.textContent = q.nights;
-      if(sim.kBase)   sim.kBase.textContent   = fmtEUR(q.nightlyBase);
-      if(sim.kGrupo)  sim.kGrupo.textContent  = q.partyTotal;
-      if(sim.bkNoites) sim.bkNoites.textContent = q.nights;
-      if(sim.bkBase)   sim.bkBase.textContent   = `${fmtEUR(q.nightlyBase)} / noite`;
-      if(sim.bkExtra)  sim.bkExtra.textContent  = q.extraPeople>0 ? `+ ${fmtEUR(q.nightlyExtras)} / noite` : '0 €';
-      if(sim.bkTotal)  sim.bkTotal.textContent  = q.valid ? fmtEUR(q.total) : '—';
-      if(sim.msg){ sim.msg.textContent = q.valid ? '' : q.message; sim.msg.hidden = !!q.valid; }
+      const q = computeQuote(els.checkin.value, els.checkout.value, els.adultos?.value, els.criancas?.value);
 
-      // sincronizar para o formulário (se existir)
-      if(elsF.fCheckin && sim.checkin) elsF.fCheckin.value = sim.checkin.value;
-      if(elsF.fCheckout && sim.checkout) elsF.fCheckout.value = sim.checkout.value;
-      if(elsF.fAdultos && sim.adultos) elsF.fAdultos.value = sim.adultos.value;
-      if(elsF.fCriancas && sim.criancas) elsF.fCriancas.value = sim.criancas.value;
-      if(elsF.hiddenTotal) elsF.hiddenTotal.value = q.valid ? fmtEUR(q.total) : '—';
-      if(elsF.hiddenBreak) {
-        elsF.hiddenBreak.value = `Noites: ${q.nights}; Base: ${fmtEUR(q.nightlyBase)}/noite; Pessoas: ${q.partyTotal}; Pessoas extra: ${q.extraPeople} (+${fmtEUR(q.nightlyExtras)}/noite)`;
+      if (els.kNoites) els.kNoites.textContent = q.nights;
+      if (els.kBase)   els.kBase.textContent   = fmtEUR(q.nightlyBase);
+      if (els.kGrupo)  els.kGrupo.textContent  = q.partyTotal;
+
+      if (els.bkNoites) els.bkNoites.textContent = q.nights;
+      if (els.bkBase)   els.bkBase.textContent   = `${fmtEUR(q.nightlyBase)} / noite`;
+      if (els.bkExtra)  els.bkExtra.textContent  = q.extraPeople > 0 ? `+ ${fmtEUR(q.nightlyExtras)} / noite` : '0 €';
+      if (els.bkTotal)  els.bkTotal.textContent  = q.valid ? fmtEUR(q.total) : '—';
+
+      if (els.msg) {
+        els.msg.textContent = q.valid ? '' : q.message;
+        els.msg.hidden = !!q.valid;
       }
+
+      // Botão só habilita se simulação for válida e consentimentos marcados
+      const consentsOk = (!!els.consentTerms?.checked) && (!!els.consentPrivacy?.checked);
+      els.reservarBtn.disabled = !(q.valid && consentsOk);
+      return q;
     };
 
-    // Listeners do simulador (defensivos)
-    [sim.checkin, sim.checkout, sim.adultos, sim.criancas].forEach((el) => {
-      if(!el) return; el.addEventListener('input', render); el.addEventListener('change', render);
-    });
-
-    // Botão copiar
-    if(sim.copy){
-      sim.copy.addEventListener('click', () => {
-        const q = computeQuote(sim.checkin?.value, sim.checkout?.value, sim.adultos?.value, sim.criancas?.value);
-        const text = `Pedido de orçamento — Quinta dos Avós Lourenço\n`+
-                     `Datas: ${sim.checkin?.value} a ${sim.checkout?.value} (noites: ${q.nights})\n`+
-                     `Pessoas: ${sim.adultos?.value} adultos, ${sim.criancas?.value} crianças (total: ${q.partyTotal})\n`+
-                     `Total estimado: ${q.valid ? fmtEUR(q.total) : '—'}\n`+
-                     `Regras: base 137€/noite (1–2 pessoas); +35€/pessoa/noite; mínimo 2 noites; máximo 30; capacidade até 7.`;
-        navigator.clipboard.writeText(text).then(()=>{
-          sim.copy.textContent = 'Copiado!';
-          setTimeout(()=> sim.copy.textContent='Copiar orçamento', 1400);
-        });
+    // Sincronizar em tempo real
+    [els.checkin, els.checkout, els.adultos, els.criancas, els.consentTerms, els.consentPrivacy]
+      .filter(Boolean)
+      .forEach((el) => {
+        el.addEventListener('input', render);
+        el.addEventListener('change', render);
       });
-    }
 
     // Primeira renderização
     render();
 
-    // ===== Validações + Envio AJAX (Formspree) com feedback NO BOTÃO =====
-    if(!form){ return; }
-    const { ok, err, nome, email, telefone, fCheckin, fCheckout, fAdultos, fCriancas, submitBtn } = elsF;
-
-    function setLoading(loading){
-      if(!submitBtn) return;
-      submitBtn.classList.toggle('is-loading', loading);
-      submitBtn.disabled = loading;
-      if(loading){ submitBtn.dataset.prev = submitBtn.textContent; submitBtn.textContent = 'A enviar…'; }
-      const controls = form.querySelectorAll('input, select, textarea, button');
-      controls.forEach(el=>{ if(el!==submitBtn) el.disabled = loading; });
-      form.setAttribute('aria-busy', loading ? 'true' : 'false');
-    }
-
-    function showButtonSuccess(tempMs=4000){
-      if(!submitBtn) return;
-      submitBtn.classList.remove('is-loading');
-      submitBtn.classList.add('is-success');
-      submitBtn.disabled = false;
-      submitBtn.textContent = '✅ Pedido enviado com sucesso';
-      window.clearTimeout(showButtonSuccess._t);
-      showButtonSuccess._t = setTimeout(()=>{
-        submitBtn.classList.remove('is-success');
-        submitBtn.textContent = BTN_TEXT_DEFAULT;
-      }, tempMs);
-    }
-
-    function showError(message){
-      if(err){ err.textContent = message; err.style.display='block'; err.scrollIntoView({behavior:'smooth', block:'center'}); }
-      if(submitBtn){
-        submitBtn.classList.remove('is-loading');
-        submitBtn.classList.add('is-error');
-        submitBtn.textContent = BTN_TEXT_DEFAULT;
-        setTimeout(()=> submitBtn.classList.remove('is-error'), 1200);
+    // UI helpers (botão)
+    const setLoading = (loading) => {
+      els.reservarBtn.classList.toggle('is-loading', loading);
+      els.reservarBtn.disabled = loading ? true : els.reservarBtn.disabled;
+      if (loading) {
+        els.reservarBtn.dataset.prev = els.reservarBtn.textContent;
+        els.reservarBtn.textContent = 'A enviar…';
       }
-    }
+    };
+    const showSuccess = (ms = 4000) => {
+      els.reservarBtn.classList.remove('is-loading');
+      els.reservarBtn.classList.add('is-success');
+      els.reservarBtn.disabled = false;
+      els.reservarBtn.textContent = '✅ Pedido enviado com sucesso';
+      clearTimeout(showSuccess._t);
+      showSuccess._t = setTimeout(() => {
+        els.reservarBtn.classList.remove('is-success');
+        els.reservarBtn.textContent = 'Reservar agora';
+        render();
+      }, ms);
+    };
+    const showError = (msg) => {
+      if (els.msg) {
+        els.msg.textContent = msg || 'Erro ao enviar. Tente novamente.';
+        els.msg.hidden = false;
+      }
+      els.reservarBtn.classList.remove('is-loading');
+      els.reservarBtn.classList.add('is-error');
+      els.reservarBtn.textContent = 'Reservar agora';
+      setTimeout(() => els.reservarBtn.classList.remove('is-error'), 1200);
+    };
 
-    function clearMessages(){ if(ok){ok.style.display='none';ok.textContent='';} if(err){err.style.display='none';err.textContent='';} }
+    // Click em “Reservar agora” -> POST para Formspree
+    els.reservarBtn.addEventListener('click', async () => {
+      const q = render(); // garantir estado atual
 
-    // Filtros em tempo real (nome sem números; telefone só dígitos/símbolos usuais)
-    if(nome){ nome.addEventListener('input', ()=>{ nome.value = nome.value.replace(/[0-9]/g,''); }); }
-    if(telefone){ telefone.addEventListener('input', ()=>{
-      let v = telefone.value; v = v.replace(/[^0-9+()\- \t]/g,''); v = v.replace(/(?!^)\+/g,''); if(v.indexOf('+')>0) v = v.replace(/\+/g,''); telefone.value = v;
-    }); }
-
-    function clampNumber(input){ if(!input) return; input.addEventListener('change',()=>{
-      const min = parseInt(input.min||'0',10); const max = parseInt(input.max||'999',10);
-      let val = parseInt(input.value||String(min),10); if(Number.isNaN(val)) val=min; if(val<min) val=min; if(val>max) val=max; input.value=String(val);
-    }); }
-    clampNumber(fAdultos); clampNumber(fCriancas);
-
-    // Submissão AJAX
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault(); clearMessages();
-
-      // Honeypot
-      if(form.website && form.website.value.trim()!=='') return;
-
-      // Preenche hidden com a simulação atual
-      render();
-
-      // Obrigatórios
-      const required = form.querySelectorAll('[required]');
-      const faltam = []; required.forEach(el=>{ const vazio = !el.value || (el.type==='checkbox' && !el.checked); if(vazio) faltam.push(el); });
-      if(faltam.length){ faltam[0].focus(); return showError('Por favor, preencha todos os campos obrigatórios antes de enviar.'); }
-
-      // Regras extra
-      if(nome && /[0-9]/.test(nome.value)) return showError('O nome não deve conter números.');
-      if(telefone && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(telefone.value)) return showError('O telefone deve conter apenas números e símbolos + ( ) - .');
-      if(email && !email.value.includes('@')) return showError('Por favor insira um email válido.');
-
-      // Datas (mínimo 2 noites)
-      if(fCheckin && fCheckout){
-        const ci = parseISO(fCheckin.value); const co = parseISO(fCheckout.value);
-        if(!(co>ci)) return showError('A data de check-out deve ser posterior à de check-in.');
-        const nights = diffNights(fCheckin.value, fCheckout.value);
-        if(nights < PRICES.minNights) return showError('Estadia mínima: 2 noites.');
-        if(nights > PRICES.maxNights) return showError('Estadia máxima: 30 noites.');
+      // Consentimentos obrigatórios
+      if (!els.consentTerms?.checked || !els.consentPrivacy?.checked) {
+        return showError('Tem de aceitar os Termos e a Política de Privacidade.');
+      }
+      // Regras de simulação
+      if (!q.valid) {
+        return showError(q.message || 'Verifique os dados da simulação.');
       }
 
-      try{
+      try {
         setLoading(true);
-        const data = new FormData(form);
-        // nº noites útil no email
-        if(fCheckin && fCheckout){
-          const nights = diffNights(fCheckin.value, fCheckout.value);
-          if(!Number.isNaN(nights) && nights>0) data.append('noites', String(nights));
-        }
-        const resp = await fetch(form.action, { method:'POST', body:data, headers:{ 'Accept':'application/json' } });
-        if(resp.ok){
-          form.reset();
-          // repor datas padrão (hoje -> amanhã)
+
+        // Montar payload para o Formspree (como se fosse um form)
+        const data = new FormData();
+        data.append('checkin',  els.checkin.value);
+        data.append('checkout', els.checkout.value);
+        data.append('adultos',  els.adultos?.value || '0');
+        data.append('criancas', els.criancas?.value || '0');
+        data.append('noites',   String(q.nights));
+        data.append('total',    fmtEUR(q.total));
+        data.append('detalhe',  `Base: ${fmtEUR(q.nightlyBase)}/noite; Pessoas: ${q.partyTotal}; Extra: ${q.extraPeople} (+${fmtEUR(q.nightlyExtras)}/noite)`);
+        data.append('_subject', 'Novo pedido de reserva — Simulador');
+        data.append('_page',    '/reservas');
+
+        const resp = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (resp.ok) {
+          // Reset leve: datas hoje->amanhã, adultos 2, crianças 0, desmarcar consentimentos
           const today = new Date(); today.setHours(0,0,0,0);
-          const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-          if(sim.checkin)  sim.checkin.value  = toISO(today);
-          if(sim.checkout) sim.checkout.value = toISO(tomorrow);
+          const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+          if (els.checkin)  els.checkin.value  = toISO(today);
+          if (els.checkout) els.checkout.value = toISO(tomorrow);
+          if (els.adultos)  els.adultos.value  = '2';
+          if (els.criancas) els.criancas.value = '0';
+          if (els.consentTerms)   els.consentTerms.checked = false;
+          if (els.consentPrivacy) els.consentPrivacy.checked = false;
           render();
-          showButtonSuccess(4000);
+          showSuccess(4000);
         } else {
           let msg = 'Erro ao enviar. Tente novamente.';
-          try{ const j = await resp.json(); if(j && Array.isArray(j.errors) && j.errors.length){ msg = j.errors.map(e=>e.message||'Erro de validação.').join(' ');} }catch(_){ }
+          try {
+            const j = await resp.json();
+            if (j && Array.isArray(j.errors) && j.errors.length) {
+              msg = j.errors.map(e => e.message || 'Erro de validação.').join(' ');
+            }
+          } catch (_) {}
           throw new Error(msg);
         }
-      } catch(ex){
-        showError(ex.message || 'Erro ao enviar. Tente novamente.');
+      } catch (ex) {
+        showError(ex.message);
       } finally {
         setLoading(false);
-        if(elsF.submitBtn && !elsF.submitBtn.classList.contains('is-success')){ elsF.submitBtn.textContent = BTN_TEXT_DEFAULT; }
       }
     });
 
-    // ===== Testes rápidos (apenas consola; não quebra produção) =====
-    try{
-      console.assert(diffNights('2025-01-01','2025-01-03')===2, 'diffNights 2 noites');
-      const q1 = computeQuote('2025-01-01','2025-01-03',2,0);
-      console.assert(q1.total === 2*PRICES.baseNightly, 'Total base 2 noites/2 pessoas');
-      const q2 = computeQuote('2025-01-01','2025-01-03',4,0);
-      console.assert(q2.nightlyExtras === 2*PRICES.extraPerPersonPerNight && q2.total === 2*(PRICES.baseNightly + 2*PRICES.extraPerPersonPerNight), 'Extras aplicados');
-      const q3 = computeQuote('2025-01-01','2025-01-05',6,2);
-      console.assert(q3.valid === false && q3.partyTotal===8, 'Capacidade máxima 7');
-      const q4 = computeQuote('2025-01-01','2025-01-02',2,0);
-      console.assert(q4.valid === false && q4.nights===1, 'Mínimo 2 noites');
-      const q5 = computeQuote('2025-01-01','2025-02-05',2,0);
-      console.assert(q5.valid === false, 'Máximo 30 noites');
-    }catch(e){ console.warn('Tests falharam:', e.message); }
-  });
-})();
+    // ===== Testes rápidos (apenas consola) =====
+    try {
+      console.assert(diffNights('2025-01-01','2025-01-03') === 2, 'diffNights 2 noites');
+      const q1 = computeQuote('2025-01-01','2025-01-03', 2, 0);
+      console.assert(q1.total === 2 * PRICES.baseNightly, 'Total base 2 noites/2 pessoas');
+      const q2 = computeQuote('2025-01-01','2025-01-03', 4, 0);
+      console.assert(q2.nightlyExtras === 2 * PRICES.extraPerPersonPerNight &&
+                     q2.total === 2 * (PRICES.baseNightly + 2 * PRICES.extraPerPersonPerNight),
+                     'Extras aplicados');
+      const q3 = computeQuote('2025-01-01','2025-01-05', 6, 2); // 8 pessoas
+      c
