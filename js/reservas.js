@@ -79,7 +79,7 @@
       els.criancas.max = String(maxKids);
       if ((parseInt(els.criancas.value||'0',10)) > maxKids) els.criancas.value = String(maxKids);
       els.criancas.disabled = (a >= 7);
-      els.criancas.title = (a >= 7) ? 'Capacidade máxima atingida (7 pessoas)' : '';
+      els.criancas.title = (a >= 6) ? 'Capacidade máxima atingida (7 pessoas)' : '';
     }
 
     const render = () => {
