@@ -1,4 +1,4 @@
-/* /js/reservas.js — Simulador + validação forte + mensagens por campo + spinners + consent-error + Formspree */
+/* /js/reservas.js — Simulador de preços + validação + envio Formspree (compatível com o HTML enviado) */
 (function () {
   'use strict';
 
@@ -14,19 +14,55 @@
   const $ = (s, c=document) => c.querySelector(s);
   const fmtEUR = (n) => new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
   const toISO = (d) => d.toISOString().slice(0,10);
+
   const diffNights = (ci, co) => {
     if (!ci || !co) return 0;
     const a = new Date(ci), b = new Date(co);
     if (isNaN(a) || isNaN(b)) return 0;
+    // evitar DST: fixa ao meio-dia
     return Math.max(0, Math.round((b.setHours(12,0,0,0)-a.setHours(12,0,0,0))/86400000));
   };
 
-  // Validadores
+  // Validadores simples
   const isNameValid  = (v) => /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/.test((v||'').trim());
-  const isPhoneValid = (v) => /^(\+)?\d+$/.test((v||'').trim()); // dígitos e + opcional no início
+  const isPhoneValid = (v) => /^(\+)?\d+$/.test((v||'').trim()); // dígitos e + opcional
   const isEmailValid = (v) => typeof v === 'string' && v.includes('@');
 
-  // Cálculo
+  // Inserir <small> hint por baixo de um input se não existir
+  function ensureHintBelowInput(input, id) {
+    if (!input) return null;
+    const wrap = input.closest('div') || input.parentElement;
+    let hint = wrap.querySelector(`#${id}`);
+    if (!hint) {
+      hint = document.createElement('small');
+      hint.id = id;
+      hint.className = 'field-hint';
+      hint.hidden = true;
+      wrap.appendChild(hint);
+    }
+    return hint;
+  }
+
+  // Estilo de erro inline (não depende do CSS global)
+  function applyFieldErrorStyles(input, label) {
+    if (!input) return;
+    input.classList.add('field-error');
+    input.style.borderColor = 'var(--brand, #8B0000)';
+    input.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--brand 20%), transparent)';
+    input.setAttribute('aria-invalid','true');
+    if (label) { label.classList.add('label-error'); label.style.color = 'var(--brand, #8B0000)'; }
+  }
+  function clearFieldErrorStyles(input, label, hint) {
+    if (!input) return;
+    input.classList.remove('field-error');
+    input.style.borderColor = '';
+    input.style.boxShadow = '';
+    input.removeAttribute('aria-invalid');
+    if (label) { label.classList.remove('label-error'); label.style.color = ''; }
+    if (hint) { hint.textContent=''; hint.hidden = true; }
+  }
+
+  // Cálculo do orçamento
   const computeQuote = (ci, co, adults, kids04) => {
     const nights = diffNights(ci, co);
     const a = Math.max(1, parseInt(adults,10) || 1);
@@ -49,115 +85,79 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     const els = {
-      checkin:  $('#checkin'),    checkout: $('#checkout'),
-      adultos:  $('#adultos'),    criancas: $('#criancas'),
-      nome:     $('#nome'),       email:    $('#email'),
-      telefone: $('#telefone'),   aloj:     $('#alojamento'),
-
-      // mensagens por campo:
-      errCheckin:  $('#err-checkin'),
-      errCheckout: $('#err-checkout'),
-      errNome:     $('#err-nome'),
-      errEmail:    $('#err-email'),
-      errTelefone: $('#err-telefone'),
-
-      // kpis e totais
-      kNoites:  $('#k-noites'),   kNightly: $('#k-nightly'),
-      kGrupo:   $('#k-grupo'),
-      bkNoites: $('#bk-noites'),  bkBase:   $('#bk-base'),
-      bkExtra:  $('#bk-extra'),   bkTotal:  $('#bk-total'),
-      msg:      $('#sim-msg'),
-
-      // consentimentos
+      checkin:  $('#checkin'),     checkout: $('#checkout'),
+      adultos:  $('#adultos'),     criancas: $('#criancas'),
+      nome:     $('#nome'),        email:    $('#email'),
+      telefone: $('#telefone'),    aloj:     $('#alojamento'),
+      kNoites:  $('#k-noites'),    kNightly: $('#k-nightly'),
+      kGrupo:   $('#k-grupo'),     bkNoites: $('#bk-noites'),
+      bkBase:   $('#bk-base'),     bkExtra:  $('#bk-extra'),
+      bkTotal:  $('#bk-total'),    msg:      $('#sim-msg'),
       consentTerms: $('#consent-terms'),
       consentPrivacy: $('#consent-privacy'),
       reservarBtn: $('#sim-reservar'),
-
-      // NOVOS: elementos de erro dos consentimentos
-      errConsents: $('#err-consents'),
-      consentTermsLabel: $('#consent-terms')?.closest('label'),
-      consentPrivacyLabel: $('#consent-privacy')?.closest('label'),
     };
     if (!els.checkin || !els.checkout || !els.reservarBtn) return;
 
-    // map para labels e hints
-    const byInput = new Map([
-      [els.checkin,  {label: els.checkin.closest('div')?.querySelector('label'),  hint: els.errCheckin}],
-      [els.checkout, {label: els.checkout.closest('div')?.querySelector('label'), hint: els.errCheckout}],
-      [els.nome,     {label: els.nome.closest('div')?.querySelector('label'),     hint: els.errNome}],
-      [els.email,    {label: els.email.closest('div')?.querySelector('label'),    hint: els.errEmail}],
-      [els.telefone, {label: els.telefone.closest('div')?.querySelector('label'), hint: els.errTelefone}],
-    ]);
-
-    // limpar erros
-    const clearConsentErrors = () => {
-      els.consentTermsLabel?.classList.remove('label-error');
-      els.consentPrivacyLabel?.classList.remove('label-error');
-      if (els.errConsents){ els.errConsents.textContent=''; els.errConsents.hidden = true; }
-    };
-    const clearFieldErrors = () => {
-      document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-      document.querySelectorAll('label.label-error').forEach(l => l.classList.remove('label-error'));
-      for (const {hint} of byInput.values()) if (hint) { hint.textContent=''; hint.hidden = true; }
-      [els.nome,els.email,els.telefone,els.checkin,els.checkout].forEach(el=>{ if(el) el.removeAttribute('aria-invalid'); });
-      clearConsentErrors();
+    // Labels (para colorir no erro)
+    const labels = {
+      checkin:  els.checkin.closest('div')?.querySelector('label'),
+      checkout: els.checkout.closest('div')?.querySelector('label'),
+      adultos:  els.adultos.closest('div')?.querySelector('label'),
+      criancas: els.criancas.closest('div')?.querySelector('label'),
+      nome:     els.nome.closest('div')?.querySelector('label'),
+      email:    els.email.closest('div')?.querySelector('label'),
+      telefone: els.telefone.closest('div')?.querySelector('label'),
     };
 
-    // marcar erro
-    const markError = (input, text) => {
-      const cfg = byInput.get(input); if (!cfg) return;
-      input.classList.add('field-error'); input.setAttribute('aria-invalid','true');
-      cfg.label?.classList.add('label-error');
-      if (cfg.hint){ cfg.hint.textContent = text || 'Campo inválido.'; cfg.hint.hidden = false; }
-      if (els.msg && text){ els.msg.textContent = text; els.msg.hidden = false; }
-    };
-    const markConsentsError = (text) => {
-      els.consentTermsLabel?.classList.add('label-error');
-      els.consentPrivacyLabel?.classList.add('label-error');
-      if (els.errConsents){ els.errConsents.textContent = text || 'Tem de aceitar os Termos e a Política de Privacidade.'; els.errConsents.hidden = false; }
+    // Hints (criamos se não existirem no HTML)
+    const hints = {
+      checkin:  ensureHintBelowInput(els.checkin,  'err-checkin'),
+      checkout: ensureHintBelowInput(els.checkout, 'err-checkout'),
+      nome:     ensureHintBelowInput(els.nome,     'err-nome'),
+      email:    ensureHintBelowInput(els.email,    'err-email'),
+      telefone: ensureHintBelowInput(els.telefone, 'err-telefone'),
     };
 
-    // datas padrão
+    // Erro consents (criar se não existir)
+    let errConsents = $('#err-consents');
+    if (!errConsents) {
+      const actions = els.reservarBtn.closest('.sim-actions');
+      errConsents = document.createElement('small');
+      errConsents.id = 'err-consents';
+      errConsents.className = 'field-hint';
+      errConsents.hidden = true;
+      actions.insertBefore(errConsents, els.reservarBtn);
+    }
+    const consentLabels = {
+      terms: els.consentTerms?.closest('label'),
+      privacy: els.consentPrivacy?.closest('label'),
+    };
+
+    // Datas padrão (hoje→amanhã) + limites mínimos
     (function initDates(){
       const today = new Date(); today.setHours(0,0,0,0);
       const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-      els.checkin.value  ||= toISO(today);
-      els.checkout.value ||= toISO(tomorrow);
-      els.checkin.min = toISO(today);
+      if (!els.checkin.value)  els.checkin.value  = toISO(today);
+      if (!els.checkout.value) els.checkout.value = toISO(tomorrow);
+      els.checkin.min  = toISO(today);
       els.checkout.min = toISO(tomorrow);
     })();
 
-    // capacidade total 7
+    // Capacidade total 7 (bloqueia crianças se adultos=7; ajusta max = 7 - adultos)
     function applyCapacityRules() {
-      const a = Math.max(1, Math.min(7, parseInt(els.adultos.value||'2',10)));
-      const maxKids = Math.max(0, PRICES.maxPeople - a);
+      let a = parseInt(els.adultos.value||'2',10); if (Number.isNaN(a)) a = 2;
+      a = Math.max(1, Math.min(7, a));
       els.adultos.value = String(a);
+      const maxKids = Math.max(0, PRICES.maxPeople - a);
       els.criancas.max = String(maxKids);
-      if ((parseInt(els.criancas.value||'0',10)) > maxKids) els.criancas.value = String(maxKids);
+      let k = parseInt(els.criancas.value||'0',10); if (Number.isNaN(k)) k = 0;
+      if (k > maxKids) { els.criancas.value = String(maxKids); k = maxKids; }
       els.criancas.disabled = (a >= 7);
       els.criancas.title = (a >= 7) ? 'Capacidade máxima atingida (7 pessoas)' : '';
     }
 
-    // filtros em tempo real + limpar mensagens por campo
-    if (els.nome) els.nome.addEventListener('input', () => {
-      els.nome.value = els.nome.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ ]+/g,'');
-      if (isNameValid(els.nome.value)) { els.errNome.hidden=true; els.errNome.textContent=''; els.nome.classList.remove('field-error'); byInput.get(els.nome)?.label?.classList.remove('label-error'); }
-    });
-    if (els.telefone) els.telefone.addEventListener('input', () => {
-      let v = els.telefone.value.replace(/\s+/g,''); v = v.replace(/(?!^)\+/g,''); if (v.indexOf('+') > 0) v = v.replace(/\+/g,''); v = v.replace(/[^+\d]/g,'');
-      els.telefone.value = v;
-      if (isPhoneValid(els.telefone.value)) { els.errTelefone.hidden=true; els.errTelefone.textContent=''; els.telefone.classList.remove('field-error'); byInput.get(els.telefone)?.label?.classList.remove('label-error'); }
-    });
-    if (els.email) els.email.addEventListener('input', () => {
-      if (isEmailValid(els.email.value)) { els.errEmail.hidden=true; els.errEmail.textContent=''; els.email.classList.remove('field-error'); byInput.get(els.email)?.label?.classList.remove('label-error'); }
-    });
-    [els.checkin, els.checkout].forEach(inp=>{
-      if(!inp) return;
-      inp.addEventListener('input', ()=>{ const cfg=byInput.get(inp); if(cfg?.hint){ cfg.hint.hidden=true; cfg.hint.textContent=''; } inp.classList.remove('field-error'); cfg?.label?.classList.remove('label-error'); });
-    });
-
-    const contactsValid = () => isNameValid(els.nome?.value) && isPhoneValid(els.telefone?.value) && isEmailValid(els.email?.value);
-
+    // Render orçamentação + KPIs
     const render = () => {
       applyCapacityRules();
       const q = computeQuote(els.checkin.value, els.checkout.value, els.adultos.value, els.criancas.value);
@@ -165,24 +165,53 @@
       if (els.kNoites)  els.kNoites.textContent  = q.nights;
       if (els.kNightly) els.kNightly.textContent = fmtEUR(q.nightlyTotal);
       if (els.kGrupo)   els.kGrupo.textContent   = q.partyTotal;
-
       if (els.bkNoites) els.bkNoites.textContent = q.nights;
       if (els.bkBase)   els.bkBase.textContent   = `${fmtEUR(PRICES.baseNightly)} / noite`;
       if (els.bkExtra)  els.bkExtra.textContent  = q.adultsAboveTwo>0 ? `+ ${fmtEUR(q.nightlyExtras)} / noite` : '0 €';
       if (els.bkTotal)  els.bkTotal.textContent  = q.valid ? fmtEUR(q.total) : '—';
 
-      const consentsOk = (!!els.consentTerms?.checked) && (!!els.consentPrivacy?.checked);
-      const allOk = q.valid && consentsOk && contactsValid() && els.checkin.value && els.checkout.value;
-      els.reservarBtn.disabled = !allOk;
-
-      if (els.msg && allOk) { els.msg.hidden = true; els.msg.textContent = ''; }
+      if (els.msg && q.valid) { els.msg.hidden = true; els.msg.textContent = ''; }
       return q;
     };
 
-    // evitar teclado em adultos/crianças
-    [els.adultos, els.criancas].forEach(inp => { if (inp) inp.addEventListener('focus', e => e.target.blur()); });
+    // Mostrar erro num campo
+    function markError(input, label, hint, text) {
+      applyFieldErrorStyles(input, label);
+      if (hint) { hint.textContent = text || 'Campo inválido.'; hint.hidden = false; }
+      if (els.msg && text) { els.msg.textContent = text; els.msg.hidden = false; }
+    }
 
-    // spinners
+    // Limpar erros dos campos quando o utilizador corrige
+    [els.nome, els.email, els.telefone, els.checkin, els.checkout].forEach(inp=>{
+      if(!inp) return;
+      inp.addEventListener('input', ()=>{
+        const key = inp.id;
+        clearFieldErrorStyles(inp, labels[key], hints[key]);
+      });
+      inp.addEventListener('change', ()=>{
+        const key = inp.id;
+        clearFieldErrorStyles(inp, labels[key], hints[key]);
+      });
+    });
+
+    // Filtros suaves de input
+    if (els.nome) els.nome.addEventListener('input', ()=> {
+      els.nome.value = els.nome.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ ]+/g,'');
+    });
+    if (els.telefone) els.telefone.addEventListener('input', ()=> {
+      let v = els.telefone.value.replace(/\s+/g,'');
+      v = v.replace(/(?!^)\+/g,''); if (v.indexOf('+') > 0) v = v.replace(/\+/g,'');
+      v = v.replace(/[^+\d]/g,'');
+      els.telefone.value = v;
+    });
+
+    // Evitar teclado em adultos/crianças (readonly + blur on focus)
+    [els.adultos, els.criancas].forEach(inp => {
+      if (!inp) return;
+      inp.addEventListener('focus', e => e.target.blur());
+    });
+
+    // Spinners ↑/↓
     document.querySelectorAll('.spinner button').forEach(btn => {
       btn.addEventListener('click', () => {
         const input = document.getElementById(btn.dataset.target);
@@ -190,7 +219,9 @@
         const step = btn.classList.contains('spin-up') ? 1 : -1;
         const min = parseInt(input.min || '0', 10);
         const max = parseInt(input.max || '99', 10);
-        let val = parseInt(input.value || min, 10) + step;
+        let val = parseInt(input.value || min, 10);
+        if (Number.isNaN(val)) val = min;
+        val += step;
         if (val < min) val = min;
         if (val > max) val = max;
         input.value = String(val);
@@ -198,56 +229,99 @@
       });
     });
 
-    // listeners gerais
+    // Re-render em eventos relevantes
     [els.checkin, els.checkout, els.adultos, els.criancas, els.nome, els.email, els.telefone, els.consentTerms, els.consentPrivacy]
       .filter(Boolean).forEach(el => { el.addEventListener('input', render); el.addEventListener('change', render); });
 
-    // limpar erro consents quando marcam
-    [els.consentTerms, els.consentPrivacy].forEach(cb => {
-      if (!cb) return;
-      cb.addEventListener('change', () => { clearConsentErrors(); render(); });
-    });
-
     render();
 
-    // UI helpers
-    const setLoading = (loading) => {
-      els.reservarBtn.classList.toggle('is-loading', loading);
-      els.reservarBtn.disabled = loading ? true : els.reservarBtn.disabled;
-      if (loading) { els.reservarBtn.dataset.prev = els.reservarBtn.textContent; els.reservarBtn.textContent = 'A enviar…'; }
-    };
-    const showSuccess = (ms=4000) => {
-      els.reservarBtn.classList.remove('is-loading'); els.reservarBtn.classList.add('is-success');
-      els.reservarBtn.disabled = false; els.reservarBtn.textContent = '✅ Pedido enviado com sucesso';
-      clearTimeout(showSuccess._t); showSuccess._t = setTimeout(()=>{ els.reservarBtn.classList.remove('is-success'); els.reservarBtn.textContent='Reservar agora'; render(); }, ms);
-    };
-    const showError = (msg) => {
-      if (els.msg) { els.msg.textContent = msg || 'Erro ao enviar. Verifique os campos.'; els.msg.hidden = false; }
-      els.reservarBtn.classList.remove('is-loading'); els.reservarBtn.classList.add('is-error');
-      els.reservarBtn.textContent = 'Reservar agora'; setTimeout(()=> els.reservarBtn.classList.remove('is-error'), 1200);
+    // Botão: helpers sem depender do CSS global (usamos estilos inline se necessário)
+    const btnOriginal = {
+      text: els.reservarBtn.textContent,
+      bg:   getComputedStyle(els.reservarBtn).backgroundColor,
+      bc:   getComputedStyle(els.reservarBtn).borderColor,
+      col:  getComputedStyle(els.reservarBtn).color,
     };
 
-    // envio
+    const setLoading = (loading) => {
+      if (loading) {
+        els.reservarBtn.disabled = true;
+        els.reservarBtn.textContent = 'A enviar…';
+      } else {
+        els.reservarBtn.disabled = false;
+        els.reservarBtn.textContent = btnOriginal.text;
+      }
+    };
+
+    const showSuccess = (ms=4000) => {
+      els.reservarBtn.disabled = false;
+      // verde inline para não depender de CSS extra
+      els.reservarBtn.style.backgroundColor = '#16a34a';
+      els.reservarBtn.style.borderColor = '#16a34a';
+      els.reservarBtn.style.color = '#fff';
+      els.reservarBtn.textContent = '✅ Pedido enviado com sucesso';
+      clearTimeout(showSuccess._t);
+      showSuccess._t = setTimeout(() => {
+        els.reservarBtn.style.backgroundColor = btnOriginal.bg;
+        els.reservarBtn.style.borderColor = btnOriginal.bc;
+        els.reservarBtn.style.color = btnOriginal.col;
+        els.reservarBtn.textContent = btnOriginal.text;
+      }, ms);
+    };
+
+    const shake = () => {
+      els.reservarBtn.style.transition = 'transform .1s';
+      els.reservarBtn.style.transform = 'translateX(-4px)';
+      setTimeout(()=>{ els.reservarBtn.style.transform='translateX(4px)'; }, 100);
+      setTimeout(()=>{ els.reservarBtn.style.transform='translateX(0)'; }, 200);
+    };
+
+    const showError = (msg) => {
+      if (els.msg) { els.msg.textContent = msg || 'Verifique os campos obrigatórios.'; els.msg.hidden = false; }
+      shake();
+    };
+
+    // Validação e envio
     els.reservarBtn.addEventListener('click', async () => {
-      clearFieldErrors();
+      if (els.msg) { els.msg.hidden = true; els.msg.textContent = ''; }
+
       const q = render();
 
-      // validação por campo + foco no primeiro erro
-      if (!els.checkin.value)   { markError(els.checkin,'Indique a data de check-in.');   els.checkin.focus();   return; }
-      if (!els.checkout.value)  { markError(els.checkout,'Indique a data de check-out.'); els.checkout.focus();  return; }
-      if (q.nights < PRICES.minNights) { markError(els.checkout,'Estadia mínima: 2 noites.'); els.checkout.focus(); return; }
-      if (!isNameValid(els.nome.value))     { markError(els.nome,'Use apenas letras e espaços.'); els.nome.focus(); return; }
-      if (!isPhoneValid(els.telefone.value)){ markError(els.telefone,'Só dígitos e, opcionalmente, + no início.'); els.telefone.focus(); return; }
-      if (!isEmailValid(els.email.value))   { markError(els.email,'Email inválido (tem de conter @).'); els.email.focus(); return; }
-      if (!els.consentTerms?.checked || !els.consentPrivacy?.checked) {
-        markConsentsError('Tem de aceitar os Termos e a Política de Privacidade.');
-        if (!els.consentTerms.checked) els.consentTerms.focus(); else els.consentPrivacy.focus();
-        return;
-      }
-      if (!q.valid) { showError(q.message || 'Verifique os dados da simulação.'); return; }
+      // Datas
+      if (!els.checkin.value) { markError(els.checkin, labels.checkin, hints.checkin, 'Indique a data de check-in.'); showError(); return; }
+      if (!els.checkout.value){ markError(els.checkout, labels.checkout, hints.checkout, 'Indique a data de check-out.'); showError(); return; }
+      if (q.nights === 0)     { markError(els.checkout, labels.checkout, hints.checkout, 'Selecione datas válidas.'); showError(); return; }
+      if (q.nights < PRICES.minNights) { markError(els.checkout, labels.checkout, hints.checkout, 'Estadia mínima: 2 noites.'); showError(); return; }
+      if (q.nights > PRICES.maxNights) { markError(els.checkout, labels.checkout, hints.checkout, 'Estadia máxima: 30 noites.'); showError(); return; }
 
+      // Pessoas
+      if (q.partyTotal > PRICES.maxPeople) { showError('Capacidade máxima: 7 pessoas.'); return; }
+
+      // Contactos
+      if (!isNameValid(els.nome.value))      { markError(els.nome, labels.nome, hints.nome, 'Use apenas letras e espaços.'); showError(); return; }
+      if (!isEmailValid(els.email.value))    { markError(els.email, labels.email, hints.email, 'Email inválido (tem de conter @).'); showError(); return; }
+      if (!isPhoneValid(els.telefone.value)) { markError(els.telefone, labels.telefone, hints.telefone, 'Só dígitos e, opcionalmente, + no início.'); showError(); return; }
+
+      // Consentimentos
+      const consentsOk = (!!els.consentTerms?.checked) && (!!els.consentPrivacy?.checked);
+      if (!consentsOk) {
+        // realce visual
+        if (consentLabels.terms)   { consentLabels.terms.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--brand 18%), transparent)'; consentLabels.terms.style.borderRadius='12px'; }
+        if (consentLabels.privacy) { consentLabels.privacy.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--brand 18%), transparent)'; consentLabels.privacy.style.borderRadius='12px'; }
+        errConsents.textContent = 'Tem de aceitar os Termos e a Política de Privacidade.';
+        errConsents.hidden = false;
+        showError();
+        return;
+      } else {
+        if (consentLabels.terms)   consentLabels.terms.style.boxShadow = '';
+        if (consentLabels.privacy) consentLabels.privacy.style.boxShadow = '';
+        errConsents.textContent=''; errConsents.hidden = true;
+      }
+
+      // Envio
       try {
         setLoading(true);
+
         const data = new FormData();
         data.append('checkin',  els.checkin.value);
         data.append('checkout', els.checkout.value);
@@ -271,28 +345,41 @@
           const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
           els.checkin.value  = toISO(today);
           els.checkout.value = toISO(tomorrow);
-          els.adultos.value  = '2'; els.criancas.value = '0';
+          els.adultos.value  = '2';
+          els.criancas.value = '0';
           els.nome.value=''; els.email.value=''; els.telefone.value='';
-          if (els.consentTerms) els.consentTerms.checked=false; if (els.consentPrivacy) els.consentPrivacy.checked=false;
-          render(); showSuccess(4000);
+          if (els.consentTerms) els.consentTerms.checked=false;
+          if (els.consentPrivacy) els.consentPrivacy.checked=false;
+          render();
+          showSuccess(4000);
         } else {
           let msg = 'Erro ao enviar. Tente novamente.';
           try { const j = await resp.json(); if (j?.errors?.length) msg = j.errors.map(e => e.message || 'Erro de validação.').join(' '); } catch(_){}
           throw new Error(msg);
         }
       } catch (ex) {
-        showError(ex.message);
+        showError(ex.message || 'Erro ao enviar. Tente novamente.');
       } finally {
         setLoading(false);
       }
     });
 
-    // testes rápidos (console)
+    // Qualquer mudança em consentimentos limpa aviso
+    [els.consentTerms, els.consentPrivacy].forEach(cb=>{
+      if (!cb) return;
+      cb.addEventListener('change', ()=>{
+        if (consentLabels.terms)   consentLabels.terms.style.boxShadow = '';
+        if (consentLabels.privacy) consentLabels.privacy.style.boxShadow = '';
+        errConsents.textContent=''; errConsents.hidden = true;
+      });
+    });
+
+    // Testes básicos (console)
     try {
       console.assert(diffNights('2025-01-01','2025-01-03')===2,'diffNights 2');
       console.assert(isNameValid('José da Silva') && !isNameValid('Maria123'),'Nome');
-      console.assert(isPhoneValid('+351912345678') && !isPhoneValid('351-912'),'Telefone');
+      console.assert(isPhoneValid('+351912345678') && !isPhoneValid('351-912-abc'),'Telefone');
       console.assert(isEmailValid('a@b.com') && !isEmailValid('ab.com'),'Email');
-    } catch(e){ console.warn('Tests falharam:', e.message); }
+    } catch(e){ console.warn('Tests:', e.message); }
   });
 })();
