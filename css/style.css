@@ -688,3 +688,25 @@ body:not(:has(.hero)) .topbar.is-hidden {
 /*
 .topbar { outline: 1px solid transparent; } 
 */
+/* Ajustes do HERO no mobile */
+@media (max-width: 768px) {
+  .hero {
+    /* Foca a parte esquerda da foto */
+    background-position: 20% center; /* experimenta 10% / 15% / 25% */
+
+    /* Evita que fique exageradamente alto em ecrãs pequenos */
+    min-height: 90vh;
+
+    /* O teu padding-top usa var(--topbar-h, 120px) que no mobile pode ser demais.
+       Dá-lhe um teto mais baixo para não “comer” a imagem. */
+    padding-top: clamp(70px, 12vw, 100px);
+  }
+}
+
+/* Afinar ainda mais para telemóveis pequenos */
+@media (max-width: 480px) {
+  .hero {
+    background-position: 15% center; /* ainda mais à esquerda em ecrãs muito estreitos */
+    min-height: 85vh;
+  }
+}
