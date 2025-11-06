@@ -498,3 +498,162 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   height: 0 !important;
   margin: 0 !important;
 }
+
+/* ===========================
+   RESERVAS — Simulador (scoped)
+   =========================== */
+
+/* Cartão do simulador alinhado ao look do site */
+#simulador-precos.simulador{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
+  padding:16px;
+}
+
+/* Grid do simulador mantém-se responsivo */
+#simulador-precos .sim-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px 20px;
+}
+@media (max-width: 800px){
+  #simulador-precos .sim-grid{ grid-template-columns:1fr; }
+}
+
+/* Labels e tipografia */
+#simulador-precos label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+  color:#333;
+}
+
+/* Inputs arredondados consistentes com o site */
+#simulador-precos .round-field{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fafafa;
+  color:var(--text);
+  font-size:16px;
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:textfield;
+  -webkit-text-fill-color:currentColor;
+}
+#simulador-precos input[type="date"].round-field{ height:52px; }
+#simulador-precos input[type="date"]::-webkit-date-and-time-value{ text-align:left; }
+
+/* Foco com cor da marca (igual ao resto do site) */
+#simulador-precos .round-field:focus{
+  outline:none;
+  border-color:var(--brand);
+  background:#fff;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 20%, transparent);
+}
+
+/* Spinners (setas ↑/↓) dentro do input — alinhados e no tema */
+#simulador-precos .with-spinner{ position:relative; }
+#simulador-precos .with-spinner .round-field{ padding-right:62px; caret-color:transparent; }
+#simulador-precos .with-spinner .spinner{
+  position:absolute; right:8px; top:6px; bottom:6px;
+  width:36px;
+  display:flex; flex-direction:column; justify-content:center; gap:6px;
+  pointer-events:auto;
+}
+#simulador-precos .with-spinner .spinner button{
+  width:100%; height:24px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; line-height:1;
+  color:var(--brand);
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:8px;
+  cursor:pointer;
+  transition: background-color .2s, transform .08s, border-color .2s, color .2s;
+}
+#simulador-precos .with-spinner .spinner button:hover{
+  background:#faf5f5; /* ligeiro tom coerente com a marca */
+  border-color:#e7c6c6;
+}
+#simulador-precos .with-spinner .spinner button:active{
+  transform: translateY(1px);
+}
+/* Caso estejas a usar SVGs nos botões (chevrons), ficam centrados e nítidos */
+#simulador-precos .with-spinner .spinner svg{
+  width:16px; height:16px; display:block; pointer-events:none;
+}
+
+/* KPIs e total — discreto e coerente */
+#simulador-precos .sim-kpi .k{
+  background:#fff;
+  border:1px dashed var(--border);
+  border-radius:10px;
+}
+#simulador-precos .sim-total{
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+}
+
+/* Mensagens de erro por campo (inline) e realce de erro */
+#simulador-precos .round-field.field-error{
+  border-color:var(--brand) !important;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent) !important;
+  background:#fff;
+}
+#simulador-precos label.label-error{ color:var(--brand); }
+#simulador-precos .field-hint{
+  display:block;
+  font-size:12px;
+  margin-top:6px;
+  color:var(--brand);
+}
+#simulador-precos .field-hint[hidden]{ display:none; }
+
+/* Consentimentos — realce quando faltarem */
+#simulador-precos .consent-line.label-error{
+  color:var(--brand);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+  border-radius:12px;
+  padding:6px;
+}
+#simulador-precos .consent-line input[type="checkbox"]{
+  accent-color: var(--brand);
+}
+
+/* Botão principal já herda .btn.primary do site; pequenos estados */
+#simulador-precos .btn.primary.is-loading{
+  pointer-events:none; opacity:.85; position:relative;
+}
+#simulador-precos .btn.primary.is-loading::after{
+  content:""; position:absolute; top:50%; left:50%;
+  width:18px; height:18px; margin:-9px 0 0 -9px;
+  border:3px solid #fff; border-top-color:transparent;
+  border-radius:50%; animation: reservas-spin .9s linear infinite;
+}
+#simulador-precos .btn.primary.is-success{
+  background:#16a34a; border-color:#16a34a; color:#fff;
+  transform:scale(1.02);
+}
+#simulador-precos .btn.primary.is-error{
+  background:#b91c1c; border-color:#b91c1c; color:#fff;
+  animation: reservas-shake .25s ease-in-out 2;
+}
+
+/* Ajustes mobile: espaço e alinhamento perfeito dos “balões” */
+@media (max-width: 720px){
+  #simulador-precos .with-spinner .spinner{ right:8px; top:8px; bottom:8px; }
+  #simulador-precos .with-spinner .spinner button{ height:26px; }
+}
+
+/* Reutiliza as animações já definidas no CSS global (fallback se não existir) */
+@keyframes reservas-spin { to { transform: rotate(360deg); } }
+@keyframes reservas-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
