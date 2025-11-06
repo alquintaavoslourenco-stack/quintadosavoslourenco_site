@@ -710,22 +710,12 @@ body:not(:has(.hero)) .topbar.is-hidden {
     min-height: 85vh;
   }
 }
-/* ===== Contactos: centrar apenas o texto ===== */
-.contactos { text-align: center; }
 
-.contactos .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.contactos h1 {
-  margin-bottom: 10px;
-}
-
+/* ===== Contactos: centrar texto sem afetar o mapa ===== */
+.contactos h1,
 .contactos p {
   text-align: center;
-  margin: 6px 0;
+  margin: 6px auto;
   line-height: 1.6;
   max-width: 720px;
 }
@@ -737,3 +727,10 @@ body:not(:has(.hero)) .topbar.is-hidden {
   color: #555;
 }
 
+/* Garantir que o mapa ocupa a largura normal */
+.contactos iframe {
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 20px 0 0 0;
+}
