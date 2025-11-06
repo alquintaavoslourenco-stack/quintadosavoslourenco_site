@@ -1,4 +1,4 @@
-/* /js/reservas.js — Simulador de preços + validação + envio Formspree (compatível com o HTML enviado) */
+/* /js/reservas.js — Simulador de preços + validação + envio Formspree (versão final) */
 (function () {
   'use strict';
 
@@ -19,16 +19,16 @@
     if (!ci || !co) return 0;
     const a = new Date(ci), b = new Date(co);
     if (isNaN(a) || isNaN(b)) return 0;
-    // evitar DST: fixa ao meio-dia
+    // fixa ao meio-dia para evitar DST
     return Math.max(0, Math.round((b.setHours(12,0,0,0)-a.setHours(12,0,0,0))/86400000));
   };
 
-  // Validadores simples
+  // Validadores
   const isNameValid  = (v) => /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/.test((v||'').trim());
   const isPhoneValid = (v) => /^(\+)?\d+$/.test((v||'').trim()); // dígitos e + opcional
   const isEmailValid = (v) => typeof v === 'string' && v.includes('@');
 
-  // Inserir <small> hint por baixo de um input se não existir
+  // Cria <small> hint por baixo do input se não existir
   function ensureHintBelowInput(input, id) {
     if (!input) return null;
     const wrap = input.closest('div') || input.parentElement;
@@ -43,7 +43,7 @@
     return hint;
   }
 
-  // Estilo de erro inline (não depende do CSS global)
+  // Estilos de erro inline (sem depender do CSS global)
   function applyFieldErrorStyles(input, label) {
     if (!input) return;
     input.classList.add('field-error');
@@ -119,7 +119,7 @@
       telefone: ensureHintBelowInput(els.telefone, 'err-telefone'),
     };
 
-    // Erro consents (criar se não existir)
+    // Erro consents (cria se não existir)
     let errConsents = $('#err-consents');
     if (!errConsents) {
       const actions = els.reservarBtn.closest('.sim-actions');
@@ -134,7 +134,7 @@
       privacy: els.consentPrivacy?.closest('label'),
     };
 
-    // Datas padrão (hoje→amanhã) + limites mínimos
+    // Datas padrão + limites
     (function initDates(){
       const today = new Date(); today.setHours(0,0,0,0);
       const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
@@ -144,7 +144,7 @@
       els.checkout.min = toISO(tomorrow);
     })();
 
-    // Capacidade total 7 (bloqueia crianças se adultos=7; ajusta max = 7 - adultos)
+    // Capacidade total 7
     function applyCapacityRules() {
       let a = parseInt(els.adultos.value||'2',10); if (Number.isNaN(a)) a = 2;
       a = Math.max(1, Math.min(7, a));
@@ -181,7 +181,7 @@
       if (els.msg && text) { els.msg.textContent = text; els.msg.hidden = false; }
     }
 
-    // Limpar erros dos campos quando o utilizador corrige
+    // Limpar erros ao corrigir
     [els.nome, els.email, els.telefone, els.checkin, els.checkout].forEach(inp=>{
       if(!inp) return;
       inp.addEventListener('input', ()=>{
@@ -194,7 +194,7 @@
       });
     });
 
-    // Filtros suaves de input
+    // Filtros de input
     if (els.nome) els.nome.addEventListener('input', ()=> {
       els.nome.value = els.nome.value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ ]+/g,'');
     });
@@ -205,11 +205,8 @@
       els.telefone.value = v;
     });
 
-    // Evitar teclado em adultos/crianças (readonly + blur on focus)
-    [els.adultos, els.criancas].forEach(inp => {
-      if (!inp) return;
-      inp.addEventListener('focus', e => e.target.blur());
-    });
+    // Evitar teclado em adultos/crianças
+    [els.adultos, els.criancas].forEach(inp => { if (inp) inp.addEventListener('focus', e => e.target.blur()); });
 
     // Spinners ↑/↓
     document.querySelectorAll('.spinner button').forEach(btn => {
@@ -229,46 +226,44 @@
       });
     });
 
-    // Re-render em eventos relevantes
+    // Re-render em eventos gerais
     [els.checkin, els.checkout, els.adultos, els.criancas, els.nome, els.email, els.telefone, els.consentTerms, els.consentPrivacy]
       .filter(Boolean).forEach(el => { el.addEventListener('input', render); el.addEventListener('change', render); });
 
     render();
 
-    // Botão: helpers sem depender do CSS global (usamos estilos inline se necessário)
-    const btnOriginal = {
-      text: els.reservarBtn.textContent,
-      bg:   getComputedStyle(els.reservarBtn).backgroundColor,
-      bc:   getComputedStyle(els.reservarBtn).borderColor,
-      col:  getComputedStyle(els.reservarBtn).color,
-    };
+    // --- ESTADOS DO BOTÃO (envio/sucesso/erro) ---
 
+    // Mostra "A enviar…" e bloqueia só durante o POST
     const setLoading = (loading) => {
+      els.reservarBtn.classList.toggle('is-loading', loading);
+      els.reservarBtn.disabled = !!loading;
       if (loading) {
-        els.reservarBtn.disabled = true;
+        els.reservarBtn.dataset.prev = els.reservarBtn.textContent || 'Reservar agora';
         els.reservarBtn.textContent = 'A enviar…';
-      } else {
-        els.reservarBtn.disabled = false;
-        els.reservarBtn.textContent = btnOriginal.text;
       }
+      // quando loading=false NÃO altera o texto (deixa showSuccess controlar)
     };
 
-    const showSuccess = (ms=4000) => {
+    // Remove o estado de loading sem mexer no texto
+    const stopLoading = () => {
+      els.reservarBtn.classList.remove('is-loading');
       els.reservarBtn.disabled = false;
-      // verde inline para não depender de CSS extra
-      els.reservarBtn.style.backgroundColor = '#16a34a';
-      els.reservarBtn.style.borderColor = '#16a34a';
-      els.reservarBtn.style.color = '#fff';
+    };
+
+    // Sucesso: fica verde (classe CSS) e mantém mensagem por 4s
+    const showSuccess = (ms = 4000) => {
+      stopLoading();
+      els.reservarBtn.classList.add('is-success');
       els.reservarBtn.textContent = '✅ Pedido enviado com sucesso';
       clearTimeout(showSuccess._t);
       showSuccess._t = setTimeout(() => {
-        els.reservarBtn.style.backgroundColor = btnOriginal.bg;
-        els.reservarBtn.style.borderColor = btnOriginal.bc;
-        els.reservarBtn.style.color = btnOriginal.col;
-        els.reservarBtn.textContent = btnOriginal.text;
+        els.reservarBtn.classList.remove('is-success');
+        els.reservarBtn.textContent = els.reservarBtn.dataset.prev || 'Reservar agora';
       }, ms);
     };
 
+    // Abanar no erro
     const shake = () => {
       els.reservarBtn.style.transition = 'transform .1s';
       els.reservarBtn.style.transform = 'translateX(-4px)';
@@ -305,16 +300,15 @@
       // Consentimentos
       const consentsOk = (!!els.consentTerms?.checked) && (!!els.consentPrivacy?.checked);
       if (!consentsOk) {
-        // realce visual
-        if (consentLabels.terms)   { consentLabels.terms.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--brand 18%), transparent)'; consentLabels.terms.style.borderRadius='12px'; }
-        if (consentLabels.privacy) { consentLabels.privacy.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--brand 18%), transparent)'; consentLabels.privacy.style.borderRadius='12px'; }
+        if (consentLabels.terms)   { consentLabels.terms.classList.add('label-error'); }
+        if (consentLabels.privacy) { consentLabels.privacy.classList.add('label-error'); }
         errConsents.textContent = 'Tem de aceitar os Termos e a Política de Privacidade.';
         errConsents.hidden = false;
         showError();
         return;
       } else {
-        if (consentLabels.terms)   consentLabels.terms.style.boxShadow = '';
-        if (consentLabels.privacy) consentLabels.privacy.style.boxShadow = '';
+        if (consentLabels.terms)   consentLabels.terms.classList.remove('label-error');
+        if (consentLabels.privacy) consentLabels.privacy.classList.remove('label-error');
         errConsents.textContent=''; errConsents.hidden = true;
       }
 
@@ -360,16 +354,17 @@
       } catch (ex) {
         showError(ex.message || 'Erro ao enviar. Tente novamente.');
       } finally {
-        setLoading(false);
+        // NÃO repõe o texto aqui — deixa o showSuccess() manter a mensagem verde
+        stopLoading();
       }
     });
 
-    // Qualquer mudança em consentimentos limpa aviso
+    // Limpa aviso dos consentimentos quando marcam
     [els.consentTerms, els.consentPrivacy].forEach(cb=>{
       if (!cb) return;
       cb.addEventListener('change', ()=>{
-        if (consentLabels.terms)   consentLabels.terms.style.boxShadow = '';
-        if (consentLabels.privacy) consentLabels.privacy.style.boxShadow = '';
+        if (consentLabels.terms)   consentLabels.terms.classList.remove('label-error');
+        if (consentLabels.privacy) consentLabels.privacy.classList.remove('label-error');
         errConsents.textContent=''; errConsents.hidden = true;
       });
     });
