@@ -664,4 +664,27 @@ body:not(:has(.hero)) .section:first-of-type { margin-top: 120px; }
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
+
+   
 }
+/* ===== Remover hairline sob o menu em páginas sem hero ===== */
+body:not(:has(.hero)) .topbar,
+body:not(:has(.hero)) .topbar.is-solid,
+body:not(:has(.hero)) .topbar.is-hiding,
+body:not(:has(.hero)) .topbar.is-hidden {
+  background: #fff !important;
+  border-bottom: 0 !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Evita a “cicatriz” de 1px durante a transição (promove a camada) */
+.topbar {
+  backface-visibility: hidden;       /* evita artefacto ao transladar */
+  transform: translateZ(0);          /* promove para layer própria */
+}
+
+/* (opcional) se ainda vires linha em alguns devices, ativa também: */
+/*
+.topbar { outline: 1px solid transparent; } 
+*/
