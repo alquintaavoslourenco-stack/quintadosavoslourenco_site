@@ -710,3 +710,50 @@ body:not(:has(.hero)) .topbar.is-hidden {
     min-height: 85vh;
   }
 }
+/* ===== Contactos: centrar tudo e estilizar mapa ===== */
+.contactos { text-align: center; }
+
+.contactos .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Título e parágrafos centrados e com largura confortável */
+.contactos h1 { margin-bottom: 10px; }
+.contactos p {
+  margin: 6px 0;
+  line-height: 1.6;
+  max-width: 720px;   /* evita linhas muito longas */
+}
+
+/* Botão centrado (podes remover o style inline do <p>) */
+.contactos .btn { display: inline-block; margin-top: 12px; }
+
+/* Mapa centrado + estilo coerente com o site */
+.contactos .mapa,
+.contactos .map,
+.contactos .map-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.contactos .mapa iframe,
+.contactos .map iframe,
+.contactos iframe {
+  width: min(100%, 900px);
+  aspect-ratio: 16 / 9;          /* mantém proporção responsiva */
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+
+/* Nota pequena sob o telefone */
+.contactos .note { color: #555; font-size: 14px; }
+
+/* Mobile: um pouco mais compacto */
+@media (max-width: 768px) {
+  .contactos p { max-width: 92%; }
+  .contactos .btn { margin-top: 10px; }
+}
