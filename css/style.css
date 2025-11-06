@@ -217,7 +217,7 @@ a:hover { text-decoration: underline; }
 /* ==========================================================
    SECÇÕES / GALERIA / TESTEMUNHOS / FOOTER
    ========================================================== */
-.section { padding: 50px 20px; }
+.section { padding: 10px 20px; }
 
 .grid {
   display: grid;
